@@ -1,6 +1,7 @@
 ﻿using Habr.DataAccess;
 using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Habr.ConsoleApp
 {
@@ -8,7 +9,20 @@ namespace Habr.ConsoleApp
     {
         static async Task Main(string[] args)
         {
-            using (var context = new DataContext())
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var connectionString = config.GetConnectionString("DefaultConnection");
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                Console.WriteLine("Connection string 'DefaultConnection' is empty. Please check your settings!");
+                return;
+            }
+
+            using (var context = new DataContext(connectionString))
             {
                 await context.Database.MigrateAsync();
 

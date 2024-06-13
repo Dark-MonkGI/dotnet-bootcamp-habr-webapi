@@ -14,18 +14,40 @@ namespace Habr.DataAccess
             builder.SetMinimumLevel(LogLevel.Information);
         });
 
+        private readonly string connectionString;
+
         public DbSet<Post> Posts { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Comment> Comments { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        /// <summary>
+        /// Initializes an instance of a class with the given connection string, for the main operation of the application.
+        /// </summary>
+        /// <param name="connectionString">The connection string to the database.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the connection string is null.</exception>
+        public DataContext(string connectionString)
+        {
+            this.connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the DataContext class using the connection string from the configuration file for manual database migration.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public DataContext()
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+            this.connectionString = config.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is empty.");
+        }
+
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(this.connectionString);
             optionsBuilder.UseLoggerFactory(ConsoleLoggerFactory);
         }
 
