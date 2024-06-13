@@ -16,7 +16,7 @@ namespace Habr.ConsoleApp
                 {
                     Title = "First post",
                     Text = "Text describing the first post",
-                    Created = DateTime.Now
+                    Created = DateTime.UtcNow
                 };
 
                 context.Posts.Add(post);
