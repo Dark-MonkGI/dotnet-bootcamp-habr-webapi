@@ -26,11 +26,23 @@ namespace Habr.ConsoleApp
             {
                 await context.Database.MigrateAsync();
 
+ 
+                var user = new User
+                {
+                    Name = "User Name",
+                    Email = "username@gmail.com"
+                };
+
+                context.Users.Add(user);
+                await context.SaveChangesAsync();
+
+
                 var post = new Post
                 {
                     Title = "First post",
-                    Text = "Text describing the first post",
-                    Created = DateTime.UtcNow
+                    Text = "First post text",
+                    Created = DateTime.UtcNow,
+                    UserId = user.Id
                 };
 
                 context.Posts.Add(post);
