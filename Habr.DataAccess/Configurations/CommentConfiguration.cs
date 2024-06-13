@@ -21,12 +21,17 @@ namespace Habr.DataAccess.Configurations
             builder.HasOne(c => c.Post)
                 .WithMany(p => p.Comments)
                 .HasForeignKey(c => c.PostId)
-                .IsRequired();
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(c => c.User)
                 .WithMany(u => u.Comments)
                 .HasForeignKey(c => c.UserId)
-                .IsRequired();
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(c => c.ParentComment)
+                .WithMany(c => c.Replies)
+                .HasForeignKey(c => c.ParentCommentId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -26,7 +26,6 @@ namespace Habr.ConsoleApp
             {
                 await context.Database.MigrateAsync();
 
- 
                 var user = new User
                 {
                     Name = "User Name",
@@ -42,11 +41,36 @@ namespace Habr.ConsoleApp
                     Title = "First post",
                     Text = "First post text",
                     Created = DateTime.UtcNow,
-                    UserId = user.Id
+                    UserId = user.Id  
                 };
 
                 context.Posts.Add(post);
                 await context.SaveChangesAsync();
+
+
+                var comment = new Comment
+                {
+                    Text = "This is a comment on the first post",
+                    Created = DateTime.UtcNow,
+                    PostId = post.Id,
+                    UserId = user.Id
+                };
+
+                context.Comments.Add(comment);
+                await context.SaveChangesAsync();
+
+
+                var reply = new Comment
+                {
+                    Text = "This is a reply to the first comment",
+                    Created = DateTime.UtcNow,
+                    ParentCommentId = comment.Id,
+                    UserId = user.Id
+                };
+
+                context.Comments.Add(reply);
+                await context.SaveChangesAsync();
+
 
                 var posts = context.Posts.ToList();
 
