@@ -19,11 +19,6 @@ namespace Habr.DataAccess.Configurations
             builder.Property(u => u.Email)
                 .IsRequired()
                 .HasMaxLength(100);
-
-            builder.HasMany(u => u.Comments)
-                .WithOne(c => c.User)
-                .HasForeignKey(c => c.UserId)
-                .IsRequired();
         }
     }
 }
