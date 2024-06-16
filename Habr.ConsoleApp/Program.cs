@@ -1,5 +1,7 @@
-﻿using Habr.DataAccess;
+﻿using Habr.ConsoleApp.Managers;
+using Habr.DataAccess;
 using Habr.DataAccess.Entities;
+using Habr.DataAccess.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -26,62 +28,40 @@ namespace Habr.ConsoleApp
             {
                 await context.Database.MigrateAsync();
 
-                var user = new User
+                var userService = new UserService(context);
+
+                while (true)
                 {
-                    Name = "User Name",
-                    Email = "username@gmail.com"
-                };
+                    Console.WriteLine("\n" + new string('-', 95));
+                    Console.WriteLine("What do you want to do? Please enter:\n R - for register;\n A - for login;\n 0 - to exit;");
+                    Console.WriteLine(new string('-', 95) + "\n");
 
-                context.Users.Add(user);
-                await context.SaveChangesAsync();
+                    var action = Console.ReadLine()?.Trim().ToLower();
 
-
-                var post = new Post
-                {
-                    Title = "First post",
-                    Text = "First post text",
-                    Created = DateTime.UtcNow,
-                    UserId = user.Id  
-                };
-
-                context.Posts.Add(post);
-                await context.SaveChangesAsync();
-
-
-                var comment = new Comment
-                {
-                    Text = "This is a comment on the first post",
-                    Created = DateTime.UtcNow,
-                    PostId = post.Id,
-                    UserId = user.Id
-                };
-
-                context.Comments.Add(comment);
-                await context.SaveChangesAsync();
-
-
-                var reply = new Comment
-                {
-                    Text = "This is a reply to the first comment",
-                    Created = DateTime.UtcNow,
-                    ParentCommentId = comment.Id,
-                    UserId = user.Id
-                };
-
-                context.Comments.Add(reply);
-                await context.SaveChangesAsync();
-
-
-                var posts = context.Posts.ToList();
-
-                Console.WriteLine("\n" + new string('-', 95));
-                Console.WriteLine("{0, -5} | {1, -20} | {2, -40} | {3, -20}", "Id", "Title", "Text", "Created");
-                Console.WriteLine(new string('-', 95)); 
-
-                foreach (var p in posts)
-                {
-                    Console.WriteLine("{0, -5} | {1, -20} | {2, -40} | {3, -20}", p.Id, p.Title, p.Text, p.Created);
+                    if (action == "r")
+                    {
+                        if (await UserManager.RegisterUser(userService))
+                        {
+                            return;
+                        }
+                    }
+                    else if (action == "a")
+                    {
+                        if (await UserManager.AuthenticateUser(userService))
+                        {
+                            return;
+                        }
+                    }
+                    else if (action == "0")
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid action. Please try again.");
+                    }
                 }
+
             }
         }
     }
