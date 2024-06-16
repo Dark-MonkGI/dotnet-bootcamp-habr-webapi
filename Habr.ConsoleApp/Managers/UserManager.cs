@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using Habr.DataAccess.Entities;
 using Habr.DataAccess.Services;
 
 namespace Habr.ConsoleApp.Managers
@@ -27,31 +26,31 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task<bool> RegisterUser(UserService userService)
+        public static async Task<User> RegisterUser(UserService userService)
         {
             var name = GetInputWithExitOption("Enter your name");
             if (name == null) 
             {
-                return false;
+                return null;
             }
 
             var email = GetInputWithExitOption("Enter your email");
             if (email == null)
             {
-                return false;
+                return null;
             }
 
             var password = GetInputWithExitOption("Enter your password");
             if (password == null)
             {
-                return false;
+                return null;
             }
 
             try
             {
                 var user = await userService.Register(name, email, password);
                 Console.WriteLine($"\nRegistration successful. Welcome, {user.Name}!");
-                return true;
+                return user;
             }
             catch (ArgumentException ex)
             {
@@ -62,23 +61,23 @@ namespace Habr.ConsoleApp.Managers
                 Console.WriteLine($"\nError: {ex.Message}");
             }
 
-            return false;
+            return null;
         }
 
-        public static async Task<bool> AuthenticateUser(UserService userService)
+        public static async Task<User> AuthenticateUser(UserService userService)
         {
             while (true)
             {
                 var email = GetInputWithExitOption("Enter your email");
                 if (email == null)
                 {
-                    return false;
+                    return null;
                 }
 
                 var password = GetInputWithExitOption("Enter your password");
                 if (password == null)
                 {
-                    return false;
+                    return null;
                 }
 
                 try
@@ -87,7 +86,7 @@ namespace Habr.ConsoleApp.Managers
                     if (user != null)
                     {
                         Console.WriteLine($"\nAuthentication successful. Welcome back, {user.Name}!");
-                        return true;
+                        return user;
                     }
                     else
                     {
@@ -99,7 +98,7 @@ namespace Habr.ConsoleApp.Managers
                     Console.WriteLine($"\nError: {ex.Message}");
                 }
 
-                return false;
+                return null;
             }
         }
     }
