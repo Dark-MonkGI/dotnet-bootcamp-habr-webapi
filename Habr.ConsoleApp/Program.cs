@@ -30,6 +30,7 @@ namespace Habr.ConsoleApp
 
                 var userService = new UserService(context);
                 var postService = new PostService(context);
+                var commentService = new CommentService(context);
                 User authenticatedUser;
 
                 // Authorization
@@ -70,7 +71,7 @@ namespace Habr.ConsoleApp
                     }
                 }
 
-                // Logic for working with posts
+                // Logic for working with posts and comments
                 while (true)
                 {
                     Console.WriteLine("\n" + new string('-', 95));
@@ -79,6 +80,9 @@ namespace Habr.ConsoleApp
                         "C - for create post;\n " +
                         "E - for edit post;\n " +
                         "D - for delete post;\n " +
+                        "A - for add comment to post;\n " +
+                        "R - for reply to comment;\n " +
+                        "X - for delete comment;\n " +
                         "0 - to exit;");
                     Console.WriteLine(new string('-', 95) + "\n");
 
@@ -96,6 +100,15 @@ namespace Habr.ConsoleApp
                             break;
                         case "d":
                             await PostManager.DeletePost(postService, authenticatedUser);
+                            break;
+                        case "a":
+                            await CommentManager.AddComment(commentService, postService, authenticatedUser);
+                            break;
+                        case "r":
+                            await CommentManager.AddReply(commentService, postService, authenticatedUser);
+                            break;
+                        case "x":
+                            await CommentManager.DeleteComment(commentService, authenticatedUser);
                             break;
                         case "0":
                             return;
