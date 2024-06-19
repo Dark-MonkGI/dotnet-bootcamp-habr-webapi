@@ -25,6 +25,9 @@ namespace Habr.DataAccess.Configurations
 
             builder.Property(u => u.Created)
                 .IsRequired();
+
+            builder.HasIndex(u => u.Email)
+                .IsUnique();
         }
     }
 }
