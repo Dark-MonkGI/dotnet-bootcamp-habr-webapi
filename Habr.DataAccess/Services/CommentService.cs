@@ -14,6 +14,15 @@ namespace Habr.DataAccess.Services
 
         public async Task<Comment> AddComment(int userId, int postId, string text)
         {
+            var post = await context.Posts
+                .Where(p => p.Id == postId && p.IsPublished)
+                .FirstOrDefaultAsync();
+
+            if (post == null)
+            {
+                throw new InvalidOperationException("You cannot comment on unpublished posts!");
+            }
+
             var comment = new Comment
             {
                 UserId = userId,
@@ -30,7 +39,11 @@ namespace Habr.DataAccess.Services
 
         public async Task<Comment> AddReply(int userId, int parentCommentId, string text)
         {
-            var parentComment = await context.Comments.FindAsync(parentCommentId);
+            var parentComment = await context.Comments
+                .Where(c => c.Id == parentCommentId && c.Post.IsPublished)
+                .Include(c => c.Post)
+                .FirstOrDefaultAsync();
+
             if (parentComment == null)
             {
                 throw new ArgumentException("Parent comment not found.");
