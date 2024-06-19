@@ -38,9 +38,12 @@ namespace Habr.DataAccess.Services
             return post;
         }
 
-        public async Task<Post> UpdatePost(int postId, string title, string text)
+        public async Task<Post> UpdatePost(int postId, int userId, string title, string text)
         {
-            var post = await context.Posts.FindAsync(postId);
+            var post = await context.Posts
+                .Where(p => p.Id == postId && p.UserId == userId)
+                .FirstOrDefaultAsync();
+
             if (post == null)
             {
                 return null;
@@ -53,9 +56,12 @@ namespace Habr.DataAccess.Services
             return post;
         }
 
-        public async Task<bool> DeletePost(int postId)
+        public async Task<bool> DeletePost(int postId, int userId)
         {
-            var post = await context.Posts.FindAsync(postId);
+            var post = await context.Posts
+                .Where(p => p.Id == postId && p.UserId == userId)
+                .FirstOrDefaultAsync();
+
             if (post == null)
             {
                 return false;

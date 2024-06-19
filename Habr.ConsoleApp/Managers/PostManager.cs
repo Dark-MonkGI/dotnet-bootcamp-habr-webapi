@@ -76,14 +76,14 @@ namespace Habr.ConsoleApp.Managers
             var title = GetInput("Enter new title:");
             var text = GetInput("Enter new text:");
 
-            var post = await postService.UpdatePost(postId, title, text);
+            var post = await postService.UpdatePost(postId, user.Id, title, text);
             if (post != null)
             {
                 Console.WriteLine("Post updated!");
             }
             else
             {
-                Console.WriteLine("Post not found!");
+                Console.WriteLine("This post was not found for you!");
             }
         }
 
@@ -109,14 +109,14 @@ namespace Habr.ConsoleApp.Managers
 
             var postId = int.Parse(GetInput("Enter the ID of the post you want to delete:"));
 
-            var postDel = await postService.DeletePost(postId);
+            var postDel = await postService.DeletePost(postId, user.Id);
             if (postDel)
             {
                 Console.WriteLine("Post deleted!");
             }
             else
             {
-                Console.WriteLine("Post not found!");
+                Console.WriteLine("This post was not found for you!");
             }
         }
     }
