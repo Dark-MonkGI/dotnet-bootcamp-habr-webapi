@@ -22,6 +22,9 @@ namespace Habr.DataAccess.Configurations
             builder.Property(p => p.Created)
                 .IsRequired();
 
+            builder.Property(p => p.IsPublished)
+                .IsRequired();
+
             builder.HasOne(p => p.User)
                 .WithMany(u => u.Posts)
                 .HasForeignKey(p => p.UserId)

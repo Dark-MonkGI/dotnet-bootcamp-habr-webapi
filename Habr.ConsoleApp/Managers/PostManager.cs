@@ -47,8 +47,11 @@ namespace Habr.ConsoleApp.Managers
         {
             var title = GetInput("Enter post title:");
             var text = GetInput("Enter post text:");
+            var isPublishedInput = GetInput("Is the post published? (yes/no):").Trim();
+            var isPublished = isPublishedInput.Equals("yes", StringComparison.OrdinalIgnoreCase);
 
-            var post = await postService.CreatePost(user.Id, title, text);
+
+            var post = await postService.CreatePost(user.Id, title, text, isPublished);
             Console.WriteLine($"{user.Name}, your post has been successfully created!");
         }
 
@@ -75,8 +78,10 @@ namespace Habr.ConsoleApp.Managers
             var postId = int.Parse(GetInput("Enter the ID of the post you want to edit:"));
             var title = GetInput("Enter new title:");
             var text = GetInput("Enter new text:");
+            var isPublishedInput = GetInput("Is the post published? (yes/no):").Trim();
+            var isPublished = isPublishedInput.Equals("yes", StringComparison.OrdinalIgnoreCase);
 
-            var post = await postService.UpdatePost(postId, user.Id, title, text);
+            var post = await postService.UpdatePost(postId, user.Id, title, text, isPublished);
             if (post != null)
             {
                 Console.WriteLine("Post updated!");

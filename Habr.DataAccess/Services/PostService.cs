@@ -19,17 +19,21 @@ namespace Habr.DataAccess.Services
 
         public async Task<IEnumerable<Post>> GetAllPosts()
         {
-            return await context.Posts.Include(p => p.User).ToListAsync();
+            return await context.Posts
+                .Include(p => p.User)
+                .Where(p => p.IsPublished)
+                .ToListAsync();
         }
 
-        public async Task<Post> CreatePost(int userId, string title, string text)
+        public async Task<Post> CreatePost(int userId, string title, string text, bool isPublished)
         {
             var post = new Post
             {
                 UserId = userId,
                 Title = title,
                 Text = text,
-                Created = DateTime.UtcNow
+                Created = DateTime.UtcNow,
+                IsPublished = isPublished
             };
 
             context.Posts.Add(post);
@@ -38,7 +42,7 @@ namespace Habr.DataAccess.Services
             return post;
         }
 
-        public async Task<Post> UpdatePost(int postId, int userId, string title, string text)
+        public async Task<Post> UpdatePost(int postId, int userId, string title, string text, bool isPublished)
         {
             var post = await context.Posts
                 .Where(p => p.Id == postId && p.UserId == userId)
@@ -51,6 +55,7 @@ namespace Habr.DataAccess.Services
 
             post.Title = title;
             post.Text = text;
+            post.IsPublished = isPublished;
             await context.SaveChangesAsync();
 
             return post;
