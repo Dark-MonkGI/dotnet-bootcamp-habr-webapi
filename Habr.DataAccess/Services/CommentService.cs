@@ -66,15 +66,33 @@ namespace Habr.DataAccess.Services
 
         public async Task<bool> DeleteComment(int commentId, int userId)
         {
-            var comment = await context.Comments.FindAsync(commentId);
-            if (comment == null || comment.UserId != userId)
+            var comment = await context.Comments
+                .Include(c => c.Replies)
+                .FirstOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
+
+            if (comment == null)
             {
                 return false;
             }
 
+            await DeleteReplies(comment);
+
             context.Comments.Remove(comment);
+
             await context.SaveChangesAsync();
             return true;
+        }
+
+        private async Task DeleteReplies(Comment comment)
+        {
+            foreach (var reply in comment.Replies.ToList())
+            {
+                await context.Entry(reply).Collection(r => r.Replies).LoadAsync();
+
+                await DeleteReplies(reply);
+
+                context.Comments.Remove(reply);
+            }
         }
 
         public async Task<IEnumerable<Comment>> GetCommentsByPost(int postId)
