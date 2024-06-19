@@ -23,7 +23,8 @@ namespace Habr.DataAccess.Services
             {
                 Name = name,
                 Email = email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password)
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+                Created = DateTime.UtcNow
             };
 
             context.Users.Add(user);
