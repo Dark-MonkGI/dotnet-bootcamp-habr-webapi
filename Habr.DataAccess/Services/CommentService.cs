@@ -16,7 +16,7 @@ namespace Habr.DataAccess.Services
         {
             var post = await context.Posts
                 .Where(p => p.Id == postId && p.IsPublished)
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync();
 
             if (post == null)
             {
@@ -42,7 +42,7 @@ namespace Habr.DataAccess.Services
             var parentComment = await context.Comments
                 .Where(c => c.Id == parentCommentId && c.Post.IsPublished)
                 .Include(c => c.Post)
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync();
 
             if (parentComment == null)
             {
@@ -68,7 +68,7 @@ namespace Habr.DataAccess.Services
         {
             var comment = await context.Comments
                 .Include(c => c.Replies)
-                .FirstOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
+                .SingleOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
 
             if (comment == null)
             {

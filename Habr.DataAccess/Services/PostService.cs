@@ -46,7 +46,7 @@ namespace Habr.DataAccess.Services
         {
             var post = await context.Posts
                 .Where(p => p.Id == postId && p.UserId == userId)
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync();
 
             if (post == null)
             {
@@ -65,7 +65,7 @@ namespace Habr.DataAccess.Services
         {
             var post = await context.Posts
                 .Where(p => p.Id == postId && p.UserId == userId)
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync();
 
             if (post == null)
             {
