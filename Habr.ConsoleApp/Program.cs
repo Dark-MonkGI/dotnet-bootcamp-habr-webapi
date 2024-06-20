@@ -1,5 +1,7 @@
-﻿using Habr.DataAccess;
+﻿using Habr.ConsoleApp.Managers;
+using Habr.DataAccess;
 using Habr.DataAccess.Entities;
+using Habr.DataAccess.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -26,61 +28,94 @@ namespace Habr.ConsoleApp
             {
                 await context.Database.MigrateAsync();
 
-                var user = new User
+                var userService = new UserService(context);
+                var postService = new PostService(context);
+                var commentService = new CommentService(context);
+                User authenticatedUser;
+
+                // Authorization
+                while (true)
                 {
-                    Name = "User Name",
-                    Email = "username@gmail.com"
-                };
+                    Console.WriteLine("\n" + new string('-', 95));
+                    Console.WriteLine("What do you want to do? Please enter:\n " +
+                        "R - for register;\n " +
+                        "A - for login;\n " +
+                        "0 - to exit;");
+                    Console.WriteLine(new string('-', 95) + "\n");
 
-                context.Users.Add(user);
-                await context.SaveChangesAsync();
+                    var userInput = Console.ReadLine()?.Trim().ToLower();
 
+                    if (userInput == "r")
+                    {
+                        authenticatedUser = await UserManager.RegisterUser(userService);
+                        if (authenticatedUser != null)
+                        {
+                            break;
+                        }
+                    }
+                    else if (userInput == "a")
+                    {
+                        authenticatedUser = await UserManager.AuthenticateUser(userService);
+                        if (authenticatedUser != null)
+                        {
+                            break;
+                        }
+                    }
+                    else if (userInput == "0")
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid action. Please try again.");
+                    }
+                }
 
-                var post = new Post
+                // Logic for working with posts and comments
+                while (true)
                 {
-                    Title = "First post",
-                    Text = "First post text",
-                    Created = DateTime.UtcNow,
-                    UserId = user.Id  
-                };
+                    Console.WriteLine("\n" + new string('-', 95));
+                    Console.WriteLine("What do you want to do? Please enter:\n " +
+                        "G - for get all posts;\n " +
+                        "C - for create post;\n " +
+                        "E - for edit post;\n " +
+                        "D - for delete post;\n " +
+                        "A - for add comment to post;\n " +
+                        "R - for reply to comment;\n " +
+                        "X - for delete comment;\n " +
+                        "0 - to exit;");
+                    Console.WriteLine(new string('-', 95) + "\n");
 
-                context.Posts.Add(post);
-                await context.SaveChangesAsync();
-
-
-                var comment = new Comment
-                {
-                    Text = "This is a comment on the first post",
-                    Created = DateTime.UtcNow,
-                    PostId = post.Id,
-                    UserId = user.Id
-                };
-
-                context.Comments.Add(comment);
-                await context.SaveChangesAsync();
-
-
-                var reply = new Comment
-                {
-                    Text = "This is a reply to the first comment",
-                    Created = DateTime.UtcNow,
-                    ParentCommentId = comment.Id,
-                    UserId = user.Id
-                };
-
-                context.Comments.Add(reply);
-                await context.SaveChangesAsync();
-
-
-                var posts = context.Posts.ToList();
-
-                Console.WriteLine("\n" + new string('-', 95));
-                Console.WriteLine("{0, -5} | {1, -20} | {2, -40} | {3, -20}", "Id", "Title", "Text", "Created");
-                Console.WriteLine(new string('-', 95)); 
-
-                foreach (var p in posts)
-                {
-                    Console.WriteLine("{0, -5} | {1, -20} | {2, -40} | {3, -20}", p.Id, p.Title, p.Text, p.Created);
+                    var userInput = Console.ReadLine()?.Trim().ToLower();
+                    switch (userInput)
+                    {
+                        case "g":
+                            await PostManager.DisplayAllPosts(postService);
+                            break;
+                        case "c":
+                            await PostManager.CreatePost(postService, authenticatedUser);
+                            break;
+                        case "e":
+                            await PostManager.EditPost(postService, authenticatedUser);
+                            break;
+                        case "d":
+                            await PostManager.DeletePost(postService, authenticatedUser);
+                            break;
+                        case "a":
+                            await CommentManager.AddComment(commentService, postService, authenticatedUser);
+                            break;
+                        case "r":
+                            await CommentManager.AddReply(commentService, postService, authenticatedUser);
+                            break;
+                        case "x":
+                            await CommentManager.DeleteComment(commentService, authenticatedUser);
+                            break;
+                        case "0":
+                            return;
+                        default:
+                            Console.WriteLine("Invalid action. Please try again.");
+                            break;
+                    }
                 }
             }
         }
