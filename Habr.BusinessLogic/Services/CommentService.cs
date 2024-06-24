@@ -1,20 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Habr.DataAccess.Entities;
+using Habr.DataAccess;
 
-namespace Habr.DataAccess.Services
+namespace Habr.BusinessLogic.Services
 {
     public class CommentService
     {
-        private readonly DataContext context;
+        private readonly DataContext _context;
 
         public CommentService(DataContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         public async Task<Comment> AddComment(int userId, int postId, string text)
         {
-            var post = await context.Posts
+            var post = await _context.Posts
                 .Where(p => p.Id == postId && p.IsPublished)
                 .SingleOrDefaultAsync();
 
@@ -31,15 +32,15 @@ namespace Habr.DataAccess.Services
                 Created = DateTime.UtcNow
             };
 
-            context.Comments.Add(comment);
-            await context.SaveChangesAsync();
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
 
             return comment;
         }
 
         public async Task<Comment> AddReply(int userId, int parentCommentId, string text)
         {
-            var parentComment = await context.Comments
+            var parentComment = await _context.Comments
                 .Where(c => c.Id == parentCommentId && c.Post.IsPublished)
                 .Include(c => c.Post)
                 .SingleOrDefaultAsync();
@@ -58,15 +59,15 @@ namespace Habr.DataAccess.Services
                 Created = DateTime.UtcNow
             };
 
-            context.Comments.Add(comment);
-            await context.SaveChangesAsync();
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
 
             return comment;
         }
 
         public async Task<bool> DeleteComment(int commentId, int userId)
         {
-            var comment = await context.Comments
+            var comment = await _context.Comments
                 .Include(c => c.Replies)
                 .SingleOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
 
@@ -77,9 +78,9 @@ namespace Habr.DataAccess.Services
 
             await DeleteReplies(comment);
 
-            context.Comments.Remove(comment);
+            _context.Comments.Remove(comment);
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return true;
         }
 
@@ -87,17 +88,15 @@ namespace Habr.DataAccess.Services
         {
             foreach (var reply in comment.Replies.ToList())
             {
-                await context.Entry(reply).Collection(r => r.Replies).LoadAsync();
-
+                await _context.Entry(reply).Collection(r => r.Replies).LoadAsync();
                 await DeleteReplies(reply);
-
-                context.Comments.Remove(reply);
+                _context.Comments.Remove(reply);
             }
         }
 
         public async Task<IEnumerable<Comment>> GetCommentsByPost(int postId)
         {
-            return await context.Comments
+            return await _context.Comments
                 .Where(c => c.PostId == postId)
                 .Include(c => c.User)
                 .ToListAsync();
@@ -105,7 +104,7 @@ namespace Habr.DataAccess.Services
 
         public async Task<IEnumerable<Comment>> GetUserComments(int userId)
         {
-            return await context.Comments
+            return await _context.Comments
                 .Where(c => c.UserId == userId)
                 .ToListAsync();
         }

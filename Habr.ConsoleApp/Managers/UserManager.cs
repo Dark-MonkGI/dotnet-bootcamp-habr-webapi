@@ -1,46 +1,21 @@
 ﻿using Habr.DataAccess.Entities;
-using Habr.DataAccess.Services;
+using Habr.BusinessLogic.Validation;
+using Habr.ConsoleApp.Helpers;
+using Habr.Application.Controllers;
 
 namespace Habr.ConsoleApp.Managers
 {
     public static class UserManager
     {
-        private static string GetInputWithExitOption(string heading)
+        public static async Task<User> RegisterUser(UserController userController)
         {
-            while (true)
-            {
-                Console.WriteLine($"\n{heading} (or 0 to exit):");
-                var input = Console.ReadLine()?.Trim();
-
-                if (input == "0")
-                {
-                    return null;
-                }
-
-                if (!string.IsNullOrEmpty(input))
-                {
-                    return input;
-                }
-
-                Console.WriteLine("Input cannot be empty. Please try again.");
-            }
-        }
-
-        public static async Task<User> RegisterUser(UserService userService)
-        {
-            var name = GetInputWithExitOption("Enter your name");
-            if (name == null) 
-            {
-                return null;
-            }
-
-            var email = GetInputWithExitOption("Enter your email");
+            var email = InputHelper.GetInputWithValidation("Enter your email", UserValidation.ValidateEmail);
             if (email == null)
             {
                 return null;
             }
 
-            var password = GetInputWithExitOption("Enter your password");
+            var password = InputHelper.GetInputWithValidation("Enter your password", UserValidation.ValidatePassword);
             if (password == null)
             {
                 return null;
@@ -48,56 +23,46 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var user = await userService.Register(name, email, password);
-                Console.WriteLine($"\nRegistration successful. Welcome, {user.Name}!");
-                return user;
+                return await userController.RegisterAsync(email, password);
             }
             catch (ArgumentException ex)
             {
                 Console.WriteLine($"\n{ex.Message}");
+                return null;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"\nError: {ex.Message}");
+                return null;
             }
-
-            return null;
         }
 
-        public static async Task<User> AuthenticateUser(UserService userService)
+        public static async Task<User> AuthenticateUser(UserController userController)
         {
-            while (true)
+            var email = InputHelper.GetInputWithValidation("Enter your email", UserValidation.ValidateEmail);
+            if (email == null)
             {
-                var email = GetInputWithExitOption("Enter your email");
-                if (email == null)
-                {
-                    return null;
-                }
+                return null;
+            }
 
-                var password = GetInputWithExitOption("Enter your password");
-                if (password == null)
-                {
-                    return null;
-                }
+            var password = InputHelper.GetInputWithValidation("Enter your password", UserValidation.ValidatePassword);
+            if (password == null)
+            {
+                return null;
+            }
 
-                try
-                {
-                    var user = await userService.Authenticate(email, password);
-                    if (user != null)
-                    {
-                        Console.WriteLine($"\nAuthentication successful. Welcome back, {user.Name}!");
-                        return user;
-                    }
-                    else
-                    {
-                        Console.WriteLine("\nAuthentication failed. Please check your email and password or enter 0 to exit.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"\nError: {ex.Message}");
-                }
-
+            try
+            {
+                return await userController.AuthenticateAsync(email, password);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
                 return null;
             }
         }

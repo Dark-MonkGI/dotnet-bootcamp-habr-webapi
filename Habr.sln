@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habr.ConsoleApp", "Habr.ConsoleApp\Habr.ConsoleApp.csproj", "{2AA69503-6694-4BAF-BE9D-673935A7246A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.ConsoleApp", "Habr.ConsoleApp\Habr.ConsoleApp.csproj", "{2AA69503-6694-4BAF-BE9D-673935A7246A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habr.DataAccess", "Habr.DataAccess\Habr.DataAccess.csproj", "{DA90A2F2-2B58-4B30-8091-A1229CFB65D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.DataAccess", "Habr.DataAccess\Habr.DataAccess.csproj", "{DA90A2F2-2B58-4B30-8091-A1229CFB65D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habr.Application", "Habr.Application\Habr.Application.csproj", "{29F53142-70C1-4CAC-B2DA-DEE69754F61A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habr.BusinessLogic", "Habr.BusinessLogic\Habr.BusinessLogic.csproj", "{A2525886-CAED-43FA-AAD4-44FB7454407A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{DA90A2F2-2B58-4B30-8091-A1229CFB65D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA90A2F2-2B58-4B30-8091-A1229CFB65D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA90A2F2-2B58-4B30-8091-A1229CFB65D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29F53142-70C1-4CAC-B2DA-DEE69754F61A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29F53142-70C1-4CAC-B2DA-DEE69754F61A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29F53142-70C1-4CAC-B2DA-DEE69754F61A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29F53142-70C1-4CAC-B2DA-DEE69754F61A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2525886-CAED-43FA-AAD4-44FB7454407A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2525886-CAED-43FA-AAD4-44FB7454407A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2525886-CAED-43FA-AAD4-44FB7454407A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2525886-CAED-43FA-AAD4-44FB7454407A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,10 @@
-﻿using Habr.ConsoleApp.Managers;
-using Habr.DataAccess;
+﻿using Habr.DataAccess;
 using Habr.DataAccess.Entities;
-using Habr.DataAccess.Services;
+using Habr.BusinessLogic.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Habr.Application.Controllers;
+using Habr.ConsoleApp.Managers;
 
 namespace Habr.ConsoleApp
 {
@@ -31,9 +32,13 @@ namespace Habr.ConsoleApp
                 var userService = new UserService(context);
                 var postService = new PostService(context);
                 var commentService = new CommentService(context);
+
+                var userController = new UserController(userService);
+                var postController = new PostController(postService);
+                var commentController = new CommentController(commentService);
+
                 User authenticatedUser;
 
-                // Authorization
                 while (true)
                 {
                     Console.WriteLine("\n" + new string('-', 95));
@@ -47,17 +52,19 @@ namespace Habr.ConsoleApp
 
                     if (userInput == "r")
                     {
-                        authenticatedUser = await UserManager.RegisterUser(userService);
+                        authenticatedUser = await UserManager.RegisterUser(userController);
                         if (authenticatedUser != null)
                         {
+                            Console.WriteLine($"\nRegistration successful. Welcome, {authenticatedUser.Name}!");
                             break;
                         }
                     }
                     else if (userInput == "a")
                     {
-                        authenticatedUser = await UserManager.AuthenticateUser(userService);
+                        authenticatedUser = await UserManager.AuthenticateUser(userController);
                         if (authenticatedUser != null)
                         {
+                            Console.WriteLine($"\nAuthorization was successful. Welcome back, {authenticatedUser.Name}!");
                             break;
                         }
                     }
@@ -71,12 +78,12 @@ namespace Habr.ConsoleApp
                     }
                 }
 
-                // Logic for working with posts and comments
                 while (true)
                 {
                     Console.WriteLine("\n" + new string('-', 95));
                     Console.WriteLine("What do you want to do? Please enter:\n " +
                         "G - for get all posts;\n " +
+                        "S - for view draft posts;\n " +
                         "C - for create post;\n " +
                         "E - for edit post;\n " +
                         "D - for delete post;\n " +
@@ -90,25 +97,28 @@ namespace Habr.ConsoleApp
                     switch (userInput)
                     {
                         case "g":
-                            await PostManager.DisplayAllPosts(postService);
+                            await PostManager.DisplayAllPosts(postController, authenticatedUser);
+                            break;
+                        case "s":
+                            await PostManager.DisplayUserDraftPosts(postController, authenticatedUser.Id);
                             break;
                         case "c":
-                            await PostManager.CreatePost(postService, authenticatedUser);
+                            await PostManager.CreatePost(postController, authenticatedUser);
                             break;
                         case "e":
-                            await PostManager.EditPost(postService, authenticatedUser);
+                            await PostManager.EditPost(postController, authenticatedUser);
                             break;
                         case "d":
-                            await PostManager.DeletePost(postService, authenticatedUser);
+                            await PostManager.DeletePost(postController, authenticatedUser);
                             break;
                         case "a":
-                            await CommentManager.AddComment(commentService, postService, authenticatedUser);
+                            await CommentManager.AddComment(commentController, postController, authenticatedUser);
                             break;
                         case "r":
-                            await CommentManager.AddReply(commentService, postService, authenticatedUser);
+                            await CommentManager.AddReply(commentController, postController, authenticatedUser);
                             break;
                         case "x":
-                            await CommentManager.DeleteComment(commentService, authenticatedUser);
+                            await CommentManager.DeleteComment(commentController, authenticatedUser);
                             break;
                         case "0":
                             return;

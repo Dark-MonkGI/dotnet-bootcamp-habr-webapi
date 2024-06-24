@@ -22,6 +22,9 @@ namespace Habr.DataAccess.Configurations
             builder.Property(p => p.Created)
                 .IsRequired();
 
+            builder.Property(p => p.Updated)
+                .IsRequired(false);
+
             builder.Property(p => p.IsPublished)
                 .IsRequired();
 
