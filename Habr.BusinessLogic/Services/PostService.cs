@@ -128,5 +128,54 @@ namespace Habr.BusinessLogic.Services
 
             return true;
         }
+
+        public async Task<bool> PublishPostAsync(int postId, int userId)
+        {
+            var post = await _context.Posts
+                .Where(p => 
+                    p.Id == postId 
+                    && p.UserId == userId 
+                    && !p.IsPublished)
+                .SingleOrDefaultAsync();
+
+            if (post == null)
+            {
+                return false;
+            }
+
+            post.IsPublished = true;
+            post.PublishedDate = DateTime.UtcNow;
+            post.Updated = DateTime.UtcNow;
+
+            _context.Posts.Update(post);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> MovePostToDraftAsync(int postId, int userId)
+        {
+            var post = await _context.Posts
+                .Include(p => p.Comments)
+                .Where(p => 
+                    p.Id == postId 
+                    && p.UserId == userId 
+                    && p.IsPublished)
+                .SingleOrDefaultAsync();
+
+            if (post == null || !post.IsPublished || post.Comments.Any())
+            {
+                return false;
+            }
+
+            post.IsPublished = false;
+            post.PublishedDate = null;
+            post.Updated = DateTime.UtcNow;
+
+            _context.Posts.Update(post);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

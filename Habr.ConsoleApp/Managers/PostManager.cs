@@ -232,5 +232,117 @@ namespace Habr.ConsoleApp.Managers
                 Console.WriteLine($"\nError: {ex.Message}");
             }
         }
+
+        public static async Task PublishPost(PostController postController, User user)
+        {
+            var userPosts = await postController.GetUserPostsAsync(user.Id);
+
+            if (userPosts == null || !userPosts.Any())
+            {
+                Console.WriteLine("\nYou have no posts to publish");
+                return;
+            }
+
+            DisplayHelper.DisplayUserPosts(userPosts);
+
+            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to publish:", input =>
+            {
+                if (!int.TryParse(input, out _))
+                {
+                    throw new ArgumentException("\nInvalid ID format.");
+                }
+            });
+
+            if (postIdInput == null)
+            {
+                return;
+            }
+
+            var postId = int.Parse(postIdInput);
+
+            try
+            {
+                var success = await postController.PublishPostAsync(postId, user.Id);
+
+                if (success)
+                {
+                    Console.WriteLine("\nPost published!");
+                }
+                else
+                {
+                    var post = await postController.GetPostWithCommentsAsync(postId, user.Id);
+                    if (post != null && post.IsPublished)
+                    {
+                        Console.WriteLine("\nThe post is already published.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nFailed to publish post.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+            }
+        }
+
+        public static async Task MovePostToDraft(PostController postController, User user)
+        {
+            var userPosts = await postController.GetUserPostsAsync(user.Id);
+
+            if (userPosts == null || !userPosts.Any())
+            {
+                Console.WriteLine("\nYou have no posts to move to drafts");
+                return;
+            }
+
+            DisplayHelper.DisplayUserPosts(userPosts);
+
+            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to move to drafts:", input =>
+            {
+                if (!int.TryParse(input, out _))
+                {
+                    throw new ArgumentException("\nInvalid ID format.");
+                }
+            });
+
+            if (postIdInput == null)
+            {
+                return;
+            }
+
+            var postId = int.Parse(postIdInput);
+
+            try
+            {
+                var success = await postController.MovePostToDraftAsync(postId, user.Id);
+
+                if (success)
+                {
+                    Console.WriteLine("\nPost moved to drafts!");
+                }
+                else
+                {
+                    var post = await postController.GetPostWithCommentsAsync(postId, user.Id);
+                    if (post != null && !post.IsPublished)
+                    {
+                        Console.WriteLine("\nThe post is already in drafts.");
+                    }
+                    else if (post != null && post.Comments.Any())
+                    {
+                        Console.WriteLine("\nThe post cannot be moved to drafts because it has comments.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nFailed to move post to drafts.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+            }
+        }
     }
 }
