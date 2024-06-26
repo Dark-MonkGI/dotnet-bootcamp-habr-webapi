@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Habr.ConsoleApp.Helpers
+﻿namespace Habr.ConsoleApp.Helpers
 {
     public static class InputHelper
     {

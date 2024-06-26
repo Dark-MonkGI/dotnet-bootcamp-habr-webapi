@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Habr.BusinessLogic.Validation
+﻿namespace Habr.BusinessLogic.Validation
 {
     public static class PostValidation
     {

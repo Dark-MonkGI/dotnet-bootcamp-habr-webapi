@@ -1,7 +1,4 @@
-﻿using System;
-
-
-namespace Habr.DataAccess.Entities
+﻿namespace Habr.DataAccess.Entities
 {
     public class User
     {
