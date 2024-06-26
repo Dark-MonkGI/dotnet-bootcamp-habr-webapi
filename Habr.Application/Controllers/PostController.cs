@@ -50,6 +50,7 @@ namespace Habr.Application.Controllers
         {
             await _postService.UpdatePost(post);
         }
+
         public async Task<bool> DeletePostAsync(int postId, int userId)
         {
             return await _postService.DeletePost(postId, userId);

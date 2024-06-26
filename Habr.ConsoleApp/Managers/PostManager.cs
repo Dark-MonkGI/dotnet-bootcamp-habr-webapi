@@ -93,17 +93,17 @@ namespace Habr.ConsoleApp.Managers
 
             if (userPosts == null || !userPosts.Any())
             {
-                Console.WriteLine("You have no posts to edit");
+                Console.WriteLine("\nYou have no posts to edit");
                 return;
             }
 
             DisplayHelper.DisplayUserPosts(userPosts);
 
-            var postIdInput = InputHelper.GetInputWithValidation("Enter the ID of the post you want to edit:", input =>
+            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to edit:", input =>
             {
                 if (!int.TryParse(input, out _))
                 {
-                    throw new ArgumentException("Invalid ID format.");
+                    throw new ArgumentException("\nInvalid ID format.");
                 }
             });
 
@@ -114,69 +114,45 @@ namespace Habr.ConsoleApp.Managers
 
             var postId = int.Parse(postIdInput);
 
-            var post = await postController.GetPostWithCommentsAsync(postId, user.Id);
-
-            if (post == null)
-            {
-                Console.WriteLine("This post was not found for you!");
-                return;
-            }
-
-            if (post.IsPublished && post.Comments.Any())
-            {
-                Console.WriteLine("This post cannot be edited because it has comments.");
-                return;
-            }
-
-            if (post.IsPublished)
-            {
-                post.IsPublished = false;
-                await postController.UpdatePostAsync(post);
-                Console.WriteLine("The post has been moved to drafts. You can now edit it.");
-            }
-
-            var title = InputHelper.GetInputWithValidation("Enter new title:", PostValidation.ValidateTitle);
-            if (title == null)
-            {
-                return;
-            }
-
-            var text = InputHelper.GetInputWithValidation("Enter new text:", PostValidation.ValidateText);
-            if (text == null)
-            {
-                return;
-            }
-
-            var isPublishedInput = InputHelper.GetInputWithValidation("Is the post published? (yes/no):", input =>
-            {
-                if (!input.Equals("yes", StringComparison.OrdinalIgnoreCase) && !input.Equals("no", StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new ArgumentException("Please enter 'yes' or 'no'.");
-                }
-            });
-
-            if (isPublishedInput == null)
-            {
-                return;
-            }
-
-            var isPublished = isPublishedInput.Equals("yes", StringComparison.OrdinalIgnoreCase);
-
             try
             {
+                var post = await postController.GetPostWithCommentsAsync(postId, user.Id);
+
+                if (post == null)
+                {
+                    Console.WriteLine("\nThis post was not found for you!");
+                    return;
+                }
+
+                if (post.IsPublished)
+                {
+                    Console.WriteLine("\nThis post is published and cannot be edited. Move it to drafts first.");
+                    return;
+                }
+
+                var title = InputHelper.GetInputWithValidation("Enter new title:", PostValidation.ValidateTitle);
+                if (title == null)
+                {
+                    return;
+                }
+
+                var text = InputHelper.GetInputWithValidation("Enter new text:", PostValidation.ValidateText);
+                if (text == null)
+                {
+                    return;
+                }
+
                 post.Title = title;
                 post.Text = text;
-                post.IsPublished = isPublished;
                 post.Updated = DateTime.UtcNow;
-
-                if (isPublished)
-                {
-                    post.PublishedDate = DateTime.UtcNow;
-                }
 
                 await postController.UpdatePostAsync(post);
 
-                Console.WriteLine("Post updated!");
+                Console.WriteLine("\nPost updated!");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
             }
             catch (ArgumentException ex)
             {

@@ -89,27 +89,22 @@ namespace Habr.BusinessLogic.Services
         {
             var existingPost = await GetPostWithCommentsAsync(post.Id, post.UserId);
 
-            if (existingPost != null)
+            if (existingPost == null)
             {
-                existingPost.Title = post.Title;
-                existingPost.Text = post.Text;
-
-                if (!existingPost.IsPublished && post.IsPublished)
-                {
-                    existingPost.IsPublished = true;
-                    existingPost.PublishedDate = DateTime.UtcNow;
-                }
-                else if (existingPost.IsPublished && !post.IsPublished)
-                {
-                    existingPost.IsPublished = false;
-                    existingPost.PublishedDate = null;
-                }
-
-                existingPost.Updated = DateTime.UtcNow;
-
-                _context.Posts.Update(existingPost);
-                await _context.SaveChangesAsync();
+                throw new ArgumentException("Post not found.");
             }
+
+            if (existingPost.IsPublished)
+            {
+                throw new InvalidOperationException("A published post cannot be edited. Move it to drafts first.");
+            }
+
+            existingPost.Title = post.Title;
+            existingPost.Text = post.Text;
+            existingPost.Updated = DateTime.UtcNow;
+
+            _context.Posts.Update(existingPost);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> DeletePost(int postId, int userId)
