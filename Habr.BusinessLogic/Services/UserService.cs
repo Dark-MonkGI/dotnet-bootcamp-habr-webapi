@@ -14,7 +14,7 @@ namespace Habr.BusinessLogic.Services
             _context = context;
         }
 
-        public async Task<User> RegisterAsync(string email, string password)
+        public async Task<User> RegisterAsync(string email, string password, bool isEmailConfirmed)
         {
             UserValidation.ValidateEmail(email);
             UserValidation.ValidatePassword(password);
@@ -29,13 +29,27 @@ namespace Habr.BusinessLogic.Services
                 Name = email.Split('@')[0],
                 Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                Created = DateTime.UtcNow
+                Created = DateTime.UtcNow,
+                IsEmailConfirmed = isEmailConfirmed
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
             return user;
+        }
+
+        public async Task ConfirmEmailAsync(string email, bool isEmailConfirmed)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                throw new ArgumentException("The email is incorrect.");
+            }
+
+            user.IsEmailConfirmed = isEmailConfirmed;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<User> AuthenticateAsync(string email, string password)

@@ -5,6 +5,7 @@ namespace Habr.BusinessLogic.Validation
     public static class UserValidation
     {
         private const string EmailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        private const int MaxEmailLength = 200;
 
         public static void ValidateEmail(string email)
         {
@@ -13,9 +14,9 @@ namespace Habr.BusinessLogic.Validation
                 throw new ArgumentException("Email cannot be empty.");
             }
 
-            if (email.Length > 200)
+            if (email.Length > MaxEmailLength)
             {
-                throw new ArgumentException("Email cannot exceed 200 characters.");
+                throw new ArgumentException($"Email cannot exceed {MaxEmailLength} characters.");
             }
 
             var emailRegex = new Regex(EmailPattern);

@@ -44,6 +44,7 @@ namespace Habr.ConsoleApp
                     Console.WriteLine("\n" + new string('-', 95));
                     Console.WriteLine("What do you want to do? Please enter:\n " +
                         "R - for register;\n " +
+                        "C - for confirm email;\n " +
                         "A - for login;\n " +
                         "0 - to exit;");
                     Console.WriteLine(new string('-', 95) + "\n");
@@ -56,6 +57,21 @@ namespace Habr.ConsoleApp
                         if (authenticatedUser != null)
                         {
                             Console.WriteLine($"\nRegistration successful. Welcome, {authenticatedUser.Name}!");
+                            if (authenticatedUser.IsEmailConfirmed)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nDon't forget to confirm your email!");
+                            }
+                        }
+                    }
+                    else if (userInput == "c")
+                    {
+                        authenticatedUser = await UserManager.ConfirmEmail(userController);
+                        if (authenticatedUser != null)
+                        {
                             break;
                         }
                     }

@@ -12,9 +12,14 @@ namespace Habr.Application.Controllers
             _userService = userService;
         }
 
-        public async Task<User> RegisterAsync(string email, string password)
+        public async Task<User> RegisterAsync(string email, string password, bool isEmailConfirmed)
         {
-            return await _userService.RegisterAsync(email, password);
+            return await _userService.RegisterAsync(email, password, isEmailConfirmed);
+        }
+
+        public async Task ConfirmEmailAsync(string email, bool isEmailConfirmed)
+        {
+            await _userService.ConfirmEmailAsync(email, isEmailConfirmed);
         }
 
         public async Task<User> AuthenticateAsync(string email, string password)
