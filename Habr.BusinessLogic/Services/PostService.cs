@@ -13,7 +13,7 @@ namespace Habr.BusinessLogic.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> GetAllPosts()
+        public async Task<IEnumerable<Post>> GetAllPublishedPosts()
         {
             return await _context.Posts
                 .Include(p => p.User)
