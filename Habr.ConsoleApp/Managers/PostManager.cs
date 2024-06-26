@@ -70,7 +70,11 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var post = await postController.CreatePostAsync(user.Id, title, text, isPublished);
+                var post = await postController.CreatePostAsync(
+                    user.Id, 
+                    title, 
+                    text, 
+                    isPublished);
                 Console.WriteLine($"{user.Name}, your post has been successfully created!");
             }
             catch (ArgumentException ex)

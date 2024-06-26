@@ -43,7 +43,11 @@ namespace Habr.BusinessLogic.Services
                 .ToListAsync();
         }
 
-        public async Task<Post> CreatePost(int userId, string title, string text, bool isPublished)
+        public async Task<Post> CreatePost(
+            int userId, 
+            string title, 
+            string text, 
+            bool isPublished)
         {
             var post = new Post
             {

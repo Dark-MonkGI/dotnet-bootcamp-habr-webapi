@@ -27,9 +27,17 @@ namespace Habr.Application.Controllers
             return await _postService.GetAllUserPosts(userId);
         }
 
-        public async Task<Post> CreatePostAsync(int userId, string title, string text, bool isPublished)
+        public async Task<Post> CreatePostAsync(
+            int userId, 
+            string title, 
+            string text, 
+            bool isPublished)
         {
-            return await _postService.CreatePost(userId, title, text, isPublished);
+            return await _postService.CreatePost(
+                userId, 
+                title, 
+                text, 
+                isPublished);
         }
 
         public async Task<Post> GetPostWithCommentsAsync(int postId, int userId)
