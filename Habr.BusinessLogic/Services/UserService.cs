@@ -24,11 +24,9 @@ namespace Habr.BusinessLogic.Services
                 throw new ArgumentException("The email is already taken.");
             }
 
-            var name = email.Split('@')[0];
-
             var user = new User
             {
-                Name = name,
+                Name = email.Split('@')[0],
                 Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 Created = DateTime.UtcNow
