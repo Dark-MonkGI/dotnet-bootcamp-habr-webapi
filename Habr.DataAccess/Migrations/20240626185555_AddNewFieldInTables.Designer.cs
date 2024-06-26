@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Habr.DataAccess.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240626165341_AddedNewFieldsAndConstraintsToTables")]
-    partial class AddedNewFieldsAndConstraintsToTables
+    [Migration("20240626185555_AddNewFieldInTables")]
+    partial class AddNewFieldInTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -73,6 +73,9 @@ namespace Habr.DataAccess.Migrations
 
                     b.Property<bool>("IsPublished")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PublishedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Text")
                         .IsRequired()

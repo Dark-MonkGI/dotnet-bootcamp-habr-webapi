@@ -71,6 +71,9 @@ namespace Habr.DataAccess.Migrations
                     b.Property<bool>("IsPublished")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("PublishedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

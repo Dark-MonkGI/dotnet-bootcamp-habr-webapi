@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Habr.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedNewFieldsAndConstraintsToTables : Migration
+    public partial class AddNewFieldInTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -29,6 +29,12 @@ namespace Habr.DataAccess.Migrations
                 defaultValue: false);
 
             migrationBuilder.AddColumn<DateTime>(
+                name: "PublishedDate",
+                table: "Posts",
+                type: "datetime2",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
                 name: "Updated",
                 table: "Posts",
                 type: "datetime2",
@@ -41,6 +47,10 @@ namespace Habr.DataAccess.Migrations
             migrationBuilder.DropColumn(
                 name: "IsEmailConfirmed",
                 table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "PublishedDate",
+                table: "Posts");
 
             migrationBuilder.DropColumn(
                 name: "Updated",

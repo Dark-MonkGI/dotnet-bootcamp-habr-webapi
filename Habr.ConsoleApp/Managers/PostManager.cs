@@ -169,6 +169,11 @@ namespace Habr.ConsoleApp.Managers
                 post.IsPublished = isPublished;
                 post.Updated = DateTime.UtcNow;
 
+                if (isPublished)
+                {
+                    post.PublishedDate = DateTime.UtcNow;
+                }
+
                 await postController.UpdatePostAsync(post);
 
                 Console.WriteLine("Post updated!");

@@ -19,13 +19,13 @@ namespace Habr.BusinessLogic.Services
             return await _context.Posts
                 .Include(p => p.User)
                 .Where(p => p.IsPublished)
-                .OrderByDescending(p => p.Created)
+                .OrderByDescending(p => p.PublishedDate)
                 .Select(p => new PostDto
                 {
                     Id = p.Id,
                     Title = p.Title,
                     AuthorEmail = p.User.Email,
-                    PublicationDate = p.Created
+                    PublicationDate = p.PublishedDate
                 })
                 .AsNoTracking()
                 .ToListAsync();
@@ -57,6 +57,7 @@ namespace Habr.BusinessLogic.Services
             string text, 
             bool isPublished)
         {
+
             var post = new Post
             {
                 UserId = userId,
@@ -64,7 +65,8 @@ namespace Habr.BusinessLogic.Services
                 Text = text,
                 IsPublished = isPublished,
                 Created = DateTime.UtcNow,
-                Updated = DateTime.UtcNow
+                Updated = DateTime.UtcNow,
+                PublishedDate = isPublished ? DateTime.UtcNow : (DateTime?)null
             };
 
             _context.Posts.Add(post);
@@ -78,7 +80,6 @@ namespace Habr.BusinessLogic.Services
             var post =  await _context.Posts
                 .Include(p => p.Comments)
                 .Where(p => p.Id == postId && p.UserId == userId)
-                .AsNoTracking()
                 .SingleOrDefaultAsync();
 
             return post;
@@ -92,7 +93,18 @@ namespace Habr.BusinessLogic.Services
             {
                 existingPost.Title = post.Title;
                 existingPost.Text = post.Text;
-                existingPost.IsPublished = post.IsPublished;
+
+                if (!existingPost.IsPublished && post.IsPublished)
+                {
+                    existingPost.IsPublished = true;
+                    existingPost.PublishedDate = DateTime.UtcNow;
+                }
+                else if (existingPost.IsPublished && !post.IsPublished)
+                {
+                    existingPost.IsPublished = false;
+                    existingPost.PublishedDate = null;
+                }
+
                 existingPost.Updated = DateTime.UtcNow;
 
                 _context.Posts.Update(existingPost);
