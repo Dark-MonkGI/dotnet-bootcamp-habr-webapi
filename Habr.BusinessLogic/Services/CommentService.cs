@@ -17,6 +17,7 @@ namespace Habr.BusinessLogic.Services
         {
             var post = await _context.Posts
                 .Where(p => p.Id == postId && p.IsPublished)
+                .AsNoTracking()
                 .SingleOrDefaultAsync();
 
             if (post == null)
@@ -43,6 +44,7 @@ namespace Habr.BusinessLogic.Services
             var parentComment = await _context.Comments
                 .Where(c => c.Id == parentCommentId && c.Post.IsPublished)
                 .Include(c => c.Post)
+                .AsNoTracking()
                 .SingleOrDefaultAsync();
 
             if (parentComment == null)
@@ -99,6 +101,7 @@ namespace Habr.BusinessLogic.Services
             return await _context.Comments
                 .Where(c => c.PostId == postId)
                 .Include(c => c.User)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -106,6 +109,7 @@ namespace Habr.BusinessLogic.Services
         {
             return await _context.Comments
                 .Where(c => c.UserId == userId)
+                .AsNoTracking()
                 .ToListAsync();
         }
     }

@@ -19,6 +19,7 @@ namespace Habr.BusinessLogic.Services
                 .Include(p => p.User)
                 .Where(p => p.IsPublished)
                 .OrderByDescending(p => p.Created)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -28,6 +29,7 @@ namespace Habr.BusinessLogic.Services
                 .Include(p => p.User)
                 .Where(p => !p.IsPublished && p.UserId == userId)
                 .OrderByDescending(p => p.Updated)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -37,6 +39,7 @@ namespace Habr.BusinessLogic.Services
                 .Include(p => p.User)
                 .Where(p => p.UserId == userId)
                 .OrderByDescending(p => p.Created)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -63,6 +66,7 @@ namespace Habr.BusinessLogic.Services
             var post =  await _context.Posts
                 .Include(p => p.Comments)
                 .Where(p => p.Id == postId && p.UserId == userId)
+                .AsNoTracking()
                 .SingleOrDefaultAsync();
 
             return post;
