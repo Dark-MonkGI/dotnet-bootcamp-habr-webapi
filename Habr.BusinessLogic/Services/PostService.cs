@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Habr.DataAccess.Entities;
 using Habr.DataAccess;
+using Habr.BusinessLogic.DTOs;
 
 namespace Habr.BusinessLogic.Services
 {
@@ -13,12 +14,19 @@ namespace Habr.BusinessLogic.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> GetAllPublishedPosts()
+        public async Task<IEnumerable<PostDto>> GetAllPublishedPosts()
         {
             return await _context.Posts
                 .Include(p => p.User)
                 .Where(p => p.IsPublished)
                 .OrderByDescending(p => p.Created)
+                .Select(p => new PostDto
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    AuthorEmail = p.User.Email,
+                    PublicationDate = p.Created
+                })
                 .AsNoTracking()
                 .ToListAsync();
         }

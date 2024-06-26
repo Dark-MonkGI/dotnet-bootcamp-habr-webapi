@@ -1,10 +1,11 @@
-﻿using Habr.DataAccess.Entities;
+﻿using Habr.BusinessLogic.DTOs;
+using Habr.DataAccess.Entities;
 
 namespace Habr.ConsoleApp.Helpers
 {
     public static class DisplayHelper
     {
-        public static void DisplayPosts(IEnumerable<Post> posts)
+        public static void DisplayPosts(IEnumerable<PostDto> posts)
         {
             Console.WriteLine("\n" + new string('-', 115));
             Console.WriteLine("{0, -5} | {1, -40} | {2, -30} | {3, -20}", "Id", "Title", "Author's Email", "Date and Time of Publication");
@@ -12,7 +13,7 @@ namespace Habr.ConsoleApp.Helpers
 
             foreach (var post in posts)
             {
-                Console.WriteLine("{0, -5} | {1, -40} | {2, -30} | {3, -20}", post.Id, post.Title, post.User.Email, post.Created);
+                Console.WriteLine("{0, -5} | {1, -40} | {2, -30} | {3, -20}", post.Id, post.Title, post.AuthorEmail, post.PublicationDate);
             }
 
             Console.WriteLine(new string('-', 115));

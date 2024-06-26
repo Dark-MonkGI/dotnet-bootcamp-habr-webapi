@@ -1,4 +1,5 @@
-﻿using Habr.BusinessLogic.Services;
+﻿using Habr.BusinessLogic.DTOs;
+using Habr.BusinessLogic.Services;
 using Habr.DataAccess.Entities;
 
 namespace Habr.Application.Controllers
@@ -12,9 +13,9 @@ namespace Habr.Application.Controllers
             _postService = postService;
         }
 
-        public async Task<IEnumerable<Post>> GetAllPostsAsync()
+        public async Task<IEnumerable<PostDto>> GetAllPostsAsync()
         {
-            return await _postService.GetAllPosts();
+            return await _postService.GetAllPublishedPosts();
         }
 
         public async Task<IEnumerable<Post>> GetUserDraftPostsAsync(int userId)
