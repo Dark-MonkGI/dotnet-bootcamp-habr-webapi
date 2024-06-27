@@ -18,7 +18,7 @@ namespace Habr.Application.Controllers
             return await _postService.GetAllPublishedPosts();
         }
 
-        public async Task<IEnumerable<Post>> GetUserDraftPostsAsync(int userId)
+        public async Task<IEnumerable<DraftPostDto>> GetUserDraftPostsAsync(int userId)
         {
             return await _postService.GetUserDraftPosts(userId);
         }

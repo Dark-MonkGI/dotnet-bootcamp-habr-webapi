@@ -19,7 +19,7 @@ namespace Habr.ConsoleApp.Helpers
             Console.WriteLine(new string('-', 115));
         }
 
-        public static void DisplayDraftPosts(IEnumerable<Post> posts)
+        public static void DisplayDraftPosts(IEnumerable<DraftPostDto> posts)
         {
             Console.WriteLine("\n" + new string('-', 95));
             Console.WriteLine("{0, -5} | {1, -30} | {2, -20} | {3, -20}", "Id", "Title", "Date of Creation", "Date of Last Update");
@@ -27,7 +27,7 @@ namespace Habr.ConsoleApp.Helpers
 
             foreach (var post in posts)
             {
-                Console.WriteLine("{0, -5} | {1, -30} | {2, -20} | {3, -20}", post.Id, post.Title, post.Created, post.Updated);
+                Console.WriteLine("{0, -5} | {1, -30} | {2, -20} | {3, -20}", post.Id, post.Title, post.CreatedAt, post.UpdatedAt.HasValue ? post.UpdatedAt.Value.ToString() : "");
             }
 
             Console.WriteLine(new string('-', 95));

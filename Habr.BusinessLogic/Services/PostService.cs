@@ -31,15 +31,21 @@ namespace Habr.BusinessLogic.Services
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Post>> GetUserDraftPosts(int userId)
+        public async Task<IEnumerable<DraftPostDto>> GetUserDraftPosts(int userId)
         {
             return await _context.Posts
-                .Include(p => p.User)
                 .Where(p => 
                     !p.IsPublished && 
                     p.UserId == userId && 
                     !p.IsDeleted)
                 .OrderByDescending(p => p.Updated)
+                .Select(p => new DraftPostDto
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    CreatedAt = p.Created,
+                    UpdatedAt = p.Updated
+                })
                 .AsNoTracking()
                 .ToListAsync();
         }
