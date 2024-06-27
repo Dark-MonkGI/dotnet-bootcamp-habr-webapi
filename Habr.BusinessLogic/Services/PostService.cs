@@ -27,7 +27,6 @@ namespace Habr.BusinessLogic.Services
                     AuthorEmail = p.User.Email,
                     PublicationDate = p.PublishedDate
                 })
-                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -46,7 +45,6 @@ namespace Habr.BusinessLogic.Services
                     CreatedAt = p.Created,
                     UpdatedAt = p.Updated
                 })
-                .AsNoTracking()
                 .ToListAsync();
         }
 
