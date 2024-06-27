@@ -117,10 +117,10 @@ namespace Habr.BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> DeletePost(int postId, int userId)
+        public async Task DeletePost(int postId, int userId)
         {
             var post = await _context.Posts
-                .Where(p => 
+                .Where(p =>
                     p.Id == postId &&
                     p.UserId == userId &&
                     !p.IsDeleted)
@@ -134,22 +134,25 @@ namespace Habr.BusinessLogic.Services
             post.IsDeleted = true;
             _context.Posts.Update(post);
             await _context.SaveChangesAsync();
-
-            return true;
         }
 
-        public async Task<bool> PublishPostAsync(int postId, int userId)
+        public async Task PublishPostAsync(int postId, int userId)
         {
             var post = await _context.Posts
-                .Where(p => 
+                .Where(p =>
                     p.Id == postId &&
                     p.UserId == userId &&
-                    !p.IsPublished)
+                    !p.IsDeleted)
                 .SingleOrDefaultAsync();
 
             if (post == null)
             {
-                return false;
+                throw new ArgumentException("\nThe post does not exist.");
+            }
+
+            if (post.IsPublished)
+            {
+                throw new InvalidOperationException("\nThe post is already published.");
             }
 
             post.IsPublished = true;
@@ -158,23 +161,31 @@ namespace Habr.BusinessLogic.Services
 
             _context.Posts.Update(post);
             await _context.SaveChangesAsync();
-
-            return true;
         }
 
-        public async Task<bool> MovePostToDraftAsync(int postId, int userId)
+        public async Task MovePostToDraftAsync(int postId, int userId)
         {
             var post = await _context.Posts
                 .Include(p => p.Comments)
-                .Where(p => 
+                .Where(p =>
                     p.Id == postId &&
                     p.UserId == userId &&
-                    p.IsPublished)
+                    !p.IsDeleted)
                 .SingleOrDefaultAsync();
 
-            if (post == null || !post.IsPublished || post.Comments.Any())
+            if (post == null)
             {
-                return false;
+                throw new ArgumentException("\nThe post does not exist.");
+            }
+
+            if (!post.IsPublished)
+            {
+                throw new InvalidOperationException("\nThe post is already in drafts.");
+            }
+
+            if (post.Comments.Any())
+            {
+                throw new InvalidOperationException("\nThe post cannot be moved to drafts because it has comments.");
             }
 
             post.IsPublished = false;
@@ -183,8 +194,6 @@ namespace Habr.BusinessLogic.Services
 
             _context.Posts.Update(post);
             await _context.SaveChangesAsync();
-
-            return true;
         }
     }
 }

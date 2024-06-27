@@ -67,7 +67,7 @@ namespace Habr.BusinessLogic.Services
             return comment;
         }
 
-        public async Task<bool> DeleteComment(int commentId, int userId)
+        public async Task DeleteComment(int commentId, int userId)
         {
             var comment = await _context.Comments
                 .Include(c => c.Replies)
@@ -75,7 +75,7 @@ namespace Habr.BusinessLogic.Services
 
             if (comment == null)
             {
-                return false;
+                throw new ArgumentException("\nComment not found or you do not have permission to delete it.");
             }
 
             await DeleteReplies(comment);
@@ -83,7 +83,6 @@ namespace Habr.BusinessLogic.Services
             _context.Comments.Remove(comment);
 
             await _context.SaveChangesAsync();
-            return true;
         }
 
         private async Task DeleteReplies(Comment comment)
@@ -109,6 +108,7 @@ namespace Habr.BusinessLogic.Services
         {
             return await _context.Comments
                 .Where(c => c.UserId == userId)
+                .Include(c => c.User)
                 .AsNoTracking()
                 .ToListAsync();
         }

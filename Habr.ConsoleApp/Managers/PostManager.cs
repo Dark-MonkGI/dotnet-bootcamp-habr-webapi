@@ -193,11 +193,8 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var postDeleted = await postController.DeletePostAsync(postId, user.Id);
-                if (postDeleted)
-                {
-                    Console.WriteLine("Post deleted!");
-                }
+                await postController.DeletePostAsync(postId, user.Id);
+                Console.WriteLine("\nPost deleted!");
             }
             catch (ArgumentException ex)
             {
@@ -238,24 +235,16 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var success = await postController.PublishPostAsync(postId, user.Id);
-
-                if (success)
-                {
-                    Console.WriteLine("\nPost published!");
-                }
-                else
-                {
-                    var post = await postController.GetPostWithCommentsAsync(postId, user.Id);
-                    if (post != null && post.IsPublished)
-                    {
-                        Console.WriteLine("\nThe post is already published.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("\nFailed to publish post.");
-                    }
-                }
+                await postController.PublishPostAsync(postId, user.Id);
+                Console.WriteLine("\nPost published!");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}"); 
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
             }
             catch (Exception ex)
             {
@@ -292,28 +281,16 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var success = await postController.MovePostToDraftAsync(postId, user.Id);
-
-                if (success)
-                {
-                    Console.WriteLine("\nPost moved to drafts!");
-                }
-                else
-                {
-                    var post = await postController.GetPostWithCommentsAsync(postId, user.Id);
-                    if (post != null && !post.IsPublished)
-                    {
-                        Console.WriteLine("\nThe post is already in drafts.");
-                    }
-                    else if (post != null && post.Comments.Any())
-                    {
-                        Console.WriteLine("\nThe post cannot be moved to drafts because it has comments.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("\nFailed to move post to drafts.");
-                    }
-                }
+                await postController.MovePostToDraftAsync(postId, user.Id);
+                Console.WriteLine("\nPost moved to drafts successfully!");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
             }
             catch (Exception ex)
             {

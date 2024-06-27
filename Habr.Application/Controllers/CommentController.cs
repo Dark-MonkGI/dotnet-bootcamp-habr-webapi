@@ -32,9 +32,9 @@ namespace Habr.Application.Controllers
             return await _commentService.GetUserComments(userId);
         }
 
-        public async Task<bool> DeleteCommentAsync(int commentId, int userId)
+        public async Task DeleteCommentAsync(int commentId, int userId)
         {
-            return await _commentService.DeleteComment(commentId, userId);
+            await _commentService.DeleteComment(commentId, userId);
         }
     }
 }

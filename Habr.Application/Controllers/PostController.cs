@@ -51,19 +51,19 @@ namespace Habr.Application.Controllers
             await _postService.UpdatePost(post);
         }
 
-        public async Task<bool> DeletePostAsync(int postId, int userId)
+        public async Task DeletePostAsync(int postId, int userId)
         {
-            return await _postService.DeletePost(postId, userId);
+            await _postService.DeletePost(postId, userId);
         }
 
-        public async Task<bool> PublishPostAsync(int postId, int userId)
+        public async Task PublishPostAsync(int postId, int userId)
         {
-            return await _postService.PublishPostAsync(postId, userId);
+            await _postService.PublishPostAsync(postId, userId);
         }
 
-        public async Task<bool> MovePostToDraftAsync(int postId, int userId)
+        public async Task MovePostToDraftAsync(int postId, int userId)
         {
-            return await _postService.MovePostToDraftAsync(postId, userId);
+            await _postService.MovePostToDraftAsync(postId, userId);
         }
     }
 }

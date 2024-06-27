@@ -158,15 +158,8 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var deleted = await commentController.DeleteCommentAsync(commentId, user.Id);
-                if (deleted)
-                {
-                    Console.WriteLine("Comment deleted!");
-                }
-                else
-                {
-                    Console.WriteLine("Comment not found or you do not have permission to delete it!");
-                }
+                await commentController.DeleteCommentAsync(commentId, user.Id);
+                Console.WriteLine("\nComment deleted!");
             }
             catch (ArgumentException ex)
             {
