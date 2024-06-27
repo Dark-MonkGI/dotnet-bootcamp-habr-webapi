@@ -9,6 +9,7 @@
         public DateTime? Updated { get; set; }
         public bool IsPublished { get; set; }
         public DateTime? PublishedDate { get; set; }
+        public bool IsDeleted { get; set; }
 
         public int UserId { get; set; }
         public User User { get; set; }

@@ -170,13 +170,13 @@ namespace Habr.ConsoleApp.Managers
 
             if (userPosts == null || !userPosts.Any())
             {
-                Console.WriteLine("You have no posts to delete");
+                Console.WriteLine("\nYou have no posts to delete");
                 return;
             }
 
             DisplayHelper.DisplayUserPosts(userPosts);
 
-            var postIdInput = InputHelper.GetInputWithValidation("Enter the ID of the post you want to delete:", input =>
+            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to delete:", input =>
             {
                 if (!int.TryParse(input, out _))
                 {
@@ -198,10 +198,10 @@ namespace Habr.ConsoleApp.Managers
                 {
                     Console.WriteLine("Post deleted!");
                 }
-                else
-                {
-                    Console.WriteLine("The post does not exist.");
-                }
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
             }
             catch (Exception ex)
             {

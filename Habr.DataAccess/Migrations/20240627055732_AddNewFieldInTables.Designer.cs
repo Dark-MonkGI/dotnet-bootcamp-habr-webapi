@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Habr.DataAccess.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240626185555_AddNewFieldInTables")]
+    [Migration("20240627055732_AddNewFieldInTables")]
     partial class AddNewFieldInTables
     {
         /// <inheritdoc />
@@ -70,6 +70,11 @@ namespace Habr.DataAccess.Migrations
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsPublished")
                         .HasColumnType("bit");

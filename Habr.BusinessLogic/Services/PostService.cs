@@ -18,7 +18,7 @@ namespace Habr.BusinessLogic.Services
         {
             return await _context.Posts
                 .Include(p => p.User)
-                .Where(p => p.IsPublished)
+                .Where(p => p.IsPublished && !p.IsDeleted)
                 .OrderByDescending(p => p.PublishedDate)
                 .Select(p => new PostDto
                 {
@@ -35,7 +35,10 @@ namespace Habr.BusinessLogic.Services
         {
             return await _context.Posts
                 .Include(p => p.User)
-                .Where(p => !p.IsPublished && p.UserId == userId)
+                .Where(p => 
+                    !p.IsPublished && 
+                    p.UserId == userId && 
+                    !p.IsDeleted)
                 .OrderByDescending(p => p.Updated)
                 .AsNoTracking()
                 .ToListAsync();
@@ -45,7 +48,7 @@ namespace Habr.BusinessLogic.Services
         {
             return await _context.Posts
                 .Include(p => p.User)
-                .Where(p => p.UserId == userId)
+                .Where(p => p.UserId == userId && !p.IsDeleted)
                 .OrderByDescending(p => p.Created)
                 .AsNoTracking()
                 .ToListAsync();
@@ -79,7 +82,10 @@ namespace Habr.BusinessLogic.Services
         {
             var post =  await _context.Posts
                 .Include(p => p.Comments)
-                .Where(p => p.Id == postId && p.UserId == userId)
+                .Where(p => 
+                    p.Id == postId &&
+                    p.UserId == userId &&
+                    !p.IsDeleted)
                 .SingleOrDefaultAsync();
 
             return post;
@@ -110,15 +116,19 @@ namespace Habr.BusinessLogic.Services
         public async Task<bool> DeletePost(int postId, int userId)
         {
             var post = await _context.Posts
-                .Where(p => p.Id == postId && p.UserId == userId)
+                .Where(p => 
+                    p.Id == postId &&
+                    p.UserId == userId &&
+                    !p.IsDeleted)
                 .SingleOrDefaultAsync();
 
             if (post == null)
             {
-                return false;
+                throw new ArgumentException("The post does not exist.");
             }
 
-            _context.Posts.Remove(post);
+            post.IsDeleted = true;
+            _context.Posts.Update(post);
             await _context.SaveChangesAsync();
 
             return true;
@@ -128,9 +138,9 @@ namespace Habr.BusinessLogic.Services
         {
             var post = await _context.Posts
                 .Where(p => 
-                    p.Id == postId 
-                    && p.UserId == userId 
-                    && !p.IsPublished)
+                    p.Id == postId &&
+                    p.UserId == userId &&
+                    !p.IsPublished)
                 .SingleOrDefaultAsync();
 
             if (post == null)
@@ -153,9 +163,9 @@ namespace Habr.BusinessLogic.Services
             var post = await _context.Posts
                 .Include(p => p.Comments)
                 .Where(p => 
-                    p.Id == postId 
-                    && p.UserId == userId 
-                    && p.IsPublished)
+                    p.Id == postId &&
+                    p.UserId == userId &&
+                    p.IsPublished)
                 .SingleOrDefaultAsync();
 
             if (post == null || !post.IsPublished || post.Comments.Any())

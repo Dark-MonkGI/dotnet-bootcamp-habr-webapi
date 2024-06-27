@@ -31,6 +31,10 @@ namespace Habr.DataAccess.Configurations
             builder.Property(p => p.PublishedDate)
                 .IsRequired(false);
 
+            builder.Property(p => p.IsDeleted)
+                .IsRequired()
+                .HasDefaultValue(false);
+
             builder.HasOne(p => p.User)
                 .WithMany(u => u.Posts)
                 .HasForeignKey(p => p.UserId)

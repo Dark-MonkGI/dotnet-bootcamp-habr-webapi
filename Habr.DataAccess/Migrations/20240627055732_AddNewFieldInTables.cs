@@ -28,6 +28,13 @@ namespace Habr.DataAccess.Migrations
                 nullable: false,
                 defaultValue: false);
 
+            migrationBuilder.AddColumn<bool>(
+                name: "IsDeleted",
+                table: "Posts",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.AddColumn<DateTime>(
                 name: "PublishedDate",
                 table: "Posts",
@@ -47,6 +54,10 @@ namespace Habr.DataAccess.Migrations
             migrationBuilder.DropColumn(
                 name: "IsEmailConfirmed",
                 table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "IsDeleted",
+                table: "Posts");
 
             migrationBuilder.DropColumn(
                 name: "PublishedDate",
