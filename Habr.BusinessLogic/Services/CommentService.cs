@@ -1,21 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Habr.DataAccess.Entities;
+using Habr.DataAccess;
 
-namespace Habr.DataAccess.Services
+namespace Habr.BusinessLogic.Services
 {
     public class CommentService
     {
-        private readonly DataContext context;
+        private readonly DataContext _context;
 
         public CommentService(DataContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         public async Task<Comment> AddComment(int userId, int postId, string text)
         {
-            var post = await context.Posts
+            var post = await _context.Posts
                 .Where(p => p.Id == postId && p.IsPublished)
+                .AsNoTracking()
                 .SingleOrDefaultAsync();
 
             if (post == null)
@@ -31,17 +33,18 @@ namespace Habr.DataAccess.Services
                 Created = DateTime.UtcNow
             };
 
-            context.Comments.Add(comment);
-            await context.SaveChangesAsync();
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
 
             return comment;
         }
 
         public async Task<Comment> AddReply(int userId, int parentCommentId, string text)
         {
-            var parentComment = await context.Comments
+            var parentComment = await _context.Comments
                 .Where(c => c.Id == parentCommentId && c.Post.IsPublished)
                 .Include(c => c.Post)
+                .AsNoTracking()
                 .SingleOrDefaultAsync();
 
             if (parentComment == null)
@@ -58,55 +61,55 @@ namespace Habr.DataAccess.Services
                 Created = DateTime.UtcNow
             };
 
-            context.Comments.Add(comment);
-            await context.SaveChangesAsync();
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
 
             return comment;
         }
 
-        public async Task<bool> DeleteComment(int commentId, int userId)
+        public async Task DeleteComment(int commentId, int userId)
         {
-            var comment = await context.Comments
+            var comment = await _context.Comments
                 .Include(c => c.Replies)
                 .SingleOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
 
             if (comment == null)
             {
-                return false;
+                throw new ArgumentException("\nComment not found or you do not have permission to delete it.");
             }
 
             await DeleteReplies(comment);
 
-            context.Comments.Remove(comment);
+            _context.Comments.Remove(comment);
 
-            await context.SaveChangesAsync();
-            return true;
+            await _context.SaveChangesAsync();
         }
 
         private async Task DeleteReplies(Comment comment)
         {
             foreach (var reply in comment.Replies.ToList())
             {
-                await context.Entry(reply).Collection(r => r.Replies).LoadAsync();
-
+                await _context.Entry(reply).Collection(r => r.Replies).LoadAsync();
                 await DeleteReplies(reply);
-
-                context.Comments.Remove(reply);
+                _context.Comments.Remove(reply);
             }
         }
 
         public async Task<IEnumerable<Comment>> GetCommentsByPost(int postId)
         {
-            return await context.Comments
+            return await _context.Comments
                 .Where(c => c.PostId == postId)
                 .Include(c => c.User)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Comment>> GetUserComments(int userId)
         {
-            return await context.Comments
+            return await _context.Comments
                 .Where(c => c.UserId == userId)
+                .Include(c => c.User)
+                .AsNoTracking()
                 .ToListAsync();
         }
     }

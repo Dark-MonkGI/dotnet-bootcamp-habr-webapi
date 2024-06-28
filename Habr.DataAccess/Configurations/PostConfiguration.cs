@@ -22,8 +22,18 @@ namespace Habr.DataAccess.Configurations
             builder.Property(p => p.Created)
                 .IsRequired();
 
+            builder.Property(p => p.Updated)
+                .IsRequired(false);
+
             builder.Property(p => p.IsPublished)
                 .IsRequired();
+
+            builder.Property(p => p.PublishedDate)
+                .IsRequired(false);
+
+            builder.Property(p => p.IsDeleted)
+                .IsRequired()
+                .HasDefaultValue(false);
 
             builder.HasOne(p => p.User)
                 .WithMany(u => u.Posts)

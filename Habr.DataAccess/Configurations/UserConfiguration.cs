@@ -18,13 +18,17 @@ namespace Habr.DataAccess.Configurations
 
             builder.Property(u => u.Email)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(200);
 
             builder.Property(u => u.PasswordHash)
                 .IsRequired();
 
             builder.Property(u => u.Created)
                 .IsRequired();
+
+            builder.Property(u => u.IsEmailConfirmed)
+                .IsRequired()
+                .HasDefaultValue(false);
 
             builder.HasIndex(u => u.Email)
                 .IsUnique();

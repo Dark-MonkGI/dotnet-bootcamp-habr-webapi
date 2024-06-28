@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Habr.DataAccess.Entities
+﻿namespace Habr.DataAccess.Entities
 {
     public class Post
     {
@@ -8,7 +6,10 @@ namespace Habr.DataAccess.Entities
         public string Title { get; set; }
         public string Text { get; set; }
         public DateTime Created { get; set; }
+        public DateTime? Updated { get; set; }
         public bool IsPublished { get; set; }
+        public DateTime? PublishedDate { get; set; }
+        public bool IsDeleted { get; set; }
 
         public int UserId { get; set; }
         public User User { get; set; }

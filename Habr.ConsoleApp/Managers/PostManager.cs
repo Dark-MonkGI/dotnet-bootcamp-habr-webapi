@@ -1,29 +1,21 @@
 ﻿using Habr.DataAccess.Entities;
-using Habr.DataAccess.Services;
+using Habr.Application.Controllers;
+using Habr.ConsoleApp.Helpers;
+using Habr.BusinessLogic.Validation;
 
 namespace Habr.ConsoleApp.Managers
 {
     public static class PostManager
     {
-        public static string GetInput(string heading)
+        public static async Task DisplayAllPosts(PostController postController, User authenticatedUser)
         {
-            while (true)
+            if (authenticatedUser == null)
             {
-                Console.WriteLine(heading);
-                var input = Console.ReadLine()?.Trim();
-
-                if (!string.IsNullOrEmpty(input))
-                {
-                    return input;
-                }
-
-                Console.WriteLine("Input cannot be empty. Please try again!");
+                Console.WriteLine("You need to be logged in to view posts.");
+                return;
             }
-        }
 
-        public static async Task DisplayAllPosts(PostService postService)
-        {
-            var posts = await postService.GetAllPosts();
+            var posts = await postController.GetAllPostsAsync();
 
             if (posts == null || !posts.Any())
             {
@@ -31,97 +23,278 @@ namespace Habr.ConsoleApp.Managers
                 return;
             }
 
-            Console.WriteLine("\n" + new string('-', 115));
-            Console.WriteLine("{0, -5} | {1, -20} | {2, -40} | {3, -20} | {4, -40}", "Id", "Title", "Text", "Date of Creation", "Name of the user");
-            Console.WriteLine(new string('-', 115));
-
-            foreach (var post in posts)
-            {
-                Console.WriteLine("{0, -5} | {1, -20} | {2, -40} | {3, -20} | {4, -20}", post.Id, post.Title, post.Text, post.Created, post.User.Name);
-            }
-
-            Console.WriteLine(new string('-', 115) + "\n");
+            DisplayHelper.DisplayPosts(posts);
         }
 
-        public static async Task CreatePost(PostService postService, User user)
+        public static async Task DisplayUserDraftPosts(PostController postController, int userId)
         {
-            var title = GetInput("Enter post title:");
-            var text = GetInput("Enter post text:");
-            var isPublishedInput = GetInput("Is the post published? (yes/no):").Trim();
-            var isPublished = isPublishedInput.Equals("yes", StringComparison.OrdinalIgnoreCase);
+            var posts = await postController.GetUserDraftPostsAsync(userId);
 
-
-            var post = await postService.CreatePost(user.Id, title, text, isPublished);
-            Console.WriteLine($"{user.Name}, your post has been successfully created!");
-        }
-
-        public static async Task EditPost(PostService postService, User user)
-        {
-            var userPosts = await postService.GetUserPosts(user.Id);
-
-            if (!userPosts.Any())
+            if (posts == null || !posts.Any())
             {
-                Console.WriteLine("You have no posts to edit");
+                Console.WriteLine("No draft posts found!");
                 return;
             }
 
-            Console.WriteLine("\n" + new string('-', 40));
-            Console.WriteLine("{0, -5} | {1, -30}", "Id", "Title");
-            Console.WriteLine(new string('-', 40));
-
-            foreach (var userPost in userPosts)
-            {
-                Console.WriteLine("{0, -5} | {1, -30}", userPost.Id, userPost.Title);
-            }
-            Console.WriteLine(new string('-', 40) + "\n");
-
-            var postId = int.Parse(GetInput("Enter the ID of the post you want to edit:"));
-            var title = GetInput("Enter new title:");
-            var text = GetInput("Enter new text:");
-            var isPublishedInput = GetInput("Is the post published? (yes/no):").Trim();
-            var isPublished = isPublishedInput.Equals("yes", StringComparison.OrdinalIgnoreCase);
-
-            var post = await postService.UpdatePost(postId, user.Id, title, text, isPublished);
-            if (post != null)
-            {
-                Console.WriteLine("Post updated!");
-            }
-            else
-            {
-                Console.WriteLine("This post was not found for you!");
-            }
+            DisplayHelper.DisplayDraftPosts(posts);
         }
 
-        public static async Task DeletePost(PostService postService, User user)
+        public static async Task CreatePost(PostController postController, User user)
         {
-            var userPosts = await postService.GetUserPosts(user.Id);
-
-            if (!userPosts.Any())
+            var title = InputHelper.GetInputWithValidation("Enter post title:", PostValidation.ValidateTitle);
+            if (title == null)
             {
-                Console.WriteLine("You have no posts to delete");
                 return;
             }
 
-            Console.WriteLine("\n" + new string('-', 40));
-            Console.WriteLine("{0, -5} | {1, -30}", "Id", "Title");
-            Console.WriteLine(new string('-', 40));
-
-            foreach (var userPost in userPosts)
+            var text = InputHelper.GetInputWithValidation("Enter post text:", PostValidation.ValidateText);
+            if (text == null)
             {
-                Console.WriteLine("{0, -5} | {1, -30}", userPost.Id, userPost.Title);
+                return;
             }
-            Console.WriteLine(new string('-', 40) + "\n");
 
-            var postId = int.Parse(GetInput("Enter the ID of the post you want to delete:"));
-
-            var postDel = await postService.DeletePost(postId, user.Id);
-            if (postDel)
+            var isPublishedInput = InputHelper.GetInputWithValidation("Is the post published? (yes/no):", input =>
             {
-                Console.WriteLine("Post deleted!");
+                if (!input.Equals("yes", StringComparison.OrdinalIgnoreCase) && !input.Equals("no", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new ArgumentException("Please enter 'yes' or 'no'.");
+                }
+            });
+
+            if (isPublishedInput == null)
+            {
+                return;
             }
-            else
+
+            var isPublished = isPublishedInput.Equals("yes", StringComparison.OrdinalIgnoreCase);
+
+            try
             {
-                Console.WriteLine("This post was not found for you!");
+                var post = await postController.CreatePostAsync(
+                    user.Id, 
+                    title, 
+                    text, 
+                    isPublished);
+                Console.WriteLine($"{user.Name}, your post has been successfully created!");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+            }
+        }
+
+        public static async Task EditPost(PostController postController, User user)
+        {
+            var userPosts = await postController.GetUserPostsAsync(user.Id);
+
+            if (userPosts == null || !userPosts.Any())
+            {
+                Console.WriteLine("\nYou have no posts to edit");
+                return;
+            }
+
+            DisplayHelper.DisplayUserPosts(userPosts);
+
+            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to edit:", input =>
+            {
+                if (!int.TryParse(input, out _))
+                {
+                    throw new ArgumentException("\nInvalid ID format.");
+                }
+            });
+
+            if (postIdInput == null)
+            {
+                return;
+            }
+
+            var postId = int.Parse(postIdInput);
+
+            try
+            {
+                var post = await postController.GetPostWithCommentsAsync(postId, user.Id);
+
+                if (post == null)
+                {
+                    Console.WriteLine("\nThis post was not found for you!");
+                    return;
+                }
+
+                if (post.IsPublished)
+                {
+                    Console.WriteLine("\nThis post is published and cannot be edited. Move it to drafts first.");
+                    return;
+                }
+
+                var title = InputHelper.GetInputWithValidation("Enter new title:", PostValidation.ValidateTitle);
+                if (title == null)
+                {
+                    return;
+                }
+
+                var text = InputHelper.GetInputWithValidation("Enter new text:", PostValidation.ValidateText);
+                if (text == null)
+                {
+                    return;
+                }
+
+                post.Title = title;
+                post.Text = text;
+                post.Updated = DateTime.UtcNow;
+
+                await postController.UpdatePostAsync(post);
+
+                Console.WriteLine("\nPost updated!");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+            }
+        }
+
+        public static async Task DeletePost(PostController postController, User user)
+        {
+            var userPosts = await postController.GetUserPostsAsync(user.Id);
+
+            if (userPosts == null || !userPosts.Any())
+            {
+                Console.WriteLine("\nYou have no posts to delete");
+                return;
+            }
+
+            DisplayHelper.DisplayUserPosts(userPosts);
+
+            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to delete:", input =>
+            {
+                if (!int.TryParse(input, out _))
+                {
+                    throw new ArgumentException("Invalid ID format.");
+                }
+            });
+
+            if (postIdInput == null)
+            {
+                return;
+            }
+
+            var postId = int.Parse(postIdInput);
+
+            try
+            {
+                await postController.DeletePostAsync(postId, user.Id);
+                Console.WriteLine("\nPost deleted!");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+            }
+        }
+
+        public static async Task PublishPost(PostController postController, User user)
+        {
+            var userPosts = await postController.GetUserPostsAsync(user.Id);
+
+            if (userPosts == null || !userPosts.Any())
+            {
+                Console.WriteLine("\nYou have no posts to publish");
+                return;
+            }
+
+            DisplayHelper.DisplayUserPosts(userPosts);
+
+            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to publish:", input =>
+            {
+                if (!int.TryParse(input, out _))
+                {
+                    throw new ArgumentException("\nInvalid ID format.");
+                }
+            });
+
+            if (postIdInput == null)
+            {
+                return;
+            }
+
+            var postId = int.Parse(postIdInput);
+
+            try
+            {
+                await postController.PublishPostAsync(postId, user.Id);
+                Console.WriteLine("\nPost published!");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}"); 
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+            }
+        }
+
+        public static async Task MovePostToDraft(PostController postController, User user)
+        {
+            var userPosts = await postController.GetUserPostsAsync(user.Id);
+
+            if (userPosts == null || !userPosts.Any())
+            {
+                Console.WriteLine("\nYou have no posts to move to drafts");
+                return;
+            }
+
+            DisplayHelper.DisplayUserPosts(userPosts);
+
+            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to move to drafts:", input =>
+            {
+                if (!int.TryParse(input, out _))
+                {
+                    throw new ArgumentException("\nInvalid ID format.");
+                }
+            });
+
+            if (postIdInput == null)
+            {
+                return;
+            }
+
+            var postId = int.Parse(postIdInput);
+
+            try
+            {
+                await postController.MovePostToDraftAsync(postId, user.Id);
+                Console.WriteLine("\nPost moved to drafts successfully!");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
             }
         }
     }

@@ -1,46 +1,114 @@
 ﻿using Habr.DataAccess.Entities;
-using Habr.DataAccess.Services;
+using Habr.BusinessLogic.Validation;
+using Habr.ConsoleApp.Helpers;
+using Habr.Application.Controllers;
 
 namespace Habr.ConsoleApp.Managers
 {
     public static class UserManager
     {
-        private static string GetInputWithExitOption(string heading)
+        public static async Task<User> RegisterUser(UserController userController)
         {
-            while (true)
-            {
-                Console.WriteLine($"\n{heading} (or 0 to exit):");
-                var input = Console.ReadLine()?.Trim();
-
-                if (input == "0")
-                {
-                    return null;
-                }
-
-                if (!string.IsNullOrEmpty(input))
-                {
-                    return input;
-                }
-
-                Console.WriteLine("Input cannot be empty. Please try again.");
-            }
-        }
-
-        public static async Task<User> RegisterUser(UserService userService)
-        {
-            var name = GetInputWithExitOption("Enter your name");
-            if (name == null) 
-            {
-                return null;
-            }
-
-            var email = GetInputWithExitOption("Enter your email");
+            var email = InputHelper.GetInputWithValidation("Enter your email", UserValidation.ValidateEmail);
             if (email == null)
             {
                 return null;
             }
 
-            var password = GetInputWithExitOption("Enter your password");
+            var password = InputHelper.GetInputWithValidation("Enter your password", UserValidation.ValidatePassword);
+            if (password == null)
+            {
+                return null;
+            }
+
+            var random = new Random();
+            var randomNumber = random.Next(1, 11);
+            Console.WriteLine($"Please enter the number {randomNumber} to confirm your email:");
+
+            var input = Console.ReadLine();
+            bool isEmailConfirmed = input == randomNumber.ToString();
+
+            try
+            {
+                var user = await userController.RegisterAsync(email, password, isEmailConfirmed);
+
+                Console.WriteLine(isEmailConfirmed
+                    ? "\nEmail confirmed."
+                    : "\nEmail not confirmed - please confirm your email later.");
+
+                return user;
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+                return null;
+            }
+        }
+
+        public static async Task<User> ConfirmEmail(UserController userController)
+        {
+            var email = InputHelper.GetInputWithValidation("Enter your email", UserValidation.ValidateEmail);
+            if (email == null)
+            {
+                Console.WriteLine("\nEmail confirmation cancelled.");
+                return null;
+            }
+
+            var password = InputHelper.GetInputWithValidation("Enter your password", UserValidation.ValidatePassword);
+            if (password == null)
+            {
+                Console.WriteLine("\nEmail confirmation cancelled.");
+                return null;
+            }
+
+            try
+            {
+                var authenticatedUser = await userController.AuthenticateAsync(email, password);
+                if (authenticatedUser == null)
+                {
+                    return null;
+                }
+
+                var random = new Random();
+                var randomNumber = random.Next(1, 11);
+                Console.WriteLine($"\nPlease enter the number {randomNumber} to confirm your email:");
+
+                var input = Console.ReadLine();
+                bool isEmailConfirmed = input == randomNumber.ToString();
+
+                await userController.ConfirmEmailAsync(email, isEmailConfirmed);
+                Console.WriteLine(isEmailConfirmed
+                    ? "\nEmail confirmed successfully."
+                    : "\nEmail confirmation failed. Please try again.");
+
+                return isEmailConfirmed ? authenticatedUser : null;
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+                return null;
+            }
+        }
+
+        public static async Task<User> AuthenticateUser(UserController userController)
+        {
+            var email = InputHelper.GetInputWithValidation("Enter your email", UserValidation.ValidateEmail);
+            if (email == null)
+            {
+                return null;
+            }
+
+            var password = InputHelper.GetInputWithValidation("Enter your password", UserValidation.ValidatePassword);
             if (password == null)
             {
                 return null;
@@ -48,56 +116,16 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var user = await userService.Register(name, email, password);
-                Console.WriteLine($"\nRegistration successful. Welcome, {user.Name}!");
-                return user;
+                return await userController.AuthenticateAsync(email, password);
             }
             catch (ArgumentException ex)
             {
                 Console.WriteLine($"\n{ex.Message}");
+                return null;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"\nError: {ex.Message}");
-            }
-
-            return null;
-        }
-
-        public static async Task<User> AuthenticateUser(UserService userService)
-        {
-            while (true)
-            {
-                var email = GetInputWithExitOption("Enter your email");
-                if (email == null)
-                {
-                    return null;
-                }
-
-                var password = GetInputWithExitOption("Enter your password");
-                if (password == null)
-                {
-                    return null;
-                }
-
-                try
-                {
-                    var user = await userService.Authenticate(email, password);
-                    if (user != null)
-                    {
-                        Console.WriteLine($"\nAuthentication successful. Welcome back, {user.Name}!");
-                        return user;
-                    }
-                    else
-                    {
-                        Console.WriteLine("\nAuthentication failed. Please check your email and password or enter 0 to exit.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"\nError: {ex.Message}");
-                }
-
                 return null;
             }
         }

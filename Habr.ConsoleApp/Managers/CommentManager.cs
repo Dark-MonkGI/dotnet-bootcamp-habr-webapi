@@ -1,56 +1,137 @@
 ﻿using Habr.DataAccess.Entities;
-using Habr.DataAccess.Services;
+using Habr.ConsoleApp.Helpers;
+using Habr.Application.Controllers;
+using Habr.BusinessLogic.Validation;
 
 namespace Habr.ConsoleApp.Managers
 {
     public static class CommentManager
     {
-        public static string GetInput(string heading)
+        public static async Task AddComment(CommentController commentController, PostController postController, User user)
         {
-            while (true)
+            var publishedPosts = await postController.GetAllPostsAsync();
+
+            if (publishedPosts == null || !publishedPosts.Any())
             {
-                Console.WriteLine(heading);
-                var input = Console.ReadLine()?.Trim();
+                Console.WriteLine("No published posts found!");
+                return;
+            }
 
-                if (!string.IsNullOrEmpty(input))
+            DisplayHelper.DisplayPosts(publishedPosts);
+
+            var postIdInput = InputHelper.GetInputWithValidation("Enter the ID of the post you want to comment on:", input =>
+            {
+                if (!int.TryParse(input, out _))
                 {
-                    return input;
+                    throw new ArgumentException("Invalid ID format.");
                 }
+            });
 
-                Console.WriteLine("Input cannot be empty. Please try again!");
+            if (postIdInput == null)
+            {
+                return;
+            }
+
+            var postId = int.Parse(postIdInput);
+
+            var text = InputHelper.GetInputWithValidation("Enter your comment:", CommentValidation.ValidateCommentText);
+
+            if (text == null)
+            {
+                return;
+            }
+
+            try
+            {
+                await commentController.AddCommentAsync(user.Id, postId, text);
+                Console.WriteLine($"{user.Name}, your comment has been successfully added!");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
             }
         }
 
-        public static async Task AddComment(CommentService commentService, PostService postService, User user)
+        public static async Task AddReply(CommentController commentController, PostController postController, User user)
         {
-            await PostManager.DisplayAllPosts(postService);
+            var publishedPosts = await postController.GetAllPostsAsync();
 
-            var postId = int.Parse(GetInput("Enter the ID of the post you want to comment on:"));
-            var text = GetInput("Enter your comment:");
+            if (publishedPosts == null || !publishedPosts.Any())
+            {
+                Console.WriteLine("No published posts found!");
+                return;
+            }
 
-            var comment = await commentService.AddComment(user.Id, postId, text);
-            Console.WriteLine($"{user.Name}, your comment has been successfully added!");
+            DisplayHelper.DisplayPosts(publishedPosts);
+
+            var postIdInput = InputHelper.GetInputWithValidation("Enter the ID of the post you want to see comments:", input =>
+            {
+                if (!int.TryParse(input, out _))
+                {
+                    throw new ArgumentException("Invalid ID format.");
+                }
+            });
+
+            if (postIdInput == null)
+            {
+                return;
+            }
+
+            var postId = int.Parse(postIdInput);
+            var comments = await commentController.GetCommentsByPostAsync(postId);
+
+            if (comments == null || !comments.Any())
+            {
+                Console.WriteLine("No comments found for this post!");
+                return;
+            }
+
+            DisplayHelper.DisplayComments(comments);
+
+            var commentIdInput = InputHelper.GetInputWithValidation("Enter the ID of the comment you want to reply to:", input =>
+            {
+                if (!int.TryParse(input, out _))
+                {
+                    throw new ArgumentException("Invalid ID format.");
+                }
+            });
+
+            if (commentIdInput == null)
+            {
+                return;
+            }
+
+            var commentId = int.Parse(commentIdInput);
+
+            var text = InputHelper.GetInputWithValidation("Enter your reply:", CommentValidation.ValidateCommentText);
+
+            if (text == null)
+            {
+                return;
+            }
+
+            try
+            {
+                await commentController.AddReplyAsync(user.Id, commentId, text);
+                Console.WriteLine($"{user.Name}, your reply has been successfully added!");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+            }
         }
 
-        public static async Task AddReply(CommentService commentService, PostService postService, User user)
+        public static async Task DeleteComment(CommentController commentController, User user)
         {
-            await PostManager.DisplayAllPosts(postService);
-
-            var postId = int.Parse(GetInput("Enter the ID of the post you want to see comments:"));
-            var comments = await commentService.GetCommentsByPost(postId);
-
-            DisplayComments(comments);
-
-            var commentId = int.Parse(GetInput("Enter the ID of the comment you want to reply to:"));
-            var text = GetInput("Enter your reply:");
-
-            var reply = await commentService.AddReply(user.Id, commentId, text);
-            Console.WriteLine($"{user.Name}, your reply has been successfully added!");
-        }
-
-        public static async Task DeleteComment(CommentService commentService, User user)
-        {
-            var userComments = await commentService.GetUserComments(user.Id);
+            var userComments = await commentController.GetUserCommentsAsync(user.Id);
 
             if (!userComments.Any())
             {
@@ -58,35 +139,36 @@ namespace Habr.ConsoleApp.Managers
                 return;
             }
 
-            DisplayComments(userComments);
+            DisplayHelper.DisplayComments(userComments);
 
-            var commentId = int.Parse(GetInput("Enter the ID of the comment you want to delete:"));
-
-            var deleted = await commentService.DeleteComment(commentId, user.Id);
-            if (deleted)
+            var commentIdInput = InputHelper.GetInputWithValidation("Enter the ID of the comment you want to delete:", input =>
             {
-                Console.WriteLine("Comment deleted!");
-            }
-            else
-            {
-                Console.WriteLine("Comment not found or you do not have permission to delete it!");
-            }
-        }
+                if (!int.TryParse(input, out _))
+                {
+                    throw new ArgumentException("Invalid ID format.");
+                }
+            });
 
-        private static void DisplayComments(IEnumerable<Comment> comments)
-        {
-            Console.WriteLine("\n" + new string('-', 115));
-            Console.WriteLine("{0, -5} | {1, -25} | {2, -20} | {3, -10} | {4, -15} | {5, -20}", "Id", "Text", "Date of Creation", 
-                "Post Id", "User Name", "ID parent comment");
-            Console.WriteLine(new string('-', 115));
-
-            foreach (var comment in comments)
+            if (commentIdInput == null)
             {
-                Console.WriteLine("{0, -5} | {1, -25} | {2, -20} | {3, -10} | {4, -15} | {5, -20}", 
-                    comment.Id, comment.Text, comment.Created, comment.PostId, comment.User.Name, comment.ParentCommentId);
+                return;
             }
 
-            Console.WriteLine(new string('-', 115) + "\n");
+            var commentId = int.Parse(commentIdInput);
+
+            try
+            {
+                await commentController.DeleteCommentAsync(commentId, user.Id);
+                Console.WriteLine("\nComment deleted!");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"\n{ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nError: {ex.Message}");
+            }
         }
     }
 }
