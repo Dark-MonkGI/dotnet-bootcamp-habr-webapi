@@ -65,5 +65,10 @@ namespace Habr.Application.Controllers
         {
             await _postService.MovePostToDraftAsync(postId, userId);
         }
+
+        public async Task<PostDetailsDto> GetPostDetailsAsync(int postId)
+        {
+            return await _postService.GetPostDetailsAsync(postId);
+        }
     }
 }

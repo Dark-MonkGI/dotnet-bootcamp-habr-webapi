@@ -2,10 +2,11 @@
 using Habr.DataAccess.Entities;
 using Habr.DataAccess;
 using Habr.BusinessLogic.DTOs;
+using Habr.BusinessLogic.Interfaces;
 
 namespace Habr.BusinessLogic.Services
 {
-    public class PostService
+    public class PostService : IPostService
     {
         private readonly DataContext _context;
 
@@ -194,6 +195,41 @@ namespace Habr.BusinessLogic.Services
 
             _context.Posts.Update(post);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<PostDetailsDto> GetPostDetailsAsync(int postId)
+        {
+            var post = await _context.Posts
+                .Include(p => p.User)
+                .Include(p => p.Comments)
+                    .ThenInclude(c => c.User)
+                .Where(p => p.Id == postId && p.IsPublished && !p.IsDeleted)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+
+            if (post == null)
+            {
+                throw new ArgumentException("Post not found or is not published.");
+            }
+
+            var postDetails = new PostDetailsDto
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Text = post.Text,
+                AuthorEmail = post.User.Email,
+                PublicationDate = post.PublishedDate,
+                Comments = post.Comments.Select(c => new CommentDto
+                {
+                    Id = c.Id,
+                    Text = c.Text,
+                    Created = c.Created,
+                    UserName = c.User.Name,
+                    ParentCommentId = c.ParentCommentId
+                }).ToList()
+            };
+
+            return postDetails;
         }
     }
 }

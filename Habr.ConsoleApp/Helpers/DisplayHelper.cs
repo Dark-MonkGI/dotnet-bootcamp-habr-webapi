@@ -62,5 +62,23 @@ namespace Habr.ConsoleApp.Helpers
 
             Console.WriteLine(new string('-', 115) + "\n");
         }
+
+        public static void DisplayPostDetails(PostDetailsDto post)
+        {
+            Console.WriteLine("\n" + new string('-', 115));
+            Console.WriteLine($"Title: {post.Title}");
+            Console.WriteLine($"Text: {post.Text}");
+            Console.WriteLine($"Author's Email: {post.AuthorEmail}");
+            Console.WriteLine($"Date and Time of Publication: {post.PublicationDate}");
+            Console.WriteLine(new string('-', 115));
+            Console.WriteLine("Comments:");
+
+            foreach (var comment in post.Comments)
+            {
+                Console.WriteLine($"{comment.Id} | {comment.UserName} | {comment.Created} | {comment.Text} | Parent Comment ID: {comment.ParentCommentId}");
+            }
+
+            Console.WriteLine(new string('-', 115));
+        }
     }
 }

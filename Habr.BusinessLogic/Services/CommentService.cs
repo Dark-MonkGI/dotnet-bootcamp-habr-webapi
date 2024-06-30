@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Habr.DataAccess.Entities;
 using Habr.DataAccess;
+using Habr.BusinessLogic.Interfaces;
 
 namespace Habr.BusinessLogic.Services
 {
-    public class CommentService
+    public class CommentService : ICommentService
     {
         private readonly DataContext _context;
 

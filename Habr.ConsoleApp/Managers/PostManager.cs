@@ -297,5 +297,49 @@ namespace Habr.ConsoleApp.Managers
                 Console.WriteLine($"\nError: {ex.Message}");
             }
         }
+
+        public static async Task DisplayPostDetails(PostController postController)
+        {
+            var publishedPosts = await postController.GetAllPostsAsync();
+
+            if (publishedPosts == null || !publishedPosts.Any())
+            {
+                Console.WriteLine("No published posts found!");
+                return;
+            }
+
+            DisplayHelper.DisplayPosts(publishedPosts);
+
+            var postIdInput = InputHelper.GetInputWithValidation("\nEnter post ID:", input =>
+            {
+                if (!int.TryParse(input, out _))
+                {
+                    throw new ArgumentException("\nInvalid ID format.");
+                }
+            });
+
+            if (postIdInput == null)
+            {
+                return;
+            }
+
+            var postId = int.Parse(postIdInput);
+
+            try
+            {
+                var postDetails = await postController.GetPostDetailsAsync(postId);
+                if (postDetails == null)
+                {
+                    Console.WriteLine("Post not found.");
+                    return;
+                }
+
+                DisplayHelper.DisplayPostDetails(postDetails);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
     }
 }

@@ -2,10 +2,11 @@
 using Habr.DataAccess.Entities;
 using Habr.BusinessLogic.Validation;
 using Habr.DataAccess;
+using Habr.BusinessLogic.Interfaces;
 
 namespace Habr.BusinessLogic.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly DataContext _context;
 

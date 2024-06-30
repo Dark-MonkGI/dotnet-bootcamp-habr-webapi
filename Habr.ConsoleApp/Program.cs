@@ -105,6 +105,7 @@ namespace Habr.ConsoleApp
                         "D - for delete post;\n " +
                         "P - for publish post;\n " +
                         "M - for move post to drafts;\n " +
+                        "J - for post details;\n " +
                         "A - for add comment to post;\n " +
                         "R - for reply to comment;\n " +
                         "X - for delete comment;\n " +
@@ -134,6 +135,9 @@ namespace Habr.ConsoleApp
                             break;
                         case "m":
                             await PostManager.MovePostToDraft(postController, authenticatedUser);
+                            break;
+                        case "j":
+                            await PostManager.DisplayPostDetails(postController);
                             break;
                         case "a":
                             await CommentManager.AddComment(commentController, postController, authenticatedUser);
