@@ -19,7 +19,7 @@ namespace Habr.WebApi.Controllers
             _postService = postService;
         }
 
-        [HttpGet("all")]
+        [HttpGet]
         public async Task<IActionResult> GetAllPostsAsync()
         {
             try
