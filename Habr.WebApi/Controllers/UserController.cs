@@ -1,10 +1,5 @@
 ﻿using Habr.BusinessLogic.Interfaces;
-using Habr.DataAccess.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
 using Habr.WebApi.DTOs;
 using Habr.BusinessLogic.DTOs;
 using Habr.WebApi.Helpers;
@@ -17,11 +12,13 @@ namespace Habr.WebApi.Controllers
     {
         private readonly IUserService _userService;
         private readonly string _secretKey;
+        private readonly int _tokenLifeDays;
 
         public UserController(IUserService userService, IConfiguration configuration)
         {
             _userService = userService;
             _secretKey = configuration["Jwt:SecretKey"];
+            _tokenLifeDays = int.Parse(configuration["Jwt:TokenLifetimeDays"]);
         }
 
         [HttpPost("register")]
@@ -37,7 +34,7 @@ namespace Habr.WebApi.Controllers
                 var user = await _userService.RegisterAsync(registerUserDto.Email, registerUserDto.Password, registerUserDto.IsEmailConfirmed);
                 if (registerUserDto.IsEmailConfirmed)
                 {
-                    var token = JwtHelper.GenerateJwtToken(user, _secretKey);
+                    var token = JwtHelper.GenerateJwtToken(user, _secretKey, _tokenLifeDays);
                     return Ok(new { Token = token });
                 }
                 else
@@ -77,7 +74,7 @@ namespace Habr.WebApi.Controllers
                 }
 
                 await _userService.ConfirmEmailAsync(confirmEmailDto.Email, true);
-                var token = JwtHelper.GenerateJwtToken(user, _secretKey);
+                var token = JwtHelper.GenerateJwtToken(user, _secretKey, _tokenLifeDays);
                 return Ok(new { Token = token, Message = "Email confirmed successfully." });
             }
             catch (ArgumentException ex)
@@ -111,7 +108,7 @@ namespace Habr.WebApi.Controllers
                     return Ok(new { Message = "User authenticated. Please confirm your email." });
                 }
 
-                var token = JwtHelper.GenerateJwtToken(user, _secretKey);
+                var token = JwtHelper.GenerateJwtToken(user, _secretKey, _tokenLifeDays);
                 return Ok(new { Token = token });
             }
             catch (ArgumentException ex)

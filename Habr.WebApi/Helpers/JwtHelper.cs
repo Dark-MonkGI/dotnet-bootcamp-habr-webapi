@@ -8,7 +8,7 @@ namespace Habr.WebApi.Helpers
 {
     public static class JwtHelper
     {
-        public static string GenerateJwtToken(User user, string secretKey)
+        public static string GenerateJwtToken(User user, string secretKey, int tokenLifeDays)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(secretKey);
@@ -20,7 +20,8 @@ namespace Habr.WebApi.Helpers
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email)
                 }),
-                Expires = DateTime.UtcNow.AddDays(7),
+
+                Expires = DateTime.UtcNow.AddDays(tokenLifeDays),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
