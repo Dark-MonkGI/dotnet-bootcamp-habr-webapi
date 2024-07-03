@@ -3,11 +3,11 @@ using Habr.DataAccess.Entities;
 
 namespace Habr.Application.Controllers
 {
-    public class CommentController
+    public class CommentsController
     {
         private readonly CommentService _commentService;
 
-        public CommentController(CommentService commentService)
+        public CommentsController(CommentService commentService)
         {
             _commentService = commentService;
         }

@@ -7,7 +7,7 @@ namespace Habr.ConsoleApp.Managers
 {
     public static class UserManager
     {
-        public static async Task<User> RegisterUser(UserController userController)
+        public static async Task<User> RegisterUser(UsersController userController)
         {
             var email = InputHelper.GetInputWithValidation("Enter your email", UserValidation.ValidateEmail);
             if (email == null)
@@ -50,7 +50,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task<User> ConfirmEmail(UserController userController)
+        public static async Task<User> ConfirmEmail(UsersController userController)
         {
             var email = InputHelper.GetInputWithValidation("Enter your email", UserValidation.ValidateEmail);
             if (email == null)
@@ -100,7 +100,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task<User> AuthenticateUser(UserController userController)
+        public static async Task<User> AuthenticateUser(UsersController userController)
         {
             var email = InputHelper.GetInputWithValidation("Enter your email", UserValidation.ValidateEmail);
             if (email == null)

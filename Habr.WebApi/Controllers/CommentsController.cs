@@ -9,11 +9,11 @@ namespace Habr.WebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class CommentController : ControllerBase
+    public class CommentsController : ControllerBase
     {
         private readonly ICommentService _commentService;
 
-        public CommentController(ICommentService commentService)
+        public CommentsController(ICommentService commentService)
         {
             _commentService = commentService;
         }

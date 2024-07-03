@@ -4,11 +4,11 @@ using Habr.DataAccess.Entities;
 
 namespace Habr.Application.Controllers
 {
-    public class PostController
+    public class PostsController
     {
         private readonly PostService _postService;
 
-        public PostController(PostService postService)
+        public PostsController(PostService postService)
         {
             _postService = postService;
         }

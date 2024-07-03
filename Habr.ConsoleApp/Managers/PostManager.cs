@@ -7,7 +7,7 @@ namespace Habr.ConsoleApp.Managers
 {
     public static class PostManager
     {
-        public static async Task DisplayAllPosts(PostController postController, User authenticatedUser)
+        public static async Task DisplayAllPosts(PostsController postController, User authenticatedUser)
         {
             if (authenticatedUser == null)
             {
@@ -26,7 +26,7 @@ namespace Habr.ConsoleApp.Managers
             DisplayHelper.DisplayPosts(posts);
         }
 
-        public static async Task DisplayUserDraftPosts(PostController postController, int userId)
+        public static async Task DisplayUserDraftPosts(PostsController postController, int userId)
         {
             var posts = await postController.GetUserDraftPostsAsync(userId);
 
@@ -39,7 +39,7 @@ namespace Habr.ConsoleApp.Managers
             DisplayHelper.DisplayDraftPosts(posts);
         }
 
-        public static async Task CreatePost(PostController postController, User user)
+        public static async Task CreatePost(PostsController postController, User user)
         {
             var title = InputHelper.GetInputWithValidation("Enter post title:", PostValidation.ValidateTitle);
             if (title == null)
@@ -87,7 +87,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task EditPost(PostController postController, User user)
+        public static async Task EditPost(PostsController postController, User user)
         {
             var userPosts = await postController.GetUserPostsAsync(user.Id);
 
@@ -164,7 +164,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task DeletePost(PostController postController, User user)
+        public static async Task DeletePost(PostsController postController, User user)
         {
             var userPosts = await postController.GetUserPostsAsync(user.Id);
 
@@ -206,7 +206,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task PublishPost(PostController postController, User user)
+        public static async Task PublishPost(PostsController postController, User user)
         {
             var userPosts = await postController.GetUserPostsAsync(user.Id);
 
@@ -252,7 +252,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task MovePostToDraft(PostController postController, User user)
+        public static async Task MovePostToDraft(PostsController postController, User user)
         {
             var userPosts = await postController.GetUserPostsAsync(user.Id);
 
@@ -298,7 +298,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task DisplayPostDetails(PostController postController)
+        public static async Task DisplayPostDetails(PostsController postController)
         {
             var publishedPosts = await postController.GetAllPostsAsync();
 

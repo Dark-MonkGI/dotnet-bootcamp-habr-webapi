@@ -33,9 +33,9 @@ namespace Habr.ConsoleApp
                 var postService = new PostService(context);
                 var commentService = new CommentService(context);
 
-                var userController = new UserController(userService);
-                var postController = new PostController(postService);
-                var commentController = new CommentController(commentService);
+                var usersController = new UsersController(userService);
+                var postsController = new PostsController(postService);
+                var commentsController = new CommentsController(commentService);
 
                 User authenticatedUser;
 
@@ -53,7 +53,7 @@ namespace Habr.ConsoleApp
 
                     if (userInput == "r")
                     {
-                        authenticatedUser = await UserManager.RegisterUser(userController);
+                        authenticatedUser = await UserManager.RegisterUser(usersController);
                         if (authenticatedUser != null)
                         {
                             Console.WriteLine($"\nRegistration successful. Welcome, {authenticatedUser.Name}!");
@@ -69,7 +69,7 @@ namespace Habr.ConsoleApp
                     }
                     else if (userInput == "c")
                     {
-                        authenticatedUser = await UserManager.ConfirmEmail(userController);
+                        authenticatedUser = await UserManager.ConfirmEmail(usersController);
                         if (authenticatedUser != null)
                         {
                             break;
@@ -77,7 +77,7 @@ namespace Habr.ConsoleApp
                     }
                     else if (userInput == "a")
                     {
-                        authenticatedUser = await UserManager.AuthenticateUser(userController);
+                        authenticatedUser = await UserManager.AuthenticateUser(usersController);
                         if (authenticatedUser != null)
                         {
                             Console.WriteLine($"\nAuthorization was successful. Welcome back, {authenticatedUser.Name}!");
@@ -116,37 +116,37 @@ namespace Habr.ConsoleApp
                     switch (userInput)
                     {
                         case "g":
-                            await PostManager.DisplayAllPosts(postController, authenticatedUser);
+                            await PostManager.DisplayAllPosts(postsController, authenticatedUser);
                             break;
                         case "s":
-                            await PostManager.DisplayUserDraftPosts(postController, authenticatedUser.Id);
+                            await PostManager.DisplayUserDraftPosts(postsController, authenticatedUser.Id);
                             break;
                         case "c":
-                            await PostManager.CreatePost(postController, authenticatedUser);
+                            await PostManager.CreatePost(postsController, authenticatedUser);
                             break;
                         case "e":
-                            await PostManager.EditPost(postController, authenticatedUser);
+                            await PostManager.EditPost(postsController, authenticatedUser);
                             break;
                         case "d":
-                            await PostManager.DeletePost(postController, authenticatedUser);
+                            await PostManager.DeletePost(postsController, authenticatedUser);
                             break;
                         case "p":
-                            await PostManager.PublishPost(postController, authenticatedUser);
+                            await PostManager.PublishPost(postsController, authenticatedUser);
                             break;
                         case "m":
-                            await PostManager.MovePostToDraft(postController, authenticatedUser);
+                            await PostManager.MovePostToDraft(postsController, authenticatedUser);
                             break;
                         case "j":
-                            await PostManager.DisplayPostDetails(postController);
+                            await PostManager.DisplayPostDetails(postsController);
                             break;
                         case "a":
-                            await CommentManager.AddComment(commentController, postController, authenticatedUser);
+                            await CommentManager.AddComment(commentsController, postsController, authenticatedUser);
                             break;
                         case "r":
-                            await CommentManager.AddReply(commentController, postController, authenticatedUser);
+                            await CommentManager.AddReply(commentsController, postsController, authenticatedUser);
                             break;
                         case "x":
-                            await CommentManager.DeleteComment(commentController, authenticatedUser);
+                            await CommentManager.DeleteComment(commentsController, authenticatedUser);
                             break;
                         case "0":
                             return;

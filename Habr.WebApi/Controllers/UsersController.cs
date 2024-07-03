@@ -8,13 +8,13 @@ namespace Habr.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
         private readonly string _secretKey;
         private readonly int _tokenLifeDays;
 
-        public UserController(IUserService userService, IConfiguration configuration)
+        public UsersController(IUserService userService, IConfiguration configuration)
         {
             _userService = userService;
             _secretKey = configuration["Jwt:SecretKey"];

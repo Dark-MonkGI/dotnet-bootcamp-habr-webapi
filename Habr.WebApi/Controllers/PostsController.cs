@@ -10,11 +10,11 @@ namespace Habr.WebApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class PostController : ControllerBase
+    public class PostsController : ControllerBase
     {
         private readonly IPostService _postService;
 
-        public PostController(IPostService postService)
+        public PostsController(IPostService postService)
         {
             _postService = postService;
         }

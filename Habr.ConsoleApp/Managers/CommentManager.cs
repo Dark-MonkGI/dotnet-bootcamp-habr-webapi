@@ -7,7 +7,7 @@ namespace Habr.ConsoleApp.Managers
 {
     public static class CommentManager
     {
-        public static async Task AddComment(CommentController commentController, PostController postController, User user)
+        public static async Task AddComment(CommentsController commentController, PostsController postController, User user)
         {
             var publishedPosts = await postController.GetAllPostsAsync();
 
@@ -56,7 +56,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task AddReply(CommentController commentController, PostController postController, User user)
+        public static async Task AddReply(CommentsController commentController, PostsController postController, User user)
         {
             var publishedPosts = await postController.GetAllPostsAsync();
 
@@ -129,7 +129,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task DeleteComment(CommentController commentController, User user)
+        public static async Task DeleteComment(CommentsController commentController, User user)
         {
             var userComments = await commentController.GetUserCommentsAsync(user.Id);
 
