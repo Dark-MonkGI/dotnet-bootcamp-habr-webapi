@@ -61,7 +61,7 @@ namespace Habr.WebApi.Controllers
             }
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostDto createPostDto)
         {
             try
