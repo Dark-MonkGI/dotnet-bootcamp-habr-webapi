@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Habr.WebApi.DTOs;
 using Habr.BusinessLogic.DTOs;
+using Habr.WebApi.Helpers;
 
 namespace Habr.WebApi.Controllers
 {
@@ -36,7 +37,7 @@ namespace Habr.WebApi.Controllers
                 var user = await _userService.RegisterAsync(registerUserDto.Email, registerUserDto.Password, registerUserDto.IsEmailConfirmed);
                 if (registerUserDto.IsEmailConfirmed)
                 {
-                    var token = GenerateJwtToken(user);
+                    var token = JwtHelper.GenerateJwtToken(user, _secretKey);
                     return Ok(new { Token = token });
                 }
                 else
@@ -76,7 +77,7 @@ namespace Habr.WebApi.Controllers
                 }
 
                 await _userService.ConfirmEmailAsync(confirmEmailDto.Email, true);
-                var token = GenerateJwtToken(user);
+                var token = JwtHelper.GenerateJwtToken(user, _secretKey);
                 return Ok(new { Token = token, Message = "Email confirmed successfully." });
             }
             catch (ArgumentException ex)
@@ -110,7 +111,7 @@ namespace Habr.WebApi.Controllers
                     return Ok(new { Message = "User authenticated. Please confirm your email." });
                 }
 
-                var token = GenerateJwtToken(user);
+                var token = JwtHelper.GenerateJwtToken(user, _secretKey);
                 return Ok(new { Token = token });
             }
             catch (ArgumentException ex)
@@ -121,27 +122,6 @@ namespace Habr.WebApi.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-        }
-
-        private string GenerateJwtToken(User user)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_secretKey);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email)
-                }),
-
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
         }
     }
 }
