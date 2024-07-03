@@ -6,7 +6,6 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Habr.WebApi.DTOs;
-using Microsoft.AspNetCore.Authorization;
 using Habr.BusinessLogic.DTOs;
 
 namespace Habr.WebApi.Controllers
@@ -25,7 +24,6 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("register")]
-        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto)
         {
             if (User.Identity.IsAuthenticated)
@@ -57,7 +55,6 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("confirm-email")]
-        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDto confirmEmailDto)
         {
             if (User.Identity.IsAuthenticated)
@@ -93,7 +90,6 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("authenticate")]
-        [AllowAnonymous]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateUserDto authenticateUserDto)
         {
             if (User.Identity.IsAuthenticated)
