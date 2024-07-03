@@ -74,7 +74,7 @@ namespace Habr.WebApi.Controllers
                     createPostDto.Text, 
                     createPostDto.IsPublished);
 
-                return Ok(post);
+                return StatusCode(201, post);
             }
             catch (ArgumentException ex)
             {
