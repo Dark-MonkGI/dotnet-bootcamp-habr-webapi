@@ -109,9 +109,9 @@ namespace Habr.BusinessLogic.Services
             return post;
         }
 
-        public async Task UpdatePost(Post post)
+        public async Task UpdatePost(int postId, int userId, UpdatePostDto updatePostDto)
         {
-            var existingPost = await GetPostByIdAsync(post.Id, post.UserId);
+            var existingPost = await GetPostByIdAsync(postId, userId);
 
             if (existingPost == null)
             {
@@ -123,8 +123,8 @@ namespace Habr.BusinessLogic.Services
                 throw new InvalidOperationException("A published post cannot be edited. Move it to drafts first.");
             }
 
-            existingPost.Title = post.Title;
-            existingPost.Text = post.Text;
+            existingPost.Title = updatePostDto.Title;
+            existingPost.Text = updatePostDto.Text;
             existingPost.Updated = DateTime.UtcNow;
 
             _context.Posts.Update(existingPost);

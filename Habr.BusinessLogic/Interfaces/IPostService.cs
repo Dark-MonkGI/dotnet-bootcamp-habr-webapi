@@ -10,7 +10,7 @@ namespace Habr.BusinessLogic.Interfaces
         Task<IEnumerable<Post>> GetAllUserPosts(int userId);
         Task<Post> CreatePost(int userId, string title, string text, bool isPublished);
         Task<Post> GetPostWithCommentsAsync(int postId, int userId);
-        Task UpdatePost(Post post);
+        Task UpdatePost(int postId, int userId, UpdatePostDto updatePostDto);
         Task DeletePost(int postId, int userId);
         Task PublishPostAsync(int postId, int userId);
         Task MovePostToDraftAsync(int postId, int userId);

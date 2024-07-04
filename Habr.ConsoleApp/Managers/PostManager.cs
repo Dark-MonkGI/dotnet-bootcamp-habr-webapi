@@ -2,6 +2,7 @@
 using Habr.Application.Controllers;
 using Habr.ConsoleApp.Helpers;
 using Habr.BusinessLogic.Validation;
+using Habr.BusinessLogic.DTOs;
 
 namespace Habr.ConsoleApp.Managers
 {
@@ -142,11 +143,13 @@ namespace Habr.ConsoleApp.Managers
                     return;
                 }
 
-                post.Title = title;
-                post.Text = text;
-                post.Updated = DateTime.UtcNow;
+                var updatePostDto = new UpdatePostDto
+                {
+                    Title = title,
+                    Text = text
+                };
 
-                await postController.UpdatePostAsync(post);
+                await postController.UpdatePostAsync(postId, updatePostDto, user.Id);
 
                 Console.WriteLine("\nPost updated!");
             }

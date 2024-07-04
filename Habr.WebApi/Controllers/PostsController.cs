@@ -95,16 +95,7 @@ namespace Habr.WebApi.Controllers
             {
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-                var postToUpdate = new Post
-                {
-                    Id = postId,
-                    Title = updatePostDto.Title,
-                    Text = updatePostDto.Text,
-                    UserId = userId
-                };
-
-                await _postService.UpdatePost(postToUpdate);
-
+                await _postService.UpdatePost(postId, userId, updatePostDto);
                 return Ok("Post updated!");
             }
             catch (Exception ex)

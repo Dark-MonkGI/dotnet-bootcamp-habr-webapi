@@ -46,9 +46,9 @@ namespace Habr.Application.Controllers
             return await _postService.GetPostWithCommentsAsync(postId, userId);
         }
 
-        public async Task UpdatePostAsync(Post post)
+        public async Task UpdatePostAsync(int postId, UpdatePostDto updatePostDto, int userId)
         {
-            await _postService.UpdatePost(post);
+            await _postService.UpdatePost(postId, userId, updatePostDto);
         }
 
         public async Task DeletePostAsync(int postId, int userId)
