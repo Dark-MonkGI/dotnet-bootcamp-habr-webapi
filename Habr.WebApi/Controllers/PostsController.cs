@@ -77,12 +77,13 @@ namespace Habr.WebApi.Controllers
 
                 return StatusCode(201, post);
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
             catch (Exception ex)
             {
+                if (ex is ArgumentException)
+                {
+                    return BadRequest(ex.Message);
+                }
+
                 return StatusCode(500, ex.Message);
             }
         }
@@ -107,16 +108,13 @@ namespace Habr.WebApi.Controllers
 
                 return Ok("Post updated!");
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
             catch (Exception ex)
             {
+                if (ex is ArgumentException || ex is InvalidOperationException)
+                {
+                    return BadRequest(ex.Message);
+                }
+
                 return StatusCode(500, ex.Message);
             }
         }
@@ -131,12 +129,13 @@ namespace Habr.WebApi.Controllers
                 await _postService.DeletePost(postId, userId);
                 return Ok("Post deleted!");
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
             catch (Exception ex)
             {
+                if (ex is ArgumentException)
+                {
+                    return BadRequest(ex.Message);
+                }
+
                 return StatusCode(500, ex.Message);
             }
         }
@@ -151,16 +150,13 @@ namespace Habr.WebApi.Controllers
                 await _postService.PublishPostAsync(postId, userId);
                 return Ok("Post published!");
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
             catch (Exception ex)
             {
+                if (ex is ArgumentException || ex is InvalidOperationException)
+                {
+                    return BadRequest(ex.Message);
+                }
+
                 return StatusCode(500, ex.Message);
             }
         }
@@ -175,16 +171,13 @@ namespace Habr.WebApi.Controllers
                 await _postService.MovePostToDraftAsync(postId, userId);
                 return Ok("Post moved to drafts successfully!");
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
             catch (Exception ex)
             {
+                if (ex is ArgumentException || ex is InvalidOperationException)
+                {
+                    return BadRequest(ex.Message);
+                }
+
                 return StatusCode(500, ex.Message);
             }
         }
@@ -197,12 +190,13 @@ namespace Habr.WebApi.Controllers
                 var postDetails = await _postService.GetPostDetailsAsync(postId);
                 return Ok(postDetails);
             }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex.Message);
-            }
             catch (Exception ex)
             {
+                if (ex is ArgumentException)
+                {
+                    return NotFound(ex.Message);
+                }
+
                 return StatusCode(500, ex.Message);
             }
         }
