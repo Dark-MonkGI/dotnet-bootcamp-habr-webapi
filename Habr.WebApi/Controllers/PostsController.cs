@@ -159,7 +159,7 @@ namespace Habr.WebApi.Controllers
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 await _postService.MovePostToDraftAsync(postId, userId);
-                return Ok("Post moved to drafts successfully!");
+                return Ok("Successfully moved!");
             }
             catch (Exception ex)
             {
