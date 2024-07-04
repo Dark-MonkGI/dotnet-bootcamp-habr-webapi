@@ -18,50 +18,42 @@ namespace Habr.WebApi.Controllers
             _commentService = commentService;
         }
 
-        [HttpPost("add")]
-        public async Task<IActionResult> AddCommentAsync([FromBody] AddCommentDto addCommentDto)
+        [HttpPost("{postId}")]
+        public async Task<IActionResult> AddCommentAsync(int postId, [FromBody] AddCommentDto addCommentDto)
         {
             try
             {
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var comment = await _commentService.AddComment(userId, addCommentDto.PostId, addCommentDto.Text);
+                var comment = await _commentService.AddComment(userId, postId, addCommentDto.Text);
 
-                return Ok(comment);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
+                return StatusCode(201, comment);
             }
             catch (Exception ex)
             {
+                if (ex is InvalidOperationException || ex is ArgumentException) 
+                {
+                    return BadRequest(ex.Message);
+                }
                 return StatusCode(500, ex.Message);
             }
         }
 
-        [HttpPost("reply")]
-        public async Task<IActionResult> AddReplyAsync([FromBody] AddReplyDto addReplyDto)
+        [HttpPost("{parentCommentId}/reply")]
+        public async Task<IActionResult> AddReplyAsync(int parentCommentId, [FromBody] AddReplyDto addReplyDto)
         {
             try
             {
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var comment = await _commentService.AddReply(userId, addReplyDto.ParentCommentId, addReplyDto.Text);
+                var comment = await _commentService.AddReply(userId, parentCommentId, addReplyDto.Text);
 
-                return Ok(comment);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
+                return StatusCode(201, comment);
             }
             catch (Exception ex)
             {
+                if (ex is InvalidOperationException || ex is ArgumentException)
+                {
+                    return BadRequest(ex.Message);
+                }
                 return StatusCode(500, ex.Message);
             }
         }
@@ -76,16 +68,12 @@ namespace Habr.WebApi.Controllers
                 await _commentService.DeleteComment(commentId, userId);
                 return Ok("Comment deleted!");
             }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
             catch (Exception ex)
             {
+                if (ex is InvalidOperationException || ex is ArgumentException)
+                {
+                    return BadRequest(ex.Message);
+                }
                 return StatusCode(500, ex.Message);
             }
         }
