@@ -96,6 +96,19 @@ namespace Habr.BusinessLogic.Services
             return post;
         }
 
+        public async Task<Post> GetPostByIdAsync(int postId, int userId)
+        {
+            var post = await _context.Posts
+                .Where(p =>
+                    p.Id == postId &&
+                    p.UserId == userId &&
+                    !p.IsDeleted)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+
+            return post;
+        }
+
         public async Task UpdatePost(Post post)
         {
             var existingPost = await GetPostWithCommentsAsync(post.Id, post.UserId);

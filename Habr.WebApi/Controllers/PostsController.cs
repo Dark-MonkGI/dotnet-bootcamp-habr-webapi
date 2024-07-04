@@ -86,13 +86,13 @@ namespace Habr.WebApi.Controllers
             }
         }
 
-        [HttpPut("update")]
-        public async Task<IActionResult> UpdatePostAsync([FromBody] UpdatePostDto updatePostDto)
+        [HttpPut("{postId}")]
+        public async Task<IActionResult> UpdatePostAsync(int postId, [FromBody] UpdatePostDto updatePostDto)
         {
             try
             {
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var post = await _postService.GetPostWithCommentsAsync(updatePostDto.PostId, userId);
+                var post = await _postService.GetPostByIdAsync(postId, userId);
 
                 if (post == null)
                 {
