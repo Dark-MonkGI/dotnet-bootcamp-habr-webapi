@@ -140,7 +140,7 @@ namespace Habr.WebApi.Controllers
             }
         }
 
-        [HttpPost("publish/{postId}")]
+        [HttpPost("{postId}/publish")]
         public async Task<IActionResult> PublishPostAsync(int postId)
         {
             try
@@ -161,7 +161,7 @@ namespace Habr.WebApi.Controllers
             }
         }
 
-        [HttpPost("move-to-draft/{postId}")]
+        [HttpPost("{postId}/move-to-draft")]
         public async Task<IActionResult> MovePostToDraftAsync(int postId)
         {
             try
@@ -182,7 +182,7 @@ namespace Habr.WebApi.Controllers
             }
         }
 
-        [HttpGet("{postId}/details")]
+        [HttpGet("{postId}")]
         public async Task<IActionResult> GetPostDetailsAsync(int postId)
         {
             try
