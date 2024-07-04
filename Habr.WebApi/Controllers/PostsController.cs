@@ -1,5 +1,6 @@
 ﻿using Habr.BusinessLogic.DTOs;
 using Habr.BusinessLogic.Interfaces;
+using Habr.DataAccess.Entities;
 using Habr.WebApi.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -92,23 +93,17 @@ namespace Habr.WebApi.Controllers
             try
             {
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var post = await _postService.GetPostByIdAsync(postId, userId);
 
-                if (post == null)
+                var postToUpdate = new Post
                 {
-                    return NotFound("This post was not found for you!");
-                }
+                    Id = postId,
+                    Title = updatePostDto.Title,
+                    Text = updatePostDto.Text,
+                    Updated = DateTime.UtcNow,
+                    UserId = userId
+                };
 
-                if (post.IsPublished)
-                {
-                    return BadRequest("This post is published and cannot be edited. Move it to drafts first.");
-                }
-
-                post.Title = updatePostDto.Title;
-                post.Text = updatePostDto.Text;
-                post.Updated = DateTime.UtcNow;
-
-                await _postService.UpdatePost(post);
+                await _postService.UpdatePost(postToUpdate);
 
                 return Ok("Post updated!");
             }

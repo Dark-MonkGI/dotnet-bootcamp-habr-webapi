@@ -111,7 +111,7 @@ namespace Habr.BusinessLogic.Services
 
         public async Task UpdatePost(Post post)
         {
-            var existingPost = await GetPostWithCommentsAsync(post.Id, post.UserId);
+            var existingPost = await GetPostByIdAsync(post.Id, post.UserId);
 
             if (existingPost == null)
             {
