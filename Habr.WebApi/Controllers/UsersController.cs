@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Habr.WebApi.DTOs;
 using Habr.BusinessLogic.DTOs;
 using Habr.WebApi.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace Habr.WebApi.Controllers
 {
@@ -11,14 +12,12 @@ namespace Habr.WebApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly string _secretKey;
-        private readonly int _tokenLifeDays;
+        private readonly JwtSettings _jwtSettings;
 
-        public UsersController(IUserService userService, IConfiguration configuration)
+        public UsersController(IUserService userService, IOptions<JwtSettings> jwtSettings)
         {
             _userService = userService;
-            _secretKey = configuration["Jwt:SecretKey"];
-            _tokenLifeDays = int.Parse(configuration["Jwt:TokenLifetimeDays"]);
+            _jwtSettings = jwtSettings.Value;
         }
 
         [HttpPost("register")]
@@ -34,7 +33,7 @@ namespace Habr.WebApi.Controllers
                 var user = await _userService.RegisterAsync(registerUserDto.Email, registerUserDto.Password, registerUserDto.IsEmailConfirmed);
                 if (registerUserDto.IsEmailConfirmed)
                 {
-                    var token = JwtHelper.GenerateJwtToken(user, _secretKey, _tokenLifeDays);
+                    var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
                     return Ok(new { Token = token });
                 }
                 else
@@ -74,7 +73,7 @@ namespace Habr.WebApi.Controllers
                 }
 
                 await _userService.ConfirmEmailAsync(confirmEmailDto.Email, true);
-                var token = JwtHelper.GenerateJwtToken(user, _secretKey, _tokenLifeDays);
+                var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
                 return Ok(new { Token = token, Message = "Email confirmed successfully." });
             }
             catch (ArgumentException ex)
@@ -108,7 +107,7 @@ namespace Habr.WebApi.Controllers
                     return Ok(new { Message = "User authenticated. Please confirm your email." });
                 }
 
-                var token = JwtHelper.GenerateJwtToken(user, _secretKey, _tokenLifeDays);
+                var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
                 return Ok(new { Token = token });
             }
             catch (ArgumentException ex)

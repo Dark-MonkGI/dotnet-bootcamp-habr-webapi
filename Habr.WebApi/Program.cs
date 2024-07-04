@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using Habr.WebApi.Helpers;
 
 namespace Habr.WebApi
 {
@@ -15,7 +16,7 @@ namespace Habr.WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var secretKey = builder.Configuration["Jwt:SecretKey"];
+            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
             builder.Services.AddDbContext<DataContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -24,7 +25,9 @@ namespace Habr.WebApi
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<IUserService, UserService>();
 
-            var key = Encoding.ASCII.GetBytes(secretKey);
+            var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
+            var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -37,7 +40,7 @@ namespace Habr.WebApi
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey)),
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
