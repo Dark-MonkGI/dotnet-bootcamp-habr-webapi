@@ -89,7 +89,7 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPut("{postId}")]
-        public async Task<IActionResult> UpdatePostAsync(int postId, [FromBody] UpdatePostDto updatePostDto)
+        public async Task<IActionResult> UpdatePostAsync([FromRoute] int postId, [FromBody] UpdatePostDto updatePostDto)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpDelete("{postId}")]
-        public async Task<IActionResult> DeletePostAsync(int postId)
+        public async Task<IActionResult> DeletePostAsync([FromRoute] int postId)
         {
             try
             {
@@ -140,7 +140,7 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("{postId}/publish")]
-        public async Task<IActionResult> PublishPostAsync(int postId)
+        public async Task<IActionResult> PublishPostAsync([FromRoute] int postId)
         {
             try
             {
@@ -161,7 +161,7 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("{postId}/move-to-draft")]
-        public async Task<IActionResult> MovePostToDraftAsync(int postId)
+        public async Task<IActionResult> MovePostToDraftAsync([FromRoute] int postId)
         {
             try
             {
@@ -182,7 +182,7 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpGet("{postId}")]
-        public async Task<IActionResult> GetPostDetailsAsync(int postId)
+        public async Task<IActionResult> GetPostDetailsAsync([FromRoute] int postId)
         {
             try
             {
