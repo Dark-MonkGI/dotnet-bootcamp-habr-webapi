@@ -100,7 +100,6 @@ namespace Habr.WebApi.Controllers
                     Id = postId,
                     Title = updatePostDto.Title,
                     Text = updatePostDto.Text,
-                    Updated = DateTime.UtcNow,
                     UserId = userId
                 };
 
