@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.ConsoleApp", "Habr.Con
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.DataAccess", "Habr.DataAccess\Habr.DataAccess.csproj", "{DA90A2F2-2B58-4B30-8091-A1229CFB65D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habr.Application", "Habr.Application\Habr.Application.csproj", "{29F53142-70C1-4CAC-B2DA-DEE69754F61A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.Application", "Habr.Application\Habr.Application.csproj", "{29F53142-70C1-4CAC-B2DA-DEE69754F61A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habr.BusinessLogic", "Habr.BusinessLogic\Habr.BusinessLogic.csproj", "{A2525886-CAED-43FA-AAD4-44FB7454407A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Habr.BusinessLogic", "Habr.BusinessLogic\Habr.BusinessLogic.csproj", "{A2525886-CAED-43FA-AAD4-44FB7454407A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habr.WebApi", "Habr.WebApi\Habr.WebApi.csproj", "{23285BB6-E9B8-4C92-83CF-DDAAB879D7FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{A2525886-CAED-43FA-AAD4-44FB7454407A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2525886-CAED-43FA-AAD4-44FB7454407A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2525886-CAED-43FA-AAD4-44FB7454407A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23285BB6-E9B8-4C92-83CF-DDAAB879D7FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23285BB6-E9B8-4C92-83CF-DDAAB879D7FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23285BB6-E9B8-4C92-83CF-DDAAB879D7FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23285BB6-E9B8-4C92-83CF-DDAAB879D7FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

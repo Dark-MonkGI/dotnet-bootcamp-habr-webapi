@@ -2,12 +2,13 @@
 using Habr.Application.Controllers;
 using Habr.ConsoleApp.Helpers;
 using Habr.BusinessLogic.Validation;
+using Habr.BusinessLogic.DTOs;
 
 namespace Habr.ConsoleApp.Managers
 {
     public static class PostManager
     {
-        public static async Task DisplayAllPosts(PostController postController, User authenticatedUser)
+        public static async Task DisplayAllPosts(PostsController postController, User authenticatedUser)
         {
             if (authenticatedUser == null)
             {
@@ -26,7 +27,7 @@ namespace Habr.ConsoleApp.Managers
             DisplayHelper.DisplayPosts(posts);
         }
 
-        public static async Task DisplayUserDraftPosts(PostController postController, int userId)
+        public static async Task DisplayUserDraftPosts(PostsController postController, int userId)
         {
             var posts = await postController.GetUserDraftPostsAsync(userId);
 
@@ -39,7 +40,7 @@ namespace Habr.ConsoleApp.Managers
             DisplayHelper.DisplayDraftPosts(posts);
         }
 
-        public static async Task CreatePost(PostController postController, User user)
+        public static async Task CreatePost(PostsController postController, User user)
         {
             var title = InputHelper.GetInputWithValidation("Enter post title:", PostValidation.ValidateTitle);
             if (title == null)
@@ -87,7 +88,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task EditPost(PostController postController, User user)
+        public static async Task EditPost(PostsController postController, User user)
         {
             var userPosts = await postController.GetUserPostsAsync(user.Id);
 
@@ -142,11 +143,13 @@ namespace Habr.ConsoleApp.Managers
                     return;
                 }
 
-                post.Title = title;
-                post.Text = text;
-                post.Updated = DateTime.UtcNow;
+                var updatePostDto = new UpdatePostDto
+                {
+                    Title = title,
+                    Text = text
+                };
 
-                await postController.UpdatePostAsync(post);
+                await postController.UpdatePostAsync(postId, updatePostDto, user.Id);
 
                 Console.WriteLine("\nPost updated!");
             }
@@ -164,7 +167,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task DeletePost(PostController postController, User user)
+        public static async Task DeletePost(PostsController postController, User user)
         {
             var userPosts = await postController.GetUserPostsAsync(user.Id);
 
@@ -206,7 +209,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task PublishPost(PostController postController, User user)
+        public static async Task PublishPost(PostsController postController, User user)
         {
             var userPosts = await postController.GetUserPostsAsync(user.Id);
 
@@ -252,7 +255,7 @@ namespace Habr.ConsoleApp.Managers
             }
         }
 
-        public static async Task MovePostToDraft(PostController postController, User user)
+        public static async Task MovePostToDraft(PostsController postController, User user)
         {
             var userPosts = await postController.GetUserPostsAsync(user.Id);
 
@@ -295,6 +298,50 @@ namespace Habr.ConsoleApp.Managers
             catch (Exception ex)
             {
                 Console.WriteLine($"\nError: {ex.Message}");
+            }
+        }
+
+        public static async Task DisplayPostDetails(PostsController postController)
+        {
+            var publishedPosts = await postController.GetAllPostsAsync();
+
+            if (publishedPosts == null || !publishedPosts.Any())
+            {
+                Console.WriteLine("No published posts found!");
+                return;
+            }
+
+            DisplayHelper.DisplayPosts(publishedPosts);
+
+            var postIdInput = InputHelper.GetInputWithValidation("\nEnter post ID:", input =>
+            {
+                if (!int.TryParse(input, out _))
+                {
+                    throw new ArgumentException("\nInvalid ID format.");
+                }
+            });
+
+            if (postIdInput == null)
+            {
+                return;
+            }
+
+            var postId = int.Parse(postIdInput);
+
+            try
+            {
+                var postDetails = await postController.GetPostDetailsAsync(postId);
+                if (postDetails == null)
+                {
+                    Console.WriteLine("Post not found.");
+                    return;
+                }
+
+                DisplayHelper.DisplayPostDetails(postDetails);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
             }
         }
     }

@@ -3,11 +3,11 @@ using Habr.DataAccess.Entities;
 
 namespace Habr.Application.Controllers
 {
-    public class UserController
+    public class UsersController
     {
         private readonly UserService _userService;
 
-        public UserController(UserService userService)
+        public UsersController(UserService userService)
         {
             _userService = userService;
         }

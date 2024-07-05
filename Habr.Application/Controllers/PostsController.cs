@@ -4,11 +4,11 @@ using Habr.DataAccess.Entities;
 
 namespace Habr.Application.Controllers
 {
-    public class PostController
+    public class PostsController
     {
         private readonly PostService _postService;
 
-        public PostController(PostService postService)
+        public PostsController(PostService postService)
         {
             _postService = postService;
         }
@@ -46,9 +46,9 @@ namespace Habr.Application.Controllers
             return await _postService.GetPostWithCommentsAsync(postId, userId);
         }
 
-        public async Task UpdatePostAsync(Post post)
+        public async Task UpdatePostAsync(int postId, UpdatePostDto updatePostDto, int userId)
         {
-            await _postService.UpdatePost(post);
+            await _postService.UpdatePost(postId, userId, updatePostDto);
         }
 
         public async Task DeletePostAsync(int postId, int userId)
@@ -64,6 +64,11 @@ namespace Habr.Application.Controllers
         public async Task MovePostToDraftAsync(int postId, int userId)
         {
             await _postService.MovePostToDraftAsync(postId, userId);
+        }
+
+        public async Task<PostDetailsDto> GetPostDetailsAsync(int postId)
+        {
+            return await _postService.GetPostDetailsAsync(postId);
         }
     }
 }
