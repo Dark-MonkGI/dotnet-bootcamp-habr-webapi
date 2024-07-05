@@ -1,6 +1,5 @@
 ﻿using Habr.BusinessLogic.DTOs;
 using Habr.BusinessLogic.Interfaces;
-using Habr.DataAccess.Entities;
 using Habr.WebApi.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -96,7 +95,7 @@ namespace Habr.WebApi.Controllers
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 await _postService.UpdatePost(postId, userId, updatePostDto);
-                return Ok("Post updated!");
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -117,7 +116,7 @@ namespace Habr.WebApi.Controllers
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 await _postService.DeletePost(postId, userId);
-                return Ok("Post deleted!");
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -138,7 +137,7 @@ namespace Habr.WebApi.Controllers
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 await _postService.PublishPostAsync(postId, userId);
-                return Ok("Post published!");
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -159,7 +158,7 @@ namespace Habr.WebApi.Controllers
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 await _postService.MovePostToDraftAsync(postId, userId);
-                return Ok("Successfully moved!");
+                return Ok();
             }
             catch (Exception ex)
             {

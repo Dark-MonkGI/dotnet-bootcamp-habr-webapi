@@ -66,7 +66,7 @@ namespace Habr.WebApi.Controllers
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 await _commentService.DeleteComment(commentId, userId);
-                return Ok("Comment deleted!");
+                return Ok();
             }
             catch (Exception ex)
             {
