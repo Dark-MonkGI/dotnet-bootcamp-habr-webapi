@@ -1,5 +1,6 @@
 ﻿using Habr.BusinessLogic.DTOs;
 using Habr.DataAccess.Entities;
+using Habr.ConsoleApp.Resources;
 
 namespace Habr.ConsoleApp.Helpers
 {
@@ -8,7 +9,7 @@ namespace Habr.ConsoleApp.Helpers
         public static void DisplayPosts(IEnumerable<PostDto> posts)
         {
             Console.WriteLine("\n" + new string('-', 115));
-            Console.WriteLine("{0, -5} | {1, -40} | {2, -30} | {3, -20}", "Id", "Title", "Author's Email", "Date and Time of Publication");
+            Console.WriteLine("{0, -5} | {1, -40} | {2, -30} | {3, -20}", Messages.Id, Messages.Title, Messages.AuthorEmail, Messages.DatePublication);
             Console.WriteLine(new string('-', 115));
 
             foreach (var post in posts)
@@ -22,12 +23,13 @@ namespace Habr.ConsoleApp.Helpers
         public static void DisplayDraftPosts(IEnumerable<DraftPostDto> posts)
         {
             Console.WriteLine("\n" + new string('-', 95));
-            Console.WriteLine("{0, -5} | {1, -30} | {2, -20} | {3, -20}", "Id", "Title", "Date of Creation", "Date of Last Update");
+            Console.WriteLine("{0, -5} | {1, -30} | {2, -20} | {3, -20}", Messages.Id, Messages.Title, Messages.DateCreation, Messages.DateLastUpdate);
             Console.WriteLine(new string('-', 95));
 
             foreach (var post in posts)
             {
-                Console.WriteLine("{0, -5} | {1, -30} | {2, -20} | {3, -20}", post.Id, post.Title, post.CreatedAt, post.UpdatedAt.HasValue ? post.UpdatedAt.Value.ToString() : "");
+                Console.WriteLine("{0, -5} | {1, -30} | {2, -20} | {3, -20}", post.Id, post.Title, post.CreatedAt, 
+                    post.UpdatedAt.HasValue ? post.UpdatedAt.Value.ToString() : "");
             }
 
             Console.WriteLine(new string('-', 95));
@@ -36,12 +38,14 @@ namespace Habr.ConsoleApp.Helpers
         public static void DisplayUserPosts(IEnumerable<Post> posts)
         {
             Console.WriteLine("\n" + new string('-', 115));
-            Console.WriteLine("{0, -5} | {1, -30} | {2, -20} | {3, -20} | {4, -30}", "Id", "Title", "Date of Creation", "Date of Last Update", "Is Published");
+            Console.WriteLine("{0, -5} | {1, -30} | {2, -20} | {3, -20} | {4, -30}", Messages.Id, Messages.Title, Messages.DateCreation,
+                Messages.DateLastUpdate, Messages.IsPublished);
             Console.WriteLine(new string('-', 115));
 
             foreach (var post in posts)
             {
-                Console.WriteLine("{0, -5} | {1, -30} | {2, -20} | {3, -20} | {4, -30}", post.Id, post.Title, post.Created, post.Updated, post.IsPublished ? "Yes" : "No");
+                Console.WriteLine("{0, -5} | {1, -30} | {2, -20} | {3, -20} | {4, -30}", post.Id, post.Title, 
+                    post.Created, post.Updated, post.IsPublished ? Messages.Yes : Messages.No);
             }
 
             Console.WriteLine(new string('-', 115));
@@ -50,8 +54,8 @@ namespace Habr.ConsoleApp.Helpers
         public static void DisplayComments(IEnumerable<Comment> comments)
         {
             Console.WriteLine("\n" + new string('-', 115));
-            Console.WriteLine("{0, -5} | {1, -25} | {2, -20} | {3, -10} | {4, -15} | {5, -20}", "Id", "Text", "Date of Creation",
-                "Post Id", "User Name", "ID parent comment");
+            Console.WriteLine("{0, -5} | {1, -25} | {2, -20} | {3, -10} | {4, -15} | {5, -20}", Messages.Id, Messages.PostId, Messages.DateCreation,
+                Messages.PostId, Messages.UserName, Messages.IdParentComment);
             Console.WriteLine(new string('-', 115));
 
             foreach (var comment in comments)
@@ -66,16 +70,16 @@ namespace Habr.ConsoleApp.Helpers
         public static void DisplayPostDetails(PostDetailsDto post)
         {
             Console.WriteLine("\n" + new string('-', 115));
-            Console.WriteLine($"Title: {post.Title}");
-            Console.WriteLine($"Text: {post.Text}");
-            Console.WriteLine($"Author's Email: {post.AuthorEmail}");
-            Console.WriteLine($"Date and Time of Publication: {post.PublicationDate}");
+            Console.WriteLine(string.Format(Messages.TitleWithColon, post.Title));
+            Console.WriteLine(string.Format(Messages.TextWithColon, post.Text)); 
+            Console.WriteLine(string.Format(Messages.AuthorEmailWithColon, post.AuthorEmail)); 
+            Console.WriteLine(string.Format(Messages.DatePublicationWithColon, post.PublicationDate)); 
             Console.WriteLine(new string('-', 115));
-            Console.WriteLine("Comments:");
+            Console.WriteLine(Messages.CommentsWithColon);
 
             foreach (var comment in post.Comments)
             {
-                Console.WriteLine($"{comment.Id} | {comment.UserName} | {comment.Created} | {comment.Text} | Parent Comment ID: {comment.ParentCommentId}");
+                Console.WriteLine(string.Format(Messages.TableFields, comment.Id, comment.UserName, comment.Created, comment.Text, comment.ParentCommentId));
             }
 
             Console.WriteLine(new string('-', 115));

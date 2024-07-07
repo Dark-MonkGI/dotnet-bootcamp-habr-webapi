@@ -3,6 +3,7 @@ using Habr.DataAccess.Entities;
 using Habr.DataAccess;
 using Habr.BusinessLogic.Interfaces;
 using Habr.BusinessLogic.DTOs;
+using Habr.BusinessLogic.Resources;
 using AutoMapper;
 
 namespace Habr.BusinessLogic.Services
@@ -27,7 +28,7 @@ namespace Habr.BusinessLogic.Services
 
             if (post == null)
             {
-                throw new InvalidOperationException("You cannot comment on unpublished posts!");
+                throw new InvalidOperationException(Messages.CannotCommentUnpublished);
             }
 
             var comment = _mapper.Map<Comment>(addCommentDto);
@@ -49,7 +50,7 @@ namespace Habr.BusinessLogic.Services
 
             if (parentComment == null)
             {
-                throw new ArgumentException("Parent comment not found.");
+                throw new ArgumentException(Messages.CommentNotFound);
             }
 
             var comment = _mapper.Map<Comment>(addReplyDto);
@@ -70,7 +71,7 @@ namespace Habr.BusinessLogic.Services
 
             if (comment == null)
             {
-                throw new ArgumentException("\nComment not found or you do not have permission to delete it.");
+                throw new ArgumentException(Messages.DeleteCommentPermissionDenied);
             }
 
             await DeleteReplies(comment);

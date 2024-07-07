@@ -5,6 +5,7 @@ using Habr.DataAccess;
 using Habr.BusinessLogic.Interfaces;
 using Habr.BusinessLogic.DTOs;
 using AutoMapper;
+using Habr.BusinessLogic.Resources;
 
 namespace Habr.BusinessLogic.Services
 {
@@ -26,7 +27,7 @@ namespace Habr.BusinessLogic.Services
 
             if (await _context.Users.AnyAsync(u => u.Email == registerUserDto.Email))
             {
-                throw new ArgumentException("The email is already taken.");
+                throw new ArgumentException(Messages.EmailTaken);
             }
 
             var user = _mapper.Map<User>(registerUserDto);
@@ -45,7 +46,7 @@ namespace Habr.BusinessLogic.Services
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
             if (user == null)
             {
-                throw new ArgumentException("The email is incorrect.");
+                throw new ArgumentException(Messages.EmailIncorrect);
             }
 
             user.IsEmailConfirmed = isEmailConfirmed;
@@ -64,12 +65,12 @@ namespace Habr.BusinessLogic.Services
 
             if (user == null)
             {
-                throw new ArgumentException("Invalid email or password.");
+                throw new ArgumentException(Messages.InvalidEmailOrPassword);
             }
 
             if (!BCrypt.Net.BCrypt.Verify(authenticateUserDto.Password, user.PasswordHash))
             {
-                throw new ArgumentException("Invalid email or password.");
+                throw new ArgumentException(Messages.InvalidEmailOrPassword);
             }
 
             return user;

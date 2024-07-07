@@ -1,0 +1,405 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="A" xml:space="preserve">
+    <value>a</value>
+  </data>
+  <data name="ActionSelection" xml:space="preserve">
+    <value>What do you want to do? Please enter:</value>
+  </data>
+  <data name="AuthorEmail" xml:space="preserve">
+    <value>Author's Email</value>
+  </data>
+  <data name="AuthorEmailWithColon" xml:space="preserve">
+    <value>Author's Email: {0}</value>
+  </data>
+  <data name="AuthorizationSuccessful" xml:space="preserve">
+    <value>Authorization was successful. Welcome back, {0}!</value>
+  </data>
+  <data name="AuthorizationWasSuccessful" xml:space="preserve">
+    <value>Authorization was successful. Welcome back, {0}!</value>
+  </data>
+  <data name="C" xml:space="preserve">
+    <value>c</value>
+  </data>
+  <data name="CommentAddedSuccessfully" xml:space="preserve">
+    <value>{0}, your comment has been successfully added!</value>
+  </data>
+  <data name="CommentDeleted" xml:space="preserve">
+    <value>Comment deleted!</value>
+  </data>
+  <data name="CommentsWithColon" xml:space="preserve">
+    <value>Comments:</value>
+  </data>
+  <data name="CommentToPost" xml:space="preserve">
+    <value>A - for add comment to post;</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>C - for confirm email;</value>
+  </data>
+  <data name="CreatePost" xml:space="preserve">
+    <value>C - for create post;</value>
+  </data>
+  <data name="DateCreation" xml:space="preserve">
+    <value>Date of Creation</value>
+  </data>
+  <data name="DateLastUpdate" xml:space="preserve">
+    <value>Date of Last Update</value>
+  </data>
+  <data name="DatePublication" xml:space="preserve">
+    <value>Date and Time of Publication</value>
+  </data>
+  <data name="DatePublicationWithColon" xml:space="preserve">
+    <value>Date and Time of Publication: {0}</value>
+  </data>
+  <data name="DefaultConnectionEmpty" xml:space="preserve">
+    <value>Connection string 'DefaultConnection' is empty. Please check your settings!</value>
+  </data>
+  <data name="DeleteComment" xml:space="preserve">
+    <value>X - for delete comment;</value>
+  </data>
+  <data name="DeletePost" xml:space="preserve">
+    <value>D - for delete post;</value>
+  </data>
+  <data name="DonNotForgetConfirmEmail" xml:space="preserve">
+    <value>Don't forget to confirm your email!</value>
+  </data>
+  <data name="EditPost" xml:space="preserve">
+    <value>E - for edit post;</value>
+  </data>
+  <data name="EmailConfirmationCancelled" xml:space="preserve">
+    <value>Email confirmation cancelled.</value>
+  </data>
+  <data name="EmailConfirmationFailed" xml:space="preserve">
+    <value>Email confirmation failed. Please try again.</value>
+  </data>
+  <data name="EmailConfirmed" xml:space="preserve">
+    <value>Email confirmed.</value>
+  </data>
+  <data name="EmailConfirmedSuccessfully" xml:space="preserve">
+    <value>Email confirmed successfully.</value>
+  </data>
+  <data name="EmailNotConfirmed" xml:space="preserve">
+    <value>Email not confirmed - please confirm your email later.</value>
+  </data>
+  <data name="EnterCommentIDToDelete" xml:space="preserve">
+    <value>Enter the ID of the comment you want to delete:</value>
+  </data>
+  <data name="EnterCommentIDToReply" xml:space="preserve">
+    <value>Enter the ID of the comment you want to reply to:</value>
+  </data>
+  <data name="EnterEmail" xml:space="preserve">
+    <value>Enter your email</value>
+  </data>
+  <data name="EnterNewText" xml:space="preserve">
+    <value>Enter new text:</value>
+  </data>
+  <data name="EnterNewTitle" xml:space="preserve">
+    <value>Enter new title:</value>
+  </data>
+  <data name="EnterNumberToConfirmEmail" xml:space="preserve">
+    <value>Please enter the number {0} to confirm your email:</value>
+  </data>
+  <data name="EnterPostID" xml:space="preserve">
+    <value>Enter post ID:</value>
+  </data>
+  <data name="EnterPostIDToComment" xml:space="preserve">
+    <value>Enter the ID of the post you want to comment on:</value>
+  </data>
+  <data name="EnterPostIDToDelete" xml:space="preserve">
+    <value>Enter the ID of the post you want to delete:</value>
+  </data>
+  <data name="EnterPostIDToEdit" xml:space="preserve">
+    <value>Enter the ID of the post you want to edit:</value>
+  </data>
+  <data name="EnterPostIDToMoveToDrafts" xml:space="preserve">
+    <value>Enter the ID of the post you want to move to drafts:</value>
+  </data>
+  <data name="EnterPostIDToPublish" xml:space="preserve">
+    <value>Enter the ID of the post you want to publish:</value>
+  </data>
+  <data name="EnterPostIDToSeeComments" xml:space="preserve">
+    <value>Enter the ID of the post you want to see comments:</value>
+  </data>
+  <data name="EnterPostText" xml:space="preserve">
+    <value>Enter post text:</value>
+  </data>
+  <data name="EnterPostTitle" xml:space="preserve">
+    <value>Enter post title:</value>
+  </data>
+  <data name="EnterYourComment" xml:space="preserve">
+    <value>Enter your comment:</value>
+  </data>
+  <data name="EnterYourPassword" xml:space="preserve">
+    <value>Enter your password</value>
+  </data>
+  <data name="EnterYourReply" xml:space="preserve">
+    <value>Enter your reply:</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error: {0}</value>
+  </data>
+  <data name="GetAllPosts" xml:space="preserve">
+    <value>G - for get all posts;</value>
+  </data>
+  <data name="Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="IdParentComment" xml:space="preserve">
+    <value>ID parent comment</value>
+  </data>
+  <data name="InvalidAction" xml:space="preserve">
+    <value>Invalid action. Please try again.</value>
+  </data>
+  <data name="InvalidIDFormat" xml:space="preserve">
+    <value>Invalid ID format.</value>
+  </data>
+  <data name="IsPostPublished" xml:space="preserve">
+    <value>Is the post published? (yes/no):</value>
+  </data>
+  <data name="IsPublished" xml:space="preserve">
+    <value>Is Published</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>A - for login;</value>
+  </data>
+  <data name="MovePostToDrafts" xml:space="preserve">
+    <value>M - for move post to drafts;</value>
+  </data>
+  <data name="NeedToBeLogged" xml:space="preserve">
+    <value>You need to be logged in to view posts.</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>no</value>
+  </data>
+  <data name="NoCommentsFoundForPost" xml:space="preserve">
+    <value>No comments found for this post!</value>
+  </data>
+  <data name="NoDraftPostsFound" xml:space="preserve">
+    <value>No draft posts found!</value>
+  </data>
+  <data name="NoPostsFound" xml:space="preserve">
+    <value>No posts found!</value>
+  </data>
+  <data name="NoPublishedPostsFound" xml:space="preserve">
+    <value>No published posts found!</value>
+  </data>
+  <data name="PleaseEnterEmail" xml:space="preserve">
+    <value>Please enter your email</value>
+  </data>
+  <data name="PleaseEnterYesOrNo" xml:space="preserve">
+    <value>Please enter 'yes' or 'no'.</value>
+  </data>
+  <data name="PostCreatedSuccessfully" xml:space="preserve">
+    <value>{0}, your post has been successfully created!</value>
+  </data>
+  <data name="PostDeleted" xml:space="preserve">
+    <value>Post deleted!</value>
+  </data>
+  <data name="PostDetails" xml:space="preserve">
+    <value>J - for post details;</value>
+  </data>
+  <data name="PostId" xml:space="preserve">
+    <value>Post Id</value>
+  </data>
+  <data name="PostIsPublishedCannotEdit" xml:space="preserve">
+    <value>This post is published and cannot be edited. Move it to drafts first.</value>
+  </data>
+  <data name="PostMovedToDraftsSuccessfully" xml:space="preserve">
+    <value>Post moved to drafts successfully!</value>
+  </data>
+  <data name="PostNotFound" xml:space="preserve">
+    <value>Post not found.</value>
+  </data>
+  <data name="PostNotFoundForYou" xml:space="preserve">
+    <value>This post was not found for you!</value>
+  </data>
+  <data name="PostPublished" xml:space="preserve">
+    <value>Post published!</value>
+  </data>
+  <data name="PostUpdated" xml:space="preserve">
+    <value>Post updated!</value>
+  </data>
+  <data name="PublishPost" xml:space="preserve">
+    <value>P - for publish post;</value>
+  </data>
+  <data name="R" xml:space="preserve">
+    <value>r</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>R - for register;</value>
+  </data>
+  <data name="RegistrationSuccessful" xml:space="preserve">
+    <value>Registration successful. Welcome, {0}!</value>
+  </data>
+  <data name="ReplyAddedSuccessfully" xml:space="preserve">
+    <value>{0}, your reply has been successfully added!</value>
+  </data>
+  <data name="ReplyToComment" xml:space="preserve">
+    <value>R - for reply to comment;</value>
+  </data>
+  <data name="TableFields" xml:space="preserve">
+    <value>{0} | {1} | {2} | {3} | Parent Comment ID: {4}</value>
+  </data>
+  <data name="TextWithColon" xml:space="preserve">
+    <value>Text: {0}</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="TitleWithColon" xml:space="preserve">
+    <value>Title: {0}</value>
+  </data>
+  <data name="ToExit" xml:space="preserve">
+    <value>0 - to exit;</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>User Name</value>
+  </data>
+  <data name="ViewDraftPosts" xml:space="preserve">
+    <value>S - for view draft posts;</value>
+  </data>
+  <data name="WhatDoYouWant" xml:space="preserve">
+    <value>What do you want to do? Please enter:</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>yes</value>
+  </data>
+  <data name="YouHaveNoCommentsToDelete" xml:space="preserve">
+    <value>You have no comments to delete</value>
+  </data>
+  <data name="YouHaveNoPostsToDelete" xml:space="preserve">
+    <value>You have no posts to delete</value>
+  </data>
+  <data name="YouHaveNoPostsToEdit" xml:space="preserve">
+    <value>You have no posts to edit</value>
+  </data>
+  <data name="YouHaveNoPostsToMoveToDrafts" xml:space="preserve">
+    <value>You have no posts to move to drafts</value>
+  </data>
+  <data name="YouHaveNoPostsToPublish" xml:space="preserve">
+    <value>You have no posts to publish</value>
+  </data>
+  <data name="Zero" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="ZeroToExit" xml:space="preserve">
+    <value>{0} (or 0 to exit):</value>
+  </data>
+</root>

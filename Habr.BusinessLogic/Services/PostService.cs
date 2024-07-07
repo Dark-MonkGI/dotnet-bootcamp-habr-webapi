@@ -5,6 +5,7 @@ using Habr.BusinessLogic.DTOs;
 using Habr.BusinessLogic.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Habr.BusinessLogic.Resources;
 
 namespace Habr.BusinessLogic.Services
 {
@@ -97,12 +98,12 @@ namespace Habr.BusinessLogic.Services
 
             if (existingPost == null)
             {
-                throw new ArgumentException("Post not found.");
+                throw new ArgumentException(Messages.PostNotFound);
             }
 
             if (existingPost.IsPublished)
             {
-                throw new InvalidOperationException("A published post cannot be edited. Move it to drafts first.");
+                throw new InvalidOperationException(Messages.PostPublishedError);
             }
 
             _mapper.Map(updatePostDto, existingPost);
@@ -123,7 +124,7 @@ namespace Habr.BusinessLogic.Services
 
             if (post == null)
             {
-                throw new ArgumentException("The post does not exist.");
+                throw new ArgumentException(Messages.PostDoesNotExist);
             }
 
             post.IsDeleted = true;
@@ -142,12 +143,12 @@ namespace Habr.BusinessLogic.Services
 
             if (post == null)
             {
-                throw new ArgumentException("\nThe post does not exist.");
+                throw new ArgumentException(Messages.PostDoesNotExist);
             }
 
             if (post.IsPublished)
             {
-                throw new InvalidOperationException("\nThe post is already published.");
+                throw new InvalidOperationException(Messages.PostAlreadyPublished);
             }
 
             post.IsPublished = true;
@@ -170,17 +171,17 @@ namespace Habr.BusinessLogic.Services
 
             if (post == null)
             {
-                throw new ArgumentException("\nThe post does not exist.");
+                throw new ArgumentException(Messages.PostDoesNotExist);
             }
 
             if (!post.IsPublished)
             {
-                throw new InvalidOperationException("\nThe post is already in drafts.");
+                throw new InvalidOperationException(Messages.PostInDrafts);
             }
 
             if (post.Comments.Any())
             {
-                throw new InvalidOperationException("\nThe post cannot be moved to drafts because it has comments.");
+                throw new InvalidOperationException(Messages.PostCommentsExist);
             }
 
             post.IsPublished = false;
@@ -203,7 +204,7 @@ namespace Habr.BusinessLogic.Services
 
             if (post == null)
             {
-                throw new ArgumentException("Post not found or is not published.");
+                throw new ArgumentException(Messages.PostNotFoundOrUnpublished);
             }
 
             return _mapper.Map<PostDetailsDto>(post);

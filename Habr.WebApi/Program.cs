@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Habr.WebApi.Helpers;
 using Habr.BusinessLogic.Profiles;
+using Habr.WebApi.Resources;
 
 namespace Habr.WebApi
 {
@@ -57,7 +58,7 @@ namespace Habr.WebApi
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Description = Messages.SwaggerSecurityDefinitionDescription,
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,

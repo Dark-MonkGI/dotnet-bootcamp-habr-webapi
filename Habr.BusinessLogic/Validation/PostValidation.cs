@@ -1,4 +1,6 @@
-﻿namespace Habr.BusinessLogic.Validation
+﻿using Habr.BusinessLogic.Resources;
+
+namespace Habr.BusinessLogic.Validation
 {
     public static class PostValidation
     {
@@ -6,12 +8,12 @@
         {
             if (string.IsNullOrWhiteSpace(title))
             {
-                throw new ArgumentException("Title is required.");
+                throw new ArgumentException(Messages.PostTitleRequired);
             }
 
             if (title.Length > 200)
             {
-                throw new ArgumentException("Title must be less than 200 symbols.");
+                throw new ArgumentException(Messages.PostTitleTooLong);
             }
         }
 
@@ -19,12 +21,12 @@
         {
             if (string.IsNullOrWhiteSpace(text))
             {
-                throw new ArgumentException("Text is required.");
+                throw new ArgumentException(Messages.PostTextRequired);
             }
 
             if (text.Length > 2000)
             {
-                throw new ArgumentException("Text must be less than 2000 symbols.");
+                throw new ArgumentException(Messages.PostTextTooLong);
             }
         }
     }

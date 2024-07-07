@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Habr.BusinessLogic.DTOs;
 using Habr.WebApi.Helpers;
 using Microsoft.Extensions.Options;
+using Habr.WebApi.Resources;
 
 namespace Habr.WebApi.Controllers
 {
@@ -24,7 +25,7 @@ namespace Habr.WebApi.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return BadRequest("You are already authenticated. Cannot register again.");
+                return BadRequest(Messages.AlreadyAuthenticated);
             }
 
             try
@@ -38,7 +39,7 @@ namespace Habr.WebApi.Controllers
                 }
                 else
                 {
-                    return Ok(new { Message = "User registered but email not confirmed." });
+                    return Ok(new { Message = Messages.UserRegisteredEmailNotConfirmed });
                 }
             }
             catch (ArgumentException ex)
@@ -56,7 +57,7 @@ namespace Habr.WebApi.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return BadRequest("You are already authenticated. Cannot register again.");
+                return BadRequest(Messages.AlreadyAuthenticated);
             }
 
             try
@@ -69,17 +70,17 @@ namespace Habr.WebApi.Controllers
 
                 if (user == null)
                 {
-                    return BadRequest("Invalid email or password.");
+                    return BadRequest(Messages.InvalidEmail);
                 }
 
                 if (!confirmEmailDto.IsEmailConfirmed)
                 {
-                    return BadRequest("Email confirmation failed. Please try again.");
+                    return BadRequest(Messages.EmailConfirmationFailed);
                 }
 
                 await _userService.ConfirmEmailAsync(confirmEmailDto.Email, true);
                 var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
-                return Ok(new { Token = token, Message = "Email confirmed successfully." });
+                return Ok(new { Token = token, Message = Messages.EmailConfirmedSuccessfully });
             }
             catch (ArgumentException ex)
             {
@@ -96,7 +97,7 @@ namespace Habr.WebApi.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return BadRequest("You are already authenticated. Cannot register again.");
+                return BadRequest(Messages.AlreadyAuthenticated);
             }
 
             try
@@ -105,12 +106,12 @@ namespace Habr.WebApi.Controllers
 
                 if (user == null)
                 {
-                    return BadRequest("Invalid email or password.");
+                    return BadRequest(Messages.InvalidEmail);
                 }
 
                 if (!user.IsEmailConfirmed)
                 {
-                    return Ok(new { Message = "User authenticated. Please confirm your email." });
+                    return Ok(new { Message = Messages.ConfirmYourEmail });
                 }
 
                 var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);

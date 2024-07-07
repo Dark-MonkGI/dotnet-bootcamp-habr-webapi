@@ -3,6 +3,7 @@ using Habr.BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Habr.WebApi.Resources;
 
 namespace Habr.WebApi.Controllers
 {
@@ -27,7 +28,7 @@ namespace Habr.WebApi.Controllers
 
                 if (posts == null || !posts.Any())
                 {
-                    return NotFound("No posts found.");
+                    return NotFound(Messages.NoPostsFound);
                 }
 
                 return Ok(posts);
@@ -48,7 +49,7 @@ namespace Habr.WebApi.Controllers
 
                 if (posts == null || !posts.Any())
                 {
-                    return NotFound("No draft posts found.");
+                    return NotFound(Messages.NoDraftPosts);
                 }
 
                 return Ok(posts);

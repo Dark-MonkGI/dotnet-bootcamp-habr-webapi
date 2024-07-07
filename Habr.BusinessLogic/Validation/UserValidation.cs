@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using Habr.BusinessLogic.Resources;
+using System.Text.RegularExpressions;
 
 namespace Habr.BusinessLogic.Validation
 {
@@ -11,18 +12,18 @@ namespace Habr.BusinessLogic.Validation
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                throw new ArgumentException("Email cannot be empty.");
+                throw new ArgumentException(Messages.EmailEmpty);
             }
 
             if (email.Length > MaxEmailLength)
             {
-                throw new ArgumentException($"Email cannot exceed {MaxEmailLength} characters.");
+                throw new ArgumentException(string.Format(Messages.EmailTooLong, MaxEmailLength));
             }
 
             var emailRegex = new Regex(EmailPattern);
             if (!emailRegex.IsMatch(email))
             {
-                throw new ArgumentException("Email format is invalid.");
+                throw new ArgumentException(Messages.EmailInvalidFormat);
             }
         }
 
@@ -30,12 +31,12 @@ namespace Habr.BusinessLogic.Validation
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentException("Password cannot be empty.");
+                throw new ArgumentException(Messages.PasswordEmpty);
             }
 
             if (password.Length < 1)
             {
-                throw new ArgumentException("Password must be at least 1 characters long.");
+                throw new ArgumentException(Messages.PasswordTooShort);
             }
         }
     }
