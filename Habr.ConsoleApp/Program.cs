@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Habr.Application.Controllers;
 using Habr.ConsoleApp.Managers;
+using AutoMapper;
+using Habr.BusinessLogic.Profiles;
 
 namespace Habr.ConsoleApp
 {
@@ -29,9 +31,18 @@ namespace Habr.ConsoleApp
             {
                 await context.Database.MigrateAsync();
 
-                var userService = new UserService(context);
-                var postService = new PostService(context);
-                var commentService = new CommentService(context);
+                var mapperConfig = new MapperConfiguration(cfg =>
+                {
+                    cfg.AddProfile<UserProfile>();
+                    cfg.AddProfile<PostProfile>();
+                    cfg.AddProfile<CommentProfile>();
+                });
+
+                var mapper = mapperConfig.CreateMapper();
+
+                var userService = new UserService(context, mapper);
+                var postService = new PostService(context, mapper);
+                var commentService = new CommentService(context, mapper);
 
                 var usersController = new UsersController(userService);
                 var postsController = new PostsController(postService);

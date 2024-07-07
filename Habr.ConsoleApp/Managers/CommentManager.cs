@@ -2,6 +2,8 @@
 using Habr.ConsoleApp.Helpers;
 using Habr.Application.Controllers;
 using Habr.BusinessLogic.Validation;
+using Habr.BusinessLogic.DTOs;
+using System.ComponentModel.Design;
 
 namespace Habr.ConsoleApp.Managers
 {
@@ -43,7 +45,13 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                await commentController.AddCommentAsync(user.Id, postId, text);
+                await commentController.AddCommentAsync(new InternalAddCommentDto
+                {
+                    UserId = user.Id,
+                    PostId = postId,
+                    Text = text
+                });
+
                 Console.WriteLine($"{user.Name}, your comment has been successfully added!");
             }
             catch (ArgumentException ex)
@@ -116,7 +124,13 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                await commentController.AddReplyAsync(user.Id, commentId, text);
+                await commentController.AddReplyAsync(new InternalAddReplyDto
+                {
+                    UserId = user.Id,
+                    ParentCommentId = commentId,
+                    Text = text
+                });
+
                 Console.WriteLine($"{user.Name}, your reply has been successfully added!");
             }
             catch (ArgumentException ex)

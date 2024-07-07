@@ -2,6 +2,7 @@
 using Habr.BusinessLogic.Validation;
 using Habr.ConsoleApp.Helpers;
 using Habr.Application.Controllers;
+using Habr.BusinessLogic.DTOs;
 
 namespace Habr.ConsoleApp.Managers
 {
@@ -30,7 +31,14 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var user = await userController.RegisterAsync(email, password, isEmailConfirmed);
+                var registerUserDto = new RegisterUserDto
+                {
+                    Email = email,
+                    Password = password,
+                    IsEmailConfirmed = isEmailConfirmed
+                };
+
+                var user = await userController.RegisterAsync(registerUserDto);
 
                 Console.WriteLine(isEmailConfirmed
                     ? "\nEmail confirmed."
@@ -68,7 +76,12 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var authenticatedUser = await userController.AuthenticateAsync(email, password);
+                var authenticatedUser = await userController.AuthenticateAsync(new AuthenticateUserDto
+                {
+                    Email = email,
+                    Password = password
+                });
+
                 if (authenticatedUser == null)
                 {
                     return null;
@@ -116,7 +129,11 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                return await userController.AuthenticateAsync(email, password);
+                return await userController.AuthenticateAsync(new AuthenticateUserDto
+                {
+                    Email = email,
+                    Password = password
+                });
             }
             catch (ArgumentException ex)
             {

@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Habr.WebApi.Helpers;
+using Habr.BusinessLogic.Profiles;
 
 namespace Habr.WebApi
 {
@@ -15,6 +16,8 @@ namespace Habr.WebApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddAutoMapper(typeof(PostProfile), typeof(CommentProfile), typeof(UserProfile));
 
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 

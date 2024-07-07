@@ -8,7 +8,7 @@ namespace Habr.BusinessLogic.Interfaces
         Task<IEnumerable<PostDto>> GetAllPublishedPosts();
         Task<IEnumerable<DraftPostDto>> GetUserDraftPosts(int userId);
         Task<IEnumerable<Post>> GetAllUserPosts(int userId);
-        Task<Post> CreatePost(int userId, string title, string text, bool isPublished);
+        Task<Post> CreatePost(CreatePostDto createPostDto, int userId);
         Task<Post> GetPostWithCommentsAsync(int postId, int userId);
         Task UpdatePost(int postId, int userId, UpdatePostDto updatePostDto);
         Task DeletePost(int postId, int userId);

@@ -3,36 +3,36 @@ using Habr.DataAccess.Entities;
 using Habr.BusinessLogic.Validation;
 using Habr.DataAccess;
 using Habr.BusinessLogic.Interfaces;
+using Habr.BusinessLogic.DTOs;
+using AutoMapper;
 
 namespace Habr.BusinessLogic.Services
 {
     public class UserService : IUserService
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public UserService(DataContext context)
+        public UserService(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<User> RegisterAsync(string email, string password, bool isEmailConfirmed)
+        public async Task<User> RegisterAsync(RegisterUserDto registerUserDto)
         {
-            UserValidation.ValidateEmail(email);
-            UserValidation.ValidatePassword(password);
+            UserValidation.ValidateEmail(registerUserDto.Email);
+            UserValidation.ValidatePassword(registerUserDto.Password);
 
-            if (await _context.Users.AnyAsync(u => u.Email == email))
+            if (await _context.Users.AnyAsync(u => u.Email == registerUserDto.Email))
             {
                 throw new ArgumentException("The email is already taken.");
             }
 
-            var user = new User
-            {
-                Name = email.Split('@')[0],
-                Email = email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                Created = DateTime.UtcNow,
-                IsEmailConfirmed = isEmailConfirmed
-            };
+            var user = _mapper.Map<User>(registerUserDto);
+            user.Name = registerUserDto.Email.Split('@')[0];
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerUserDto.Password);
+            user.Created = DateTime.UtcNow;
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -53,23 +53,23 @@ namespace Habr.BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<User> AuthenticateAsync(string email, string password)
+        public async Task<User> AuthenticateAsync(AuthenticateUserDto authenticateUserDto)
         {
-            UserValidation.ValidateEmail(email);
-            UserValidation.ValidatePassword(password);
+            UserValidation.ValidateEmail(authenticateUserDto.Email);
+            UserValidation.ValidatePassword(authenticateUserDto.Password);
 
             var user = await _context.Users
                 .AsNoTracking()
-                .SingleOrDefaultAsync(u => u.Email == email);
+                .SingleOrDefaultAsync(u => u.Email == authenticateUserDto.Email);
 
             if (user == null)
             {
-                throw new ArgumentException("The email is incorrect."); 
+                throw new ArgumentException("Invalid email or password.");
             }
 
-            if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            if (!BCrypt.Net.BCrypt.Verify(authenticateUserDto.Password, user.PasswordHash))
             {
-                throw new ArgumentException("Invalid password.");
+                throw new ArgumentException("Invalid email or password.");
             }
 
             return user;

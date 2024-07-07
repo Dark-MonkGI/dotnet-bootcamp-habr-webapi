@@ -1,6 +1,5 @@
 ﻿using Habr.BusinessLogic.DTOs;
 using Habr.BusinessLogic.Interfaces;
-using Habr.WebApi.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -24,7 +23,6 @@ namespace Habr.WebApi.Controllers
         {
             try
             {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
                 var posts = await _postService.GetAllPublishedPosts();
 
                 if (posts == null || !posts.Any())
@@ -67,12 +65,7 @@ namespace Habr.WebApi.Controllers
             try
             {
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-                var post = await _postService.CreatePost(
-                    userId, 
-                    createPostDto.Title, 
-                    createPostDto.Text, 
-                    createPostDto.IsPublished);
+                var post = await _postService.CreatePost(createPostDto, userId);
 
                 return StatusCode(201, post);
             }

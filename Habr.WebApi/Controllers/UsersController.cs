@@ -1,6 +1,5 @@
 ﻿using Habr.BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Habr.WebApi.DTOs;
 using Habr.BusinessLogic.DTOs;
 using Habr.WebApi.Helpers;
 using Microsoft.Extensions.Options;
@@ -30,7 +29,8 @@ namespace Habr.WebApi.Controllers
 
             try
             {
-                var user = await _userService.RegisterAsync(registerUserDto.Email, registerUserDto.Password, registerUserDto.IsEmailConfirmed);
+                var user = await _userService.RegisterAsync(registerUserDto);
+
                 if (registerUserDto.IsEmailConfirmed)
                 {
                     var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
@@ -61,7 +61,12 @@ namespace Habr.WebApi.Controllers
 
             try
             {
-                var user = await _userService.AuthenticateAsync(confirmEmailDto.Email, confirmEmailDto.Password);
+                var user = await _userService.AuthenticateAsync(new AuthenticateUserDto
+                {
+                    Email = confirmEmailDto.Email,
+                    Password = confirmEmailDto.Password
+                });
+
                 if (user == null)
                 {
                     return BadRequest("Invalid email or password.");
@@ -96,7 +101,8 @@ namespace Habr.WebApi.Controllers
 
             try
             {
-                var user = await _userService.AuthenticateAsync(authenticateUserDto.Email, authenticateUserDto.Password);
+                var user = await _userService.AuthenticateAsync(authenticateUserDto);
+
                 if (user == null)
                 {
                     return BadRequest("Invalid email or password.");

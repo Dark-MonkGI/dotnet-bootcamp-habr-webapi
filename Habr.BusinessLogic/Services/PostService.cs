@@ -3,16 +3,20 @@ using Habr.DataAccess.Entities;
 using Habr.DataAccess;
 using Habr.BusinessLogic.DTOs;
 using Habr.BusinessLogic.Interfaces;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 namespace Habr.BusinessLogic.Services
 {
     public class PostService : IPostService
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public PostService(DataContext context)
+        public PostService(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<PostDto>> GetAllPublishedPosts()
@@ -21,31 +25,19 @@ namespace Habr.BusinessLogic.Services
                 .Include(p => p.User)
                 .Where(p => p.IsPublished && !p.IsDeleted)
                 .OrderByDescending(p => p.PublishedDate)
-                .Select(p => new PostDto
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    AuthorEmail = p.User.Email,
-                    PublicationDate = p.PublishedDate
-                })
+                .ProjectTo<PostDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<DraftPostDto>> GetUserDraftPosts(int userId)
         {
             return await _context.Posts
-                .Where(p => 
-                    !p.IsPublished && 
-                    p.UserId == userId && 
+                .Where(p =>
+                    !p.IsPublished &&
+                    p.UserId == userId &&
                     !p.IsDeleted)
                 .OrderByDescending(p => p.Updated)
-                .Select(p => new DraftPostDto
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    CreatedAt = p.Created,
-                    UpdatedAt = p.Updated
-                })
+                .ProjectTo<DraftPostDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
@@ -59,23 +51,13 @@ namespace Habr.BusinessLogic.Services
                 .ToListAsync();
         }
 
-        public async Task<Post> CreatePost(
-            int userId, 
-            string title, 
-            string text, 
-            bool isPublished)
+        public async Task<Post> CreatePost(CreatePostDto createPostDto, int userId)
         {
-
-            var post = new Post
-            {
-                UserId = userId,
-                Title = title,
-                Text = text,
-                IsPublished = isPublished,
-                Created = DateTime.UtcNow,
-                Updated = DateTime.UtcNow,
-                PublishedDate = isPublished ? DateTime.UtcNow : (DateTime?)null
-            };
+            var post = _mapper.Map<Post>(createPostDto);
+            post.UserId = userId;
+            post.Created = DateTime.UtcNow;
+            post.Updated = DateTime.UtcNow;
+            post.PublishedDate = createPostDto.IsPublished ? DateTime.UtcNow : (DateTime?)null;
 
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
@@ -123,8 +105,7 @@ namespace Habr.BusinessLogic.Services
                 throw new InvalidOperationException("A published post cannot be edited. Move it to drafts first.");
             }
 
-            existingPost.Title = updatePostDto.Title;
-            existingPost.Text = updatePostDto.Text;
+            _mapper.Map(updatePostDto, existingPost);
             existingPost.Updated = DateTime.UtcNow;
 
             _context.Posts.Update(existingPost);
@@ -225,24 +206,7 @@ namespace Habr.BusinessLogic.Services
                 throw new ArgumentException("Post not found or is not published.");
             }
 
-            var postDetails = new PostDetailsDto
-            {
-                Id = post.Id,
-                Title = post.Title,
-                Text = post.Text,
-                AuthorEmail = post.User.Email,
-                PublicationDate = post.PublishedDate,
-                Comments = post.Comments.Select(c => new CommentDto
-                {
-                    Id = c.Id,
-                    Text = c.Text,
-                    Created = c.Created,
-                    UserName = c.User.Name,
-                    ParentCommentId = c.ParentCommentId
-                }).ToList()
-            };
-
-            return postDetails;
+            return _mapper.Map<PostDetailsDto>(post);
         }
     }
 }

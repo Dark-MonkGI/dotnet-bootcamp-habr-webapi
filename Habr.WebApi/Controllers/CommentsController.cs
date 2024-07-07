@@ -23,8 +23,12 @@ namespace Habr.WebApi.Controllers
         {
             try
             {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var comment = await _commentService.AddComment(userId, postId, addCommentDto.Text);
+                var comment = await _commentService.AddComment(new InternalAddCommentDto
+                {
+                    UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                    PostId = postId,
+                    Text = addCommentDto.Text
+                });
 
                 return StatusCode(201, comment);
             }
@@ -43,8 +47,12 @@ namespace Habr.WebApi.Controllers
         {
             try
             {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var comment = await _commentService.AddReply(userId, parentCommentId, addReplyDto.Text);
+                var comment = await _commentService.AddReply(new InternalAddReplyDto
+                {
+                    UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                    ParentCommentId = parentCommentId,
+                    Text = addReplyDto.Text
+                });
 
                 return StatusCode(201, comment);
             }
