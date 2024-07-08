@@ -28,27 +28,16 @@ namespace Habr.WebApi.Controllers
                 return BadRequest(Messages.AlreadyAuthenticated);
             }
 
-            try
-            {
-                var user = await _userService.RegisterAsync(registerUserDto);
+            var user = await _userService.RegisterAsync(registerUserDto);
 
-                if (registerUserDto.IsEmailConfirmed)
-                {
-                    var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
-                    return Ok(new { Token = token });
-                }
-                else
-                {
-                    return Ok(new { Message = Messages.UserRegisteredEmailNotConfirmed });
-                }
-            }
-            catch (ArgumentException ex)
+            if (registerUserDto.IsEmailConfirmed)
             {
-                return BadRequest(ex.Message);
+                var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
+                return Ok(new { Token = token });
             }
-            catch (Exception ex)
+            else
             {
-                return StatusCode(500, ex.Message);
+                return Ok(new { Message = Messages.UserRegisteredEmailNotConfirmed });
             }
         }
 
@@ -60,36 +49,25 @@ namespace Habr.WebApi.Controllers
                 return BadRequest(Messages.AlreadyAuthenticated);
             }
 
-            try
+            var user = await _userService.AuthenticateAsync(new AuthenticateUserDto
             {
-                var user = await _userService.AuthenticateAsync(new AuthenticateUserDto
-                {
-                    Email = confirmEmailDto.Email,
-                    Password = confirmEmailDto.Password
-                });
+                Email = confirmEmailDto.Email,
+                Password = confirmEmailDto.Password
+            });
 
-                if (user == null)
-                {
-                    return BadRequest(Messages.InvalidEmail);
-                }
-
-                if (!confirmEmailDto.IsEmailConfirmed)
-                {
-                    return BadRequest(Messages.EmailConfirmationFailed);
-                }
-
-                await _userService.ConfirmEmailAsync(confirmEmailDto.Email, true);
-                var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
-                return Ok(new { Token = token, Message = Messages.EmailConfirmedSuccessfully });
-            }
-            catch (ArgumentException ex)
+            if (user == null)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(Messages.InvalidEmail);
             }
-            catch (Exception ex)
+
+            if (!confirmEmailDto.IsEmailConfirmed)
             {
-                return StatusCode(500, ex.Message);
+                return BadRequest(Messages.EmailConfirmationFailed);
             }
+
+            await _userService.ConfirmEmailAsync(confirmEmailDto.Email, true);
+            var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
+            return Ok(new { Token = token, Message = Messages.EmailConfirmedSuccessfully });
         }
 
         [HttpPost("authenticate")]
@@ -100,31 +78,20 @@ namespace Habr.WebApi.Controllers
                 return BadRequest(Messages.AlreadyAuthenticated);
             }
 
-            try
-            {
-                var user = await _userService.AuthenticateAsync(authenticateUserDto);
+            var user = await _userService.AuthenticateAsync(authenticateUserDto);
 
-                if (user == null)
-                {
-                    return BadRequest(Messages.InvalidEmail);
-                }
-
-                if (!user.IsEmailConfirmed)
-                {
-                    return Ok(new { Message = Messages.ConfirmYourEmail });
-                }
-
-                var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
-                return Ok(new { Token = token });
-            }
-            catch (ArgumentException ex)
+            if (user == null)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(Messages.InvalidEmail);
             }
-            catch (Exception ex)
+
+            if (!user.IsEmailConfirmed)
             {
-                return StatusCode(500, ex.Message);
+                return Ok(new { Message = Messages.ConfirmYourEmail });
             }
+
+            var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
+            return Ok(new { Token = token });
         }
     }
 }

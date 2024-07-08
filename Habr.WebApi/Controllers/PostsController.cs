@@ -22,166 +22,80 @@ namespace Habr.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllPostsAsync()
         {
-            try
-            {
-                var posts = await _postService.GetAllPublishedPosts();
+            var posts = await _postService.GetAllPublishedPosts();
 
-                if (posts == null || !posts.Any())
-                {
-                    return NotFound(Messages.NoPostsFound);
-                }
-
-                return Ok(posts);
-            }
-            catch (Exception ex)
+            if (posts == null || !posts.Any())
             {
-                return StatusCode(500, ex.Message);
+                return NotFound(Messages.NoPostsFound);
             }
+
+            return Ok(posts);
         }
 
         [HttpGet("drafts")]
         public async Task<IActionResult> GetUserDraftPostsAsync()
         {
-            try
-            {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var posts = await _postService.GetUserDraftPosts(userId);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var posts = await _postService.GetUserDraftPosts(userId);
 
-                if (posts == null || !posts.Any())
-                {
-                    return NotFound(Messages.NoDraftPosts);
-                }
-
-                return Ok(posts);
-            }
-            catch (Exception ex)
+            if (posts == null || !posts.Any())
             {
-                return StatusCode(500, ex.Message);
+                return NotFound(Messages.NoDraftPosts);
             }
+
+            return Ok(posts);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostDto createPostDto)
         {
-            try
-            {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var post = await _postService.CreatePost(createPostDto, userId);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var post = await _postService.CreatePost(createPostDto, userId);
 
-                return StatusCode(201, post);
-            }
-            catch (Exception ex)
-            {
-                if (ex is ArgumentException)
-                {
-                    return BadRequest(ex.Message);
-                }
-
-                return StatusCode(500, ex.Message);
-            }
+            return StatusCode(201, post);
         }
 
         [HttpPut("{postId}")]
         public async Task<IActionResult> UpdatePostAsync([FromRoute] int postId, [FromBody] UpdatePostDto updatePostDto)
         {
-            try
-            {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-                await _postService.UpdatePost(postId, userId, updatePostDto);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                if (ex is ArgumentException || ex is InvalidOperationException)
-                {
-                    return BadRequest(ex.Message);
-                }
-
-                return StatusCode(500, ex.Message);
-            }
+            await _postService.UpdatePost(postId, userId, updatePostDto);
+            return Ok();
         }
 
         [HttpDelete("{postId}")]
         public async Task<IActionResult> DeletePostAsync([FromRoute] int postId)
         {
-            try
-            {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-                await _postService.DeletePost(postId, userId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                if (ex is ArgumentException)
-                {
-                    return BadRequest(ex.Message);
-                }
-
-                return StatusCode(500, ex.Message);
-            }
+            await _postService.DeletePost(postId, userId);
+            return Ok();
         }
 
         [HttpPost("{postId}/publish")]
         public async Task<IActionResult> PublishPostAsync([FromRoute] int postId)
         {
-            try
-            {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-                await _postService.PublishPostAsync(postId, userId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                if (ex is ArgumentException || ex is InvalidOperationException)
-                {
-                    return BadRequest(ex.Message);
-                }
-
-                return StatusCode(500, ex.Message);
-            }
+            await _postService.PublishPostAsync(postId, userId);
+            return Ok();
         }
 
         [HttpPost("{postId}/move-to-draft")]
         public async Task<IActionResult> MovePostToDraftAsync([FromRoute] int postId)
         {
-            try
-            {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-                await _postService.MovePostToDraftAsync(postId, userId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                if (ex is ArgumentException || ex is InvalidOperationException)
-                {
-                    return BadRequest(ex.Message);
-                }
-
-                return StatusCode(500, ex.Message);
-            }
+            await _postService.MovePostToDraftAsync(postId, userId);
+            return Ok();
         }
 
         [HttpGet("{postId}")]
         public async Task<IActionResult> GetPostDetailsAsync([FromRoute] int postId)
         {
-            try
-            {
-                var postDetails = await _postService.GetPostDetailsAsync(postId);
-                return Ok(postDetails);
-            }
-            catch (Exception ex)
-            {
-                if (ex is ArgumentException)
-                {
-                    return NotFound(ex.Message);
-                }
-
-                return StatusCode(500, ex.Message);
-            }
+            var postDetails = await _postService.GetPostDetailsAsync(postId);
+            return Ok(postDetails);
         }
     }
 }

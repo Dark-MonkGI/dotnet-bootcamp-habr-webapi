@@ -70,6 +70,15 @@ namespace Habr.WebApi.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Bad Request.
+        /// </summary>
+        public static string BadRequestTitle {
+            get {
+                return ResourceManager.GetString("BadRequestTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на User authenticated. Please confirm your email..
         /// </summary>
         public static string ConfirmYourEmail {
@@ -93,6 +102,15 @@ namespace Habr.WebApi.Resources {
         public static string EmailConfirmedSuccessfully {
             get {
                 return ResourceManager.GetString("EmailConfirmedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Internal Server Error.
+        /// </summary>
+        public static string InternalServerErrorTitle {
+            get {
+                return ResourceManager.GetString("InternalServerErrorTitle", resourceCulture);
             }
         }
         
@@ -124,6 +142,15 @@ namespace Habr.WebApi.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Not Found.
+        /// </summary>
+        public static string NotFoundTitle {
+            get {
+                return ResourceManager.GetString("NotFoundTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на JWT Authorization header using the Bearer scheme. Example: &quot;Authorization: Bearer {token}&quot;.
         /// </summary>
         public static string SwaggerSecurityDefinitionDescription {
@@ -133,11 +160,29 @@ namespace Habr.WebApi.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Unauthorized.
+        /// </summary>
+        public static string UnauthorizedTitle {
+            get {
+                return ResourceManager.GetString("UnauthorizedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на User registered but email not confirmed..
         /// </summary>
         public static string UserRegisteredEmailNotConfirmed {
             get {
                 return ResourceManager.GetString("UserRegisteredEmailNotConfirmed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на One or more validation errors occurred.
+        /// </summary>
+        public static string ValidationErrorMessage {
+            get {
+                return ResourceManager.GetString("ValidationErrorMessage", resourceCulture);
             }
         }
     }

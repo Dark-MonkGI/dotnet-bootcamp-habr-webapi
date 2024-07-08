@@ -9,6 +9,8 @@ using Microsoft.OpenApi.Models;
 using Habr.WebApi.Helpers;
 using Habr.BusinessLogic.Profiles;
 using Habr.WebApi.Resources;
+using Habr.WebApi.Extensions;
+using Habr.WebApi.Profiles;
 
 namespace Habr.WebApi
 {
@@ -18,7 +20,11 @@ namespace Habr.WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddAutoMapper(typeof(PostProfile), typeof(CommentProfile), typeof(UserProfile));
+            builder.Services.AddAutoMapper(
+                typeof(PostProfile), 
+                typeof(CommentProfile), 
+                typeof(UserProfile),
+                typeof(ExceptionProfile));
 
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
@@ -28,6 +34,8 @@ namespace Habr.WebApi
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<IUserService, UserService>();
+
+            builder.Services.AddGlobalExceptionHandler();
 
             var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
             var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
@@ -90,6 +98,8 @@ namespace Habr.WebApi
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseGlobalExceptionHandler();
 
             app.UseHttpsRedirection();
 
