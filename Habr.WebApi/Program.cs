@@ -11,14 +11,28 @@ using Habr.BusinessLogic.Profiles;
 using Habr.WebApi.Resources;
 using Habr.WebApi.Extensions;
 using Habr.WebApi.Profiles;
+using Serilog;
+using Serilog.Events;
 
 namespace Habr.WebApi
 {
     public class Program
     {
+        private const string LogFilePath = "logs/log.txt";
+
         public static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.Async(a => a.File(LogFilePath, rollingInterval: RollingInterval.Day))
+                .CreateLogger();
+
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Host.UseSerilog();
 
             builder.Services.AddAutoMapper(
                 typeof(PostProfile), 
