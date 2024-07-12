@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Habr.Common\Habr.Common.csproj" />
     <ProjectReference Include="..\Habr.DataAccess\Habr.DataAccess.csproj" />
   </ItemGroup>
 

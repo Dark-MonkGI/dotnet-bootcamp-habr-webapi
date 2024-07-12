@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Habr.DataAccess.Entities;
+using Habr.Common;
 
 namespace Habr.DataAccess.Configurations
 {
@@ -14,11 +15,11 @@ namespace Habr.DataAccess.Configurations
 
             builder.Property(u => u.Name)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(Constants.User.NameMaxLength);
 
             builder.Property(u => u.Email)
                 .IsRequired()
-                .HasMaxLength(200);
+                .HasMaxLength(Constants.User.EmailMaxLength);
 
             builder.Property(u => u.PasswordHash)
                 .IsRequired();
@@ -28,7 +29,7 @@ namespace Habr.DataAccess.Configurations
 
             builder.Property(u => u.IsEmailConfirmed)
                 .IsRequired()
-                .HasDefaultValue(false);
+                .HasDefaultValue(Constants.User.DefaultIsEmailConfirmed);
 
             builder.HasIndex(u => u.Email)
                 .IsUnique();

@@ -127,7 +127,7 @@
     <value>Comment text cannot be empty.</value>
   </data>
   <data name="CommentTextTooLong" xml:space="preserve">
-    <value>Comment text cannot exceed 200 characters.</value>
+    <value>Comment text cannot exceed {0} characters.</value>
   </data>
   <data name="DeleteCommentPermissionDenied" xml:space="preserve">
     <value>Comment not found or you do not have permission to delete it.</value>
@@ -181,12 +181,12 @@
     <value>Text is required.</value>
   </data>
   <data name="PostTextTooLong" xml:space="preserve">
-    <value>Text must be less than 2000 symbols.</value>
+    <value>Text must be less than {0} symbols.</value>
   </data>
   <data name="PostTitleRequired" xml:space="preserve">
     <value>Title is required.</value>
   </data>
   <data name="PostTitleTooLong" xml:space="preserve">
-    <value>Title must be less than 200 symbols.</value>
+    <value>Title must be less than {0}  symbols.</value>
   </data>
 </root>

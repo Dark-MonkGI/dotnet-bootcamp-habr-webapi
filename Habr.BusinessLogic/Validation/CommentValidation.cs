@@ -1,4 +1,5 @@
 ﻿using Habr.BusinessLogic.Resources;
+using Habr.Common;
 
 namespace Habr.BusinessLogic.Validation
 {
@@ -11,9 +12,9 @@ namespace Habr.BusinessLogic.Validation
                 throw new ArgumentException(Messages.CommentTextEmpty);
             }
 
-            if (text.Length > 200) 
+            if (text.Length > Constants.Comment.TextMaxLength)
             {
-                throw new ArgumentException(Messages.CommentTextTooLong);
+                throw new ArgumentException(string.Format(Messages.CommentTextTooLong, Constants.Comment.TextMaxLength));
             }
         }
     }

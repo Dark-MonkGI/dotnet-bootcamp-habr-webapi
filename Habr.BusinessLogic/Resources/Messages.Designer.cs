@@ -88,7 +88,7 @@ namespace Habr.BusinessLogic.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Comment text cannot exceed 200 characters..
+        ///   Ищет локализованную строку, похожую на Comment text cannot exceed {0} characters..
         /// </summary>
         internal static string CommentTextTooLong {
             get {
@@ -250,7 +250,7 @@ namespace Habr.BusinessLogic.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Text must be less than 2000 symbols..
+        ///   Ищет локализованную строку, похожую на Text must be less than {0} symbols..
         /// </summary>
         internal static string PostTextTooLong {
             get {
@@ -268,7 +268,7 @@ namespace Habr.BusinessLogic.Resources {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Title must be less than 200 symbols..
+        ///   Ищет локализованную строку, похожую на Title must be less than {0}  symbols..
         /// </summary>
         internal static string PostTitleTooLong {
             get {

@@ -1,4 +1,5 @@
 ﻿using Habr.BusinessLogic.Resources;
+using Habr.Common;
 
 namespace Habr.BusinessLogic.Validation
 {
@@ -11,9 +12,9 @@ namespace Habr.BusinessLogic.Validation
                 throw new ArgumentException(Messages.PostTitleRequired);
             }
 
-            if (title.Length > 200)
+            if (title.Length > Constants.Post.TitleMaxLength)
             {
-                throw new ArgumentException(Messages.PostTitleTooLong);
+                throw new ArgumentException(string.Format(Messages.PostTitleTooLong, Constants.Post.TitleMaxLength));
             }
         }
 
@@ -24,9 +25,9 @@ namespace Habr.BusinessLogic.Validation
                 throw new ArgumentException(Messages.PostTextRequired);
             }
 
-            if (text.Length > 2000)
+            if (text.Length > Constants.Post.TextMaxLength)
             {
-                throw new ArgumentException(Messages.PostTextTooLong);
+                throw new ArgumentException(string.Format(Messages.PostTextTooLong, Constants.Post.TextMaxLength));
             }
         }
     }

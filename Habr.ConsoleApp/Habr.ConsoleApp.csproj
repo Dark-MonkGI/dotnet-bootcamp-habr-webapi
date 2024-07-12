@@ -30,9 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Habr.Application\Habr.Application.csproj" />
 		<ProjectReference Include="..\Habr.BusinessLogic\Habr.BusinessLogic.csproj" />
-		<ProjectReference Include="..\Habr.DataAccess\Habr.DataAccess.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

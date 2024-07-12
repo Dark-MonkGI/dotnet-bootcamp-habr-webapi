@@ -1,13 +1,11 @@
 ﻿using Habr.BusinessLogic.Resources;
 using System.Text.RegularExpressions;
+using Habr.Common;
 
 namespace Habr.BusinessLogic.Validation
 {
     public static class UserValidation
     {
-        private const string EmailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-        private const int MaxEmailLength = 200;
-
         public static void ValidateEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
@@ -15,12 +13,12 @@ namespace Habr.BusinessLogic.Validation
                 throw new ArgumentException(Messages.EmailEmpty);
             }
 
-            if (email.Length > MaxEmailLength)
+            if (email.Length > Constants.User.EmailMaxLength)
             {
-                throw new ArgumentException(string.Format(Messages.EmailTooLong, MaxEmailLength));
+                throw new ArgumentException(string.Format(Messages.EmailTooLong, Constants.User.EmailMaxLength));
             }
 
-            var emailRegex = new Regex(EmailPattern);
+            var emailRegex = new Regex(Constants.User.EmailPattern);
             if (!emailRegex.IsMatch(email))
             {
                 throw new ArgumentException(Messages.EmailInvalidFormat);
