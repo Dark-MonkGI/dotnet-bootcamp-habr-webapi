@@ -49,6 +49,8 @@ namespace Habr.WebApi
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<IUserService, UserService>();
 
+            builder.Services.AddLogging();
+
             builder.Services.AddGlobalExceptionHandler();
 
             var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();

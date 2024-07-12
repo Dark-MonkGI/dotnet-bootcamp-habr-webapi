@@ -8,6 +8,9 @@ using Habr.ConsoleApp.Managers;
 using AutoMapper;
 using Habr.BusinessLogic.Profiles;
 using Habr.ConsoleApp.Resources;
+using Microsoft.Extensions.Logging;
+using Serilog;
+
 
 namespace Habr.ConsoleApp
 {
@@ -15,6 +18,17 @@ namespace Habr.ConsoleApp
     {
         static async Task Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddSerilog(Log.Logger);
+            });
+
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
@@ -41,8 +55,9 @@ namespace Habr.ConsoleApp
 
                 var mapper = mapperConfig.CreateMapper();
 
-                var userService = new UserService(context, mapper);
-                var postService = new PostService(context, mapper);
+
+                var userService = new UserService(context, mapper, loggerFactory.CreateLogger<UserService>());
+                var postService = new PostService(context, mapper, loggerFactory.CreateLogger<PostService>());
                 var commentService = new CommentService(context, mapper);
 
                 var usersController = new UsersController(userService);

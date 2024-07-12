@@ -6,6 +6,7 @@ using Habr.BusinessLogic.Interfaces;
 using Habr.BusinessLogic.DTOs;
 using AutoMapper;
 using Habr.BusinessLogic.Resources;
+using Microsoft.Extensions.Logging;
 
 namespace Habr.BusinessLogic.Services
 {
@@ -13,11 +14,13 @@ namespace Habr.BusinessLogic.Services
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(DataContext context, IMapper mapper)
+        public UserService(DataContext context, IMapper mapper, ILogger<UserService> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<User> RegisterAsync(RegisterUserDto registerUserDto)
@@ -38,6 +41,8 @@ namespace Habr.BusinessLogic.Services
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation(string.Format(LogMessages.UserRegisteredSuccessfully, user.Email));
+
             return user;
         }
 
@@ -52,6 +57,8 @@ namespace Habr.BusinessLogic.Services
             user.IsEmailConfirmed = isEmailConfirmed;
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(string.Format(LogMessages.UserConfirmedSuccessfully, user.Email));
         }
 
         public async Task<User> AuthenticateAsync(AuthenticateUserDto authenticateUserDto)
@@ -72,6 +79,8 @@ namespace Habr.BusinessLogic.Services
             {
                 throw new ArgumentException(Messages.InvalidEmailOrPassword);
             }
+
+            _logger.LogInformation(string.Format(LogMessages.UserLoggedInSuccessfully, user.Email));
 
             return user;
         }

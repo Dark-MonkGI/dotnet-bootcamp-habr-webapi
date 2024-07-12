@@ -6,6 +6,7 @@ using Habr.BusinessLogic.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Habr.BusinessLogic.Resources;
+using Microsoft.Extensions.Logging;
 
 namespace Habr.BusinessLogic.Services
 {
@@ -13,11 +14,13 @@ namespace Habr.BusinessLogic.Services
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<PostService> _logger;
 
-        public PostService(DataContext context, IMapper mapper)
+        public PostService(DataContext context, IMapper mapper, ILogger<PostService> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<PostDto>> GetAllPublishedPosts()
@@ -62,6 +65,8 @@ namespace Habr.BusinessLogic.Services
 
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(string.Format(LogMessages.PostCreatedSuccessfully, post.Id, userId));
 
             return post;
         }
@@ -157,6 +162,8 @@ namespace Habr.BusinessLogic.Services
 
             _context.Posts.Update(post);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(string.Format(LogMessages.PostPublishedSuccessfully, postId, userId));
         }
 
         public async Task MovePostToDraftAsync(int postId, int userId)

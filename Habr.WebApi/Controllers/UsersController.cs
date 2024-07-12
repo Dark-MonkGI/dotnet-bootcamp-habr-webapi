@@ -4,7 +4,6 @@ using Habr.BusinessLogic.DTOs;
 using Habr.WebApi.Helpers;
 using Microsoft.Extensions.Options;
 using Habr.WebApi.Resources;
-using Serilog;
 
 namespace Habr.WebApi.Controllers
 {
@@ -30,8 +29,6 @@ namespace Habr.WebApi.Controllers
             }
 
             var user = await _userService.RegisterAsync(registerUserDto);
-
-            Log.Information(string.Format(LogMessages.UserRegisteredSuccessfully, user.Email));
 
             if (registerUserDto.IsEmailConfirmed)
             {
@@ -71,8 +68,6 @@ namespace Habr.WebApi.Controllers
             await _userService.ConfirmEmailAsync(confirmEmailDto.Email, true);
             var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
 
-            Log.Information(string.Format(LogMessages.UserConfirmedSuccessfully, user.Email));
-
             return Ok(new { Token = token, Message = Messages.EmailConfirmedSuccessfully });
         }
 
@@ -95,8 +90,6 @@ namespace Habr.WebApi.Controllers
             {
                 return Ok(new { Message = Messages.ConfirmYourEmail });
             }
-
-            Log.Information(string.Format(LogMessages.UserLoggedInSuccessfully, user.Email));
 
             var token = JwtHelper.GenerateJwtToken(user, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
             return Ok(new { Token = token });

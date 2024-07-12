@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Habr.WebApi.Resources;
-using Serilog;
 
 namespace Habr.WebApi.Controllers
 {
@@ -53,8 +52,6 @@ namespace Habr.WebApi.Controllers
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var post = await _postService.CreatePost(createPostDto, userId);
 
-            Log.Information(string.Format(LogMessages.PostCreatedSuccessfully, post.Id, userId));
-
             return StatusCode(201, post);
         }
 
@@ -82,8 +79,6 @@ namespace Habr.WebApi.Controllers
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             await _postService.PublishPostAsync(postId, userId);
-
-            Log.Information(string.Format(LogMessages.PostPublishedSuccessfully, postId, userId));
 
             return Ok();
         }
