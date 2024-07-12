@@ -1,6 +1,6 @@
 ﻿namespace Habr.BusinessLogic.DTOs
 {
-    public class RegisterUserDto
+    public class RegisterUserRequest
     {
         public string Email { get; set; }
         public string Password { get; set; }

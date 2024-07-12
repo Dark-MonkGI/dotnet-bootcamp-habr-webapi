@@ -55,7 +55,7 @@ namespace Habr.BusinessLogic.Services
                 .ToListAsync();
         }
 
-        public async Task<Post> CreatePost(CreatePostDto createPostDto, int userId)
+        public async Task<Post> CreatePost(CreatePostRequest createPostDto, int userId)
         {
             var post = _mapper.Map<Post>(createPostDto);
             post.UserId = userId;
@@ -97,7 +97,7 @@ namespace Habr.BusinessLogic.Services
             return post;
         }
 
-        public async Task UpdatePost(int postId, int userId, UpdatePostDto updatePostDto)
+        public async Task UpdatePost(int postId, int userId, UpdatePostRequest updatePostDto)
         {
             var existingPost = await GetPostByIdAsync(postId, userId);
 

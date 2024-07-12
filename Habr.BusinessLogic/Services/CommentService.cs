@@ -19,7 +19,7 @@ namespace Habr.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<Comment> AddComment(InternalAddCommentDto addCommentDto)
+        public async Task<Comment> AddComment(AddCommentDto addCommentDto)
         {
             var post = await _context.Posts
                 .Where(p => p.Id == addCommentDto.PostId && p.IsPublished)

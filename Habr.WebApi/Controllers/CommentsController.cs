@@ -19,9 +19,9 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("{postId}")]
-        public async Task<IActionResult> AddCommentAsync(int postId, [FromBody] AddCommentDto addCommentDto)
+        public async Task<IActionResult> AddCommentAsync(int postId, [FromBody] AddCommentRequest addCommentDto)
         {
-            var comment = await _commentService.AddComment(new InternalAddCommentDto
+            var comment = await _commentService.AddComment(new AddCommentDto
             {
                 UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
                 PostId = postId,
@@ -32,7 +32,7 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("{parentCommentId}/reply")]
-        public async Task<IActionResult> AddReplyAsync(int parentCommentId, [FromBody] AddReplyDto addReplyDto)
+        public async Task<IActionResult> AddReplyAsync(int parentCommentId, [FromBody] AddReplyRequest addReplyDto)
         {
             var comment = await _commentService.AddReply(new InternalAddReplyDto
             {

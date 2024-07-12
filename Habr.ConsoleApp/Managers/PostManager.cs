@@ -72,7 +72,7 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var post = await postController.CreatePostAsync(new CreatePostDto
+                var post = await postController.CreatePostAsync(new CreatePostRequest
                 {
                     Title = title,
                     Text = text,
@@ -147,7 +147,7 @@ namespace Habr.ConsoleApp.Managers
                     return;
                 }
 
-                var updatePostDto = new UpdatePostDto
+                var updatePostDto = new UpdatePostRequest
                 {
                     Title = title,
                     Text = text

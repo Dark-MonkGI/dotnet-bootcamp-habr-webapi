@@ -47,7 +47,7 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostDto createPostDto)
+        public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostRequest createPostDto)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var post = await _postService.CreatePost(createPostDto, userId);
@@ -56,7 +56,7 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPut("{postId}")]
-        public async Task<IActionResult> UpdatePostAsync([FromRoute] int postId, [FromBody] UpdatePostDto updatePostDto)
+        public async Task<IActionResult> UpdatePostAsync([FromRoute] int postId, [FromBody] UpdatePostRequest updatePostDto)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 

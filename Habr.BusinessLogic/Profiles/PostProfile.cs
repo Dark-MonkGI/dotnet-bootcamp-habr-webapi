@@ -22,7 +22,7 @@ namespace Habr.BusinessLogic.Profiles
                 .ForMember(dest => dest.PublicationDate, opt => opt.MapFrom(src => src.PublishedDate))
                 .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments));
 
-            CreateMap<CreatePostDto, Post>()
+            CreateMap<CreatePostRequest, Post>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
                 .ForMember(dest => dest.IsPublished, opt => opt.MapFrom(src => src.IsPublished))
@@ -31,7 +31,7 @@ namespace Habr.BusinessLogic.Profiles
                 .ForMember(dest => dest.PublishedDate, opt => opt.Ignore())
                 .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
 
-            CreateMap<UpdatePostDto, Post>()
+            CreateMap<UpdatePostRequest, Post>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text));
 

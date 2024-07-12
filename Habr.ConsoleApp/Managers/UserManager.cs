@@ -32,7 +32,7 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var registerUserDto = new RegisterUserDto
+                var registerUserDto = new RegisterUserRequest
                 {
                     Email = email,
                     Password = password,
@@ -77,7 +77,7 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var authenticatedUser = await userController.AuthenticateAsync(new AuthenticateUserDto
+                var authenticatedUser = await userController.AuthenticateAsync(new AuthenticateUserRequest
                 {
                     Email = email,
                     Password = password
@@ -130,7 +130,7 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                return await userController.AuthenticateAsync(new AuthenticateUserDto
+                return await userController.AuthenticateAsync(new AuthenticateUserRequest
                 {
                     Email = email,
                     Password = password

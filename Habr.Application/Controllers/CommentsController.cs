@@ -18,7 +18,7 @@ namespace Habr.Application.Controllers
             return await _commentService.GetCommentsByPost(postId);
         }
 
-        public async Task<Comment> AddCommentAsync(InternalAddCommentDto addCommentDto)
+        public async Task<Comment> AddCommentAsync(AddCommentDto addCommentDto)
         {
             return await _commentService.AddComment(addCommentDto);
         }

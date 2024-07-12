@@ -26,7 +26,7 @@ namespace Habr.BusinessLogic.Profiles
                 .ForMember(dest => dest.User, opt => opt.Ignore())
                 .ForMember(dest => dest.Replies, opt => opt.Ignore());
 
-            CreateMap<InternalAddCommentDto, Comment>()
+            CreateMap<AddCommentDto, Comment>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.PostId))
                 .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))

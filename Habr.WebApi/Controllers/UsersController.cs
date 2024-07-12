@@ -21,7 +21,7 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto)
+        public async Task<IActionResult> Register([FromBody] RegisterUserRequest registerUserDto)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -42,14 +42,14 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDto confirmEmailDto)
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest confirmEmailDto)
         {
             if (User.Identity.IsAuthenticated)
             {
                 return BadRequest(Messages.AlreadyAuthenticated);
             }
 
-            var user = await _userService.AuthenticateAsync(new AuthenticateUserDto
+            var user = await _userService.AuthenticateAsync(new AuthenticateUserRequest
             {
                 Email = confirmEmailDto.Email,
                 Password = confirmEmailDto.Password
@@ -72,7 +72,7 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody] AuthenticateUserDto authenticateUserDto)
+        public async Task<IActionResult> Authenticate([FromBody] AuthenticateUserRequest authenticateUserDto)
         {
             if (User.Identity.IsAuthenticated)
             {

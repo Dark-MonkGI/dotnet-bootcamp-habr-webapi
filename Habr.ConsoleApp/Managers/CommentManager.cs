@@ -45,7 +45,7 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                await commentController.AddCommentAsync(new InternalAddCommentDto
+                await commentController.AddCommentAsync(new AddCommentDto
                 {
                     UserId = user.Id,
                     PostId = postId,

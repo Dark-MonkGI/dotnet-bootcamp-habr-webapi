@@ -8,7 +8,7 @@ namespace Habr.BusinessLogic.Profiles
     {
         public UserProfile()
         {
-            CreateMap<RegisterUserDto, User>()
+            CreateMap<RegisterUserRequest, User>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
                 .ForMember(dest => dest.IsEmailConfirmed, opt => opt.MapFrom(src => src.IsEmailConfirmed))

@@ -1,6 +1,6 @@
 ﻿namespace Habr.BusinessLogic.DTOs
 {
-    public class AddReplyDto
+    public class AddReplyRequest
     {
         public string Text { get; set; }
     }
