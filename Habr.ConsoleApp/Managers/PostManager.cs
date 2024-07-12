@@ -72,13 +72,13 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                var post = await postController.CreatePostAsync(new CreatePostRequest
+                var post = await postController.CreatePostAsync(new CreatePostDto
                 {
+                    UserId = user.Id,
                     Title = title,
                     Text = text,
                     IsPublished = isPublished
-                }, 
-                user.Id);
+                });
 
                 Console.WriteLine(string.Format(Messages.PostCreatedSuccessfully, user.Name));
             }
@@ -147,13 +147,15 @@ namespace Habr.ConsoleApp.Managers
                     return;
                 }
 
-                var updatePostDto = new UpdatePostRequest
+                var updatePostDto = new UpdatePostDto
                 {
+                    UserId = user.Id,
+                    PostId = postId,
                     Title = title,
                     Text = text
                 };
 
-                await postController.UpdatePostAsync(postId, updatePostDto, user.Id);
+                await postController.UpdatePostAsync(updatePostDto);
 
                 Console.WriteLine(Messages.PostUpdated);
             }

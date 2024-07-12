@@ -40,7 +40,7 @@ namespace Habr.BusinessLogic.Services
             return comment;
         }
 
-        public async Task<Comment> AddReply(InternalAddReplyDto addReplyDto)
+        public async Task<Comment> AddReply(AddReplyDto addReplyDto)
         {
             var parentComment = await _context.Comments
                 .Where(c => c.Id == addReplyDto.ParentCommentId && c.Post.IsPublished)

@@ -28,9 +28,9 @@ namespace Habr.Application.Controllers
             return await _postService.GetAllUserPosts(userId);
         }
 
-        public async Task<Post> CreatePostAsync(CreatePostRequest createPostDto, int userId)
+        public async Task<Post> CreatePostAsync(CreatePostDto createPostDto)
         {
-            return await _postService.CreatePost(createPostDto, userId);
+            return await _postService.CreatePost(createPostDto);
         }
 
         public async Task<Post> GetPostWithCommentsAsync(int postId, int userId)
@@ -38,9 +38,9 @@ namespace Habr.Application.Controllers
             return await _postService.GetPostWithCommentsAsync(postId, userId);
         }
 
-        public async Task UpdatePostAsync(int postId, UpdatePostRequest updatePostDto, int userId)
+        public async Task UpdatePostAsync(UpdatePostDto updatePostDto)
         {
-            await _postService.UpdatePost(postId, userId, updatePostDto);
+            await _postService.UpdatePost(updatePostDto);
         }
 
         public async Task DeletePostAsync(int postId, int userId)

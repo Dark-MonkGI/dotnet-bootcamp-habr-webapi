@@ -15,7 +15,7 @@ namespace Habr.BusinessLogic.Profiles
               .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Name))
               .ForMember(dest => dest.ParentCommentId, opt => opt.MapFrom(src => src.ParentCommentId));
 
-            CreateMap<InternalAddReplyDto, Comment>()
+            CreateMap<AddReplyDto, Comment>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.ParentCommentId, opt => opt.MapFrom(src => src.ParentCommentId))
                 .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))

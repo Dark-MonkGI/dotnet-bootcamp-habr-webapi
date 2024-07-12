@@ -13,7 +13,7 @@ namespace Habr.Application.Controllers
             _userService = userService;
         }
 
-        public async Task<User> RegisterAsync(RegisterUserRequest registerUserDto)
+        public async Task<User> RegisterAsync(RegisterUserDto registerUserDto)
         {
             return await _userService.RegisterAsync(registerUserDto);
         }
@@ -23,7 +23,7 @@ namespace Habr.Application.Controllers
             await _userService.ConfirmEmailAsync(email, isEmailConfirmed);
         }
 
-        public async Task<User> AuthenticateAsync(AuthenticateUserRequest authenticateUserDto)
+        public async Task<User> AuthenticateAsync(AuthenticateUserDto authenticateUserDto)
         {
             return await _userService.AuthenticateAsync(authenticateUserDto);
         }

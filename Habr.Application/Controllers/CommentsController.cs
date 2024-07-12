@@ -23,7 +23,7 @@ namespace Habr.Application.Controllers
             return await _commentService.AddComment(addCommentDto);
         }
 
-        public async Task<Comment> AddReplyAsync(InternalAddReplyDto addReplyDto)
+        public async Task<Comment> AddReplyAsync(AddReplyDto addReplyDto)
         {
             return await _commentService.AddReply(addReplyDto);
         }

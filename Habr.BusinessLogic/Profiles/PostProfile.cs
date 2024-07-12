@@ -22,18 +22,22 @@ namespace Habr.BusinessLogic.Profiles
                 .ForMember(dest => dest.PublicationDate, opt => opt.MapFrom(src => src.PublishedDate))
                 .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments));
 
-            CreateMap<CreatePostRequest, Post>()
+            CreateMap<CreatePostDto, Post>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
                 .ForMember(dest => dest.IsPublished, opt => opt.MapFrom(src => src.IsPublished))
                 .ForMember(dest => dest.Created, opt => opt.Ignore())
                 .ForMember(dest => dest.Updated, opt => opt.Ignore())
                 .ForMember(dest => dest.PublishedDate, opt => opt.Ignore())
-                .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
+                .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
 
-            CreateMap<UpdatePostRequest, Post>()
+            CreateMap<UpdatePostDto, Post>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
-                .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text));
+                .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PostId));
+
 
             CreateMap<Post, DraftPostDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

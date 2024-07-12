@@ -23,7 +23,7 @@ namespace Habr.BusinessLogic.Services
             _logger = logger;
         }
 
-        public async Task<User> RegisterAsync(RegisterUserRequest registerUserDto)
+        public async Task<User> RegisterAsync(RegisterUserDto registerUserDto)
         {
             UserValidation.ValidateEmail(registerUserDto.Email);
             UserValidation.ValidatePassword(registerUserDto.Password);
@@ -61,7 +61,7 @@ namespace Habr.BusinessLogic.Services
             _logger.LogInformation(string.Format(LogMessages.UserConfirmedSuccessfully, user.Email));
         }
 
-        public async Task<User> AuthenticateAsync(AuthenticateUserRequest authenticateUserDto)
+        public async Task<User> AuthenticateAsync(AuthenticateUserDto authenticateUserDto)
         {
             UserValidation.ValidateEmail(authenticateUserDto.Email);
             UserValidation.ValidatePassword(authenticateUserDto.Password);

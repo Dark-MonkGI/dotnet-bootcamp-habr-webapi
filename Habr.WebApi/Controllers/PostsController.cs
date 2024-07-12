@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Habr.WebApi.Resources;
+using AutoMapper;
 
 namespace Habr.WebApi.Controllers
 {
@@ -13,10 +14,12 @@ namespace Habr.WebApi.Controllers
     public class PostsController : ControllerBase
     {
         private readonly IPostService _postService;
+        private readonly IMapper _mapper;
 
-        public PostsController(IPostService postService)
+        public PostsController(IPostService postService, IMapper mapper)
         {
             _postService = postService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -47,20 +50,22 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostRequest createPostDto)
+        public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostRequest createPostRequest)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var post = await _postService.CreatePost(createPostDto, userId);
+            var createPostDto = _mapper.Map<CreatePostDto>(createPostRequest);
+            createPostDto.UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
 
+            var post = await _postService.CreatePost(createPostDto);
             return StatusCode(201, post);
         }
 
         [HttpPut("{postId}")]
-        public async Task<IActionResult> UpdatePostAsync([FromRoute] int postId, [FromBody] UpdatePostRequest updatePostDto)
+        public async Task<IActionResult> UpdatePostAsync([FromRoute] int postId, [FromBody] UpdatePostRequest updatePostRequest)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            await _postService.UpdatePost(postId, userId, updatePostDto);
+            var updatePostDto = _mapper.Map<UpdatePostDto>(updatePostRequest);
+            updatePostDto.UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            updatePostDto.PostId = postId;
+            await _postService.UpdatePost(updatePostDto);
             return Ok();
         }
 

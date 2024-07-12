@@ -19,26 +19,26 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("{postId}")]
-        public async Task<IActionResult> AddCommentAsync(int postId, [FromBody] AddCommentRequest addCommentDto)
+        public async Task<IActionResult> AddCommentAsync(int postId, [FromBody] AddCommentRequest addCommentRequest)
         {
             var comment = await _commentService.AddComment(new AddCommentDto
             {
                 UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
                 PostId = postId,
-                Text = addCommentDto.Text
+                Text = addCommentRequest.Text
             });
 
             return StatusCode(201, comment);
         }
 
         [HttpPost("{parentCommentId}/reply")]
-        public async Task<IActionResult> AddReplyAsync(int parentCommentId, [FromBody] AddReplyRequest addReplyDto)
+        public async Task<IActionResult> AddReplyAsync(int parentCommentId, [FromBody] AddReplyRequest addReplyRequest)
         {
-            var comment = await _commentService.AddReply(new InternalAddReplyDto
+            var comment = await _commentService.AddReply(new AddReplyDto
             {
                 UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
                 ParentCommentId = parentCommentId,
-                Text = addReplyDto.Text
+                Text = addReplyRequest.Text
             });
 
             return StatusCode(201, comment);

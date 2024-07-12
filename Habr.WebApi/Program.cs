@@ -38,7 +38,9 @@ namespace Habr.WebApi
                 typeof(PostProfile), 
                 typeof(CommentProfile), 
                 typeof(UserProfile),
-                typeof(ExceptionProfile));
+                typeof(ExceptionProfile),
+                typeof(WebApiMappingProfile)
+                );
 
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 

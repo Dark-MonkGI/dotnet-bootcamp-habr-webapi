@@ -55,10 +55,9 @@ namespace Habr.BusinessLogic.Services
                 .ToListAsync();
         }
 
-        public async Task<Post> CreatePost(CreatePostRequest createPostDto, int userId)
+        public async Task<Post> CreatePost(CreatePostDto createPostDto)
         {
             var post = _mapper.Map<Post>(createPostDto);
-            post.UserId = userId;
             post.Created = DateTime.UtcNow;
             post.Updated = DateTime.UtcNow;
             post.PublishedDate = createPostDto.IsPublished ? DateTime.UtcNow : (DateTime?)null;
@@ -66,7 +65,7 @@ namespace Habr.BusinessLogic.Services
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation(string.Format(LogMessages.PostCreatedSuccessfully, post.Id, userId));
+            _logger.LogInformation(string.Format(LogMessages.PostCreatedSuccessfully, post.Id, createPostDto.UserId));
 
             return post;
         }
@@ -97,9 +96,9 @@ namespace Habr.BusinessLogic.Services
             return post;
         }
 
-        public async Task UpdatePost(int postId, int userId, UpdatePostRequest updatePostDto)
+        public async Task UpdatePost(UpdatePostDto updatePostDto)
         {
-            var existingPost = await GetPostByIdAsync(postId, userId);
+            var existingPost = await GetPostByIdAsync(updatePostDto.PostId, updatePostDto.UserId);
 
             if (existingPost == null)
             {

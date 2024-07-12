@@ -5,8 +5,8 @@ namespace Habr.BusinessLogic.Interfaces
 {
     public interface IUserService
     {
-        Task<User> RegisterAsync(RegisterUserRequest registerUserDto);
+        Task<User> RegisterAsync(RegisterUserDto registerUserDto);
         Task ConfirmEmailAsync(string email, bool isEmailConfirmed);
-        Task<User> AuthenticateAsync(AuthenticateUserRequest authenticateUserDto);
+        Task<User> AuthenticateAsync(AuthenticateUserDto authenticateUserDto);
     }
 }

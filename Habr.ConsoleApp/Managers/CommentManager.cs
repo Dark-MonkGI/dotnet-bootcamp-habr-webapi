@@ -124,7 +124,7 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                await commentController.AddReplyAsync(new InternalAddReplyDto
+                await commentController.AddReplyAsync(new AddReplyDto
                 {
                     UserId = user.Id,
                     ParentCommentId = commentId,
