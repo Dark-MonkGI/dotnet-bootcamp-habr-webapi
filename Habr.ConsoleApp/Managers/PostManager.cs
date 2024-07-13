@@ -3,6 +3,7 @@ using Habr.Application.Controllers;
 using Habr.ConsoleApp.Helpers;
 using Habr.BusinessLogic.Validation;
 using Habr.BusinessLogic.DTOs;
+using Habr.ConsoleApp.Resources;
 
 namespace Habr.ConsoleApp.Managers
 {
@@ -12,7 +13,7 @@ namespace Habr.ConsoleApp.Managers
         {
             if (authenticatedUser == null)
             {
-                Console.WriteLine("You need to be logged in to view posts.");
+                Console.WriteLine(Messages.NeedToBeLogged);
                 return;
             }
 
@@ -20,7 +21,7 @@ namespace Habr.ConsoleApp.Managers
 
             if (posts == null || !posts.Any())
             {
-                Console.WriteLine("No posts found!");
+                Console.WriteLine(Messages.NoPostsFound);
                 return;
             }
 
@@ -33,7 +34,7 @@ namespace Habr.ConsoleApp.Managers
 
             if (posts == null || !posts.Any())
             {
-                Console.WriteLine("No draft posts found!");
+                Console.WriteLine(Messages.NoDraftPostsFound);
                 return;
             }
 
@@ -42,23 +43,23 @@ namespace Habr.ConsoleApp.Managers
 
         public static async Task CreatePost(PostsController postController, User user)
         {
-            var title = InputHelper.GetInputWithValidation("Enter post title:", PostValidation.ValidateTitle);
+            var title = InputHelper.GetInputWithValidation(Messages.EnterPostTitle, PostValidation.ValidateTitle);
             if (title == null)
             {
                 return;
             }
 
-            var text = InputHelper.GetInputWithValidation("Enter post text:", PostValidation.ValidateText);
+            var text = InputHelper.GetInputWithValidation(Messages.EnterPostText, PostValidation.ValidateText);
             if (text == null)
             {
                 return;
             }
 
-            var isPublishedInput = InputHelper.GetInputWithValidation("Is the post published? (yes/no):", input =>
+            var isPublishedInput = InputHelper.GetInputWithValidation(Messages.IsPostPublished, input =>
             {
-                if (!input.Equals("yes", StringComparison.OrdinalIgnoreCase) && !input.Equals("no", StringComparison.OrdinalIgnoreCase))
+                if (!input.Equals(Messages.Yes, StringComparison.OrdinalIgnoreCase) && !input.Equals(Messages.No, StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new ArgumentException("Please enter 'yes' or 'no'.");
+                    throw new ArgumentException(Messages.PleaseEnterYesOrNo);
                 }
             });
 
@@ -67,24 +68,27 @@ namespace Habr.ConsoleApp.Managers
                 return;
             }
 
-            var isPublished = isPublishedInput.Equals("yes", StringComparison.OrdinalIgnoreCase);
+            var isPublished = isPublishedInput.Equals(Messages.Yes, StringComparison.OrdinalIgnoreCase);
 
             try
             {
-                var post = await postController.CreatePostAsync(
-                    user.Id, 
-                    title, 
-                    text, 
-                    isPublished);
-                Console.WriteLine($"{user.Name}, your post has been successfully created!");
+                var post = await postController.CreatePostAsync(new CreatePostDto
+                {
+                    UserId = user.Id,
+                    Title = title,
+                    Text = text,
+                    IsPublished = isPublished
+                });
+
+                Console.WriteLine(string.Format(Messages.PostCreatedSuccessfully, user.Name));
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine($"\n{ex.Message}");
+                Console.WriteLine(ex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nError: {ex.Message}");
+                Console.WriteLine(string.Format(Messages.Error, ex.Message));
             }
         }
 
@@ -94,17 +98,17 @@ namespace Habr.ConsoleApp.Managers
 
             if (userPosts == null || !userPosts.Any())
             {
-                Console.WriteLine("\nYou have no posts to edit");
+                Console.WriteLine(Messages.YouHaveNoPostsToEdit);
                 return;
             }
 
             DisplayHelper.DisplayUserPosts(userPosts);
 
-            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to edit:", input =>
+            var postIdInput = InputHelper.GetInputWithValidation(Messages.EnterPostIDToEdit, input =>
             {
                 if (!int.TryParse(input, out _))
                 {
-                    throw new ArgumentException("\nInvalid ID format.");
+                    throw new ArgumentException(Messages.InvalidIDFormat);
                 }
             });
 
@@ -121,23 +125,23 @@ namespace Habr.ConsoleApp.Managers
 
                 if (post == null)
                 {
-                    Console.WriteLine("\nThis post was not found for you!");
+                    Console.WriteLine(Messages.PostNotFoundForYou);
                     return;
                 }
 
                 if (post.IsPublished)
                 {
-                    Console.WriteLine("\nThis post is published and cannot be edited. Move it to drafts first.");
+                    Console.WriteLine(Messages.PostIsPublishedCannotEdit);
                     return;
                 }
 
-                var title = InputHelper.GetInputWithValidation("Enter new title:", PostValidation.ValidateTitle);
+                var title = InputHelper.GetInputWithValidation(Messages.EnterNewTitle, PostValidation.ValidateTitle);
                 if (title == null)
                 {
                     return;
                 }
 
-                var text = InputHelper.GetInputWithValidation("Enter new text:", PostValidation.ValidateText);
+                var text = InputHelper.GetInputWithValidation(Messages.EnterNewText, PostValidation.ValidateText);
                 if (text == null)
                 {
                     return;
@@ -145,25 +149,27 @@ namespace Habr.ConsoleApp.Managers
 
                 var updatePostDto = new UpdatePostDto
                 {
+                    UserId = user.Id,
+                    PostId = postId,
                     Title = title,
                     Text = text
                 };
 
-                await postController.UpdatePostAsync(postId, updatePostDto, user.Id);
+                await postController.UpdatePostAsync(updatePostDto);
 
-                Console.WriteLine("\nPost updated!");
+                Console.WriteLine(Messages.PostUpdated);
             }
             catch (InvalidOperationException ex)
             {
-                Console.WriteLine($"\n{ex.Message}");
+                Console.WriteLine(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine($"\n{ex.Message}");
+                Console.WriteLine(ex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nError: {ex.Message}");
+                Console.WriteLine(string.Format(Messages.Error, ex.Message));
             }
         }
 
@@ -173,17 +179,17 @@ namespace Habr.ConsoleApp.Managers
 
             if (userPosts == null || !userPosts.Any())
             {
-                Console.WriteLine("\nYou have no posts to delete");
+                Console.WriteLine(Messages.YouHaveNoPostsToDelete);
                 return;
             }
 
             DisplayHelper.DisplayUserPosts(userPosts);
 
-            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to delete:", input =>
+            var postIdInput = InputHelper.GetInputWithValidation(Messages.EnterPostIDToDelete, input =>
             {
                 if (!int.TryParse(input, out _))
                 {
-                    throw new ArgumentException("Invalid ID format.");
+                    throw new ArgumentException(Messages.InvalidIDFormat);
                 }
             });
 
@@ -197,15 +203,15 @@ namespace Habr.ConsoleApp.Managers
             try
             {
                 await postController.DeletePostAsync(postId, user.Id);
-                Console.WriteLine("\nPost deleted!");
+                Console.WriteLine(Messages.PostDeleted);
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine($"\n{ex.Message}");
+                Console.WriteLine(ex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nError: {ex.Message}");
+                Console.WriteLine(string.Format(Messages.Error, ex.Message));
             }
         }
 
@@ -215,17 +221,17 @@ namespace Habr.ConsoleApp.Managers
 
             if (userPosts == null || !userPosts.Any())
             {
-                Console.WriteLine("\nYou have no posts to publish");
+                Console.WriteLine(Messages.YouHaveNoPostsToPublish);
                 return;
             }
 
             DisplayHelper.DisplayUserPosts(userPosts);
 
-            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to publish:", input =>
+            var postIdInput = InputHelper.GetInputWithValidation(Messages.EnterPostIDToPublish, input =>
             {
                 if (!int.TryParse(input, out _))
                 {
-                    throw new ArgumentException("\nInvalid ID format.");
+                    throw new ArgumentException(Messages.InvalidIDFormat);
                 }
             });
 
@@ -239,19 +245,19 @@ namespace Habr.ConsoleApp.Managers
             try
             {
                 await postController.PublishPostAsync(postId, user.Id);
-                Console.WriteLine("\nPost published!");
+                Console.WriteLine(Messages.PostPublished);
             }
             catch (InvalidOperationException ex)
             {
-                Console.WriteLine($"\n{ex.Message}"); 
+                Console.WriteLine(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine($"\n{ex.Message}");
+                Console.WriteLine(ex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nError: {ex.Message}");
+                Console.WriteLine(string.Format(Messages.Error, ex.Message));
             }
         }
 
@@ -261,17 +267,17 @@ namespace Habr.ConsoleApp.Managers
 
             if (userPosts == null || !userPosts.Any())
             {
-                Console.WriteLine("\nYou have no posts to move to drafts");
+                Console.WriteLine(Messages.YouHaveNoPostsToMoveToDrafts);
                 return;
             }
 
             DisplayHelper.DisplayUserPosts(userPosts);
 
-            var postIdInput = InputHelper.GetInputWithValidation("\nEnter the ID of the post you want to move to drafts:", input =>
+            var postIdInput = InputHelper.GetInputWithValidation(Messages.EnterPostIDToMoveToDrafts, input =>
             {
                 if (!int.TryParse(input, out _))
                 {
-                    throw new ArgumentException("\nInvalid ID format.");
+                    throw new ArgumentException(Messages.InvalidIDFormat);
                 }
             });
 
@@ -285,19 +291,19 @@ namespace Habr.ConsoleApp.Managers
             try
             {
                 await postController.MovePostToDraftAsync(postId, user.Id);
-                Console.WriteLine("\nPost moved to drafts successfully!");
+                Console.WriteLine(Messages.PostMovedToDraftsSuccessfully);
             }
             catch (InvalidOperationException ex)
             {
-                Console.WriteLine($"\n{ex.Message}");
+                Console.WriteLine(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine($"\n{ex.Message}");
+                Console.WriteLine(ex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nError: {ex.Message}");
+                Console.WriteLine(string.Format(Messages.Error, ex.Message));
             }
         }
 
@@ -307,17 +313,17 @@ namespace Habr.ConsoleApp.Managers
 
             if (publishedPosts == null || !publishedPosts.Any())
             {
-                Console.WriteLine("No published posts found!");
+                Console.WriteLine(Messages.NoPublishedPostsFound);
                 return;
             }
 
             DisplayHelper.DisplayPosts(publishedPosts);
 
-            var postIdInput = InputHelper.GetInputWithValidation("\nEnter post ID:", input =>
+            var postIdInput = InputHelper.GetInputWithValidation(Messages.EnterPostID, input =>
             {
                 if (!int.TryParse(input, out _))
                 {
-                    throw new ArgumentException("\nInvalid ID format.");
+                    throw new ArgumentException(Messages.InvalidIDFormat);
                 }
             });
 
@@ -333,7 +339,7 @@ namespace Habr.ConsoleApp.Managers
                 var postDetails = await postController.GetPostDetailsAsync(postId);
                 if (postDetails == null)
                 {
-                    Console.WriteLine("Post not found.");
+                    Console.WriteLine(Messages.PostNotFound);
                     return;
                 }
 
@@ -341,7 +347,7 @@ namespace Habr.ConsoleApp.Managers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine(string.Format(Messages.Error, ex.Message));
             }
         }
     }

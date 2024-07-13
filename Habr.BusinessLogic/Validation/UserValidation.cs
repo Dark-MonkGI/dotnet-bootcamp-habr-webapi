@@ -1,28 +1,27 @@
-﻿using System.Text.RegularExpressions;
+﻿using Habr.BusinessLogic.Resources;
+using System.Text.RegularExpressions;
+using Habr.Common;
 
 namespace Habr.BusinessLogic.Validation
 {
     public static class UserValidation
     {
-        private const string EmailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-        private const int MaxEmailLength = 200;
-
         public static void ValidateEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                throw new ArgumentException("Email cannot be empty.");
+                throw new ArgumentException(Messages.EmailEmpty);
             }
 
-            if (email.Length > MaxEmailLength)
+            if (email.Length > Constants.User.EmailMaxLength)
             {
-                throw new ArgumentException($"Email cannot exceed {MaxEmailLength} characters.");
+                throw new ArgumentException(string.Format(Messages.EmailTooLong, Constants.User.EmailMaxLength));
             }
 
-            var emailRegex = new Regex(EmailPattern);
+            var emailRegex = new Regex(Constants.User.EmailPattern);
             if (!emailRegex.IsMatch(email))
             {
-                throw new ArgumentException("Email format is invalid.");
+                throw new ArgumentException(Messages.EmailInvalidFormat);
             }
         }
 
@@ -30,12 +29,12 @@ namespace Habr.BusinessLogic.Validation
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentException("Password cannot be empty.");
+                throw new ArgumentException(Messages.PasswordEmpty);
             }
 
             if (password.Length < 1)
             {
-                throw new ArgumentException("Password must be at least 1 characters long.");
+                throw new ArgumentException(Messages.PasswordTooShort);
             }
         }
     }

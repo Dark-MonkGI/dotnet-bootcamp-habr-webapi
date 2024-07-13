@@ -1,4 +1,7 @@
-﻿namespace Habr.BusinessLogic.Validation
+﻿using Habr.BusinessLogic.Resources;
+using Habr.Common;
+
+namespace Habr.BusinessLogic.Validation
 {
     public static class CommentValidation
     {
@@ -6,12 +9,12 @@
         {
             if (string.IsNullOrWhiteSpace(text))
             {
-                throw new ArgumentException("Comment text cannot be empty.");
+                throw new ArgumentException(Messages.CommentTextEmpty);
             }
 
-            if (text.Length > 200) 
+            if (text.Length > Constants.Comment.TextMaxLength)
             {
-                throw new ArgumentException("Comment text cannot exceed 200 characters.");
+                throw new ArgumentException(string.Format(Messages.CommentTextTooLong, Constants.Comment.TextMaxLength));
             }
         }
     }

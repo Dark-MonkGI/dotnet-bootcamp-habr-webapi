@@ -2,6 +2,8 @@
 using Habr.ConsoleApp.Helpers;
 using Habr.Application.Controllers;
 using Habr.BusinessLogic.Validation;
+using Habr.BusinessLogic.DTOs;
+using Habr.ConsoleApp.Resources;
 
 namespace Habr.ConsoleApp.Managers
 {
@@ -13,17 +15,17 @@ namespace Habr.ConsoleApp.Managers
 
             if (publishedPosts == null || !publishedPosts.Any())
             {
-                Console.WriteLine("No published posts found!");
+                Console.WriteLine(Messages.NoPublishedPostsFound);
                 return;
             }
 
             DisplayHelper.DisplayPosts(publishedPosts);
 
-            var postIdInput = InputHelper.GetInputWithValidation("Enter the ID of the post you want to comment on:", input =>
+            var postIdInput = InputHelper.GetInputWithValidation(Messages.EnterPostIDToComment, input =>
             {
                 if (!int.TryParse(input, out _))
                 {
-                    throw new ArgumentException("Invalid ID format.");
+                    throw new ArgumentException(Messages.InvalidIDFormat);
                 }
             });
 
@@ -34,7 +36,7 @@ namespace Habr.ConsoleApp.Managers
 
             var postId = int.Parse(postIdInput);
 
-            var text = InputHelper.GetInputWithValidation("Enter your comment:", CommentValidation.ValidateCommentText);
+            var text = InputHelper.GetInputWithValidation(Messages.EnterYourComment, CommentValidation.ValidateCommentText);
 
             if (text == null)
             {
@@ -43,16 +45,22 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                await commentController.AddCommentAsync(user.Id, postId, text);
-                Console.WriteLine($"{user.Name}, your comment has been successfully added!");
+                await commentController.AddCommentAsync(new AddCommentDto
+                {
+                    UserId = user.Id,
+                    PostId = postId,
+                    Text = text
+                });
+
+                Console.WriteLine(string.Format(Messages.CommentAddedSuccessfully, user.Name));
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine($"\n{ex.Message}");
+                Console.WriteLine(ex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nError: {ex.Message}");
+                Console.WriteLine(string.Format(Messages.Error, ex.Message));
             }
         }
 
@@ -62,17 +70,17 @@ namespace Habr.ConsoleApp.Managers
 
             if (publishedPosts == null || !publishedPosts.Any())
             {
-                Console.WriteLine("No published posts found!");
+                Console.WriteLine(Messages.NoPublishedPostsFound);
                 return;
             }
 
             DisplayHelper.DisplayPosts(publishedPosts);
 
-            var postIdInput = InputHelper.GetInputWithValidation("Enter the ID of the post you want to see comments:", input =>
+            var postIdInput = InputHelper.GetInputWithValidation(Messages.EnterPostIDToSeeComments, input =>
             {
                 if (!int.TryParse(input, out _))
                 {
-                    throw new ArgumentException("Invalid ID format.");
+                    throw new ArgumentException(Messages.InvalidIDFormat);
                 }
             });
 
@@ -86,17 +94,17 @@ namespace Habr.ConsoleApp.Managers
 
             if (comments == null || !comments.Any())
             {
-                Console.WriteLine("No comments found for this post!");
+                Console.WriteLine(Messages.NoCommentsFoundForPost);
                 return;
             }
 
             DisplayHelper.DisplayComments(comments);
 
-            var commentIdInput = InputHelper.GetInputWithValidation("Enter the ID of the comment you want to reply to:", input =>
+            var commentIdInput = InputHelper.GetInputWithValidation(Messages.EnterCommentIDToReply, input =>
             {
                 if (!int.TryParse(input, out _))
                 {
-                    throw new ArgumentException("Invalid ID format.");
+                    throw new ArgumentException(Messages.InvalidIDFormat);
                 }
             });
 
@@ -107,7 +115,7 @@ namespace Habr.ConsoleApp.Managers
 
             var commentId = int.Parse(commentIdInput);
 
-            var text = InputHelper.GetInputWithValidation("Enter your reply:", CommentValidation.ValidateCommentText);
+            var text = InputHelper.GetInputWithValidation(Messages.EnterYourReply, CommentValidation.ValidateCommentText);
 
             if (text == null)
             {
@@ -116,16 +124,22 @@ namespace Habr.ConsoleApp.Managers
 
             try
             {
-                await commentController.AddReplyAsync(user.Id, commentId, text);
-                Console.WriteLine($"{user.Name}, your reply has been successfully added!");
+                await commentController.AddReplyAsync(new AddReplyDto
+                {
+                    UserId = user.Id,
+                    ParentCommentId = commentId,
+                    Text = text
+                });
+
+                Console.WriteLine(string.Format(Messages.ReplyAddedSuccessfully, user.Name));
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine($"\n{ex.Message}");
+                Console.WriteLine(ex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nError: {ex.Message}");
+                Console.WriteLine(string.Format(Messages.Error, ex.Message));
             }
         }
 
@@ -135,17 +149,17 @@ namespace Habr.ConsoleApp.Managers
 
             if (!userComments.Any())
             {
-                Console.WriteLine("You have no comments to delete");
+                Console.WriteLine(Messages.YouHaveNoCommentsToDelete);
                 return;
             }
 
             DisplayHelper.DisplayComments(userComments);
 
-            var commentIdInput = InputHelper.GetInputWithValidation("Enter the ID of the comment you want to delete:", input =>
+            var commentIdInput = InputHelper.GetInputWithValidation(Messages.EnterCommentIDToDelete, input =>
             {
                 if (!int.TryParse(input, out _))
                 {
-                    throw new ArgumentException("Invalid ID format.");
+                    throw new ArgumentException(Messages.InvalidIDFormat);
                 }
             });
 
@@ -159,15 +173,15 @@ namespace Habr.ConsoleApp.Managers
             try
             {
                 await commentController.DeleteCommentAsync(commentId, user.Id);
-                Console.WriteLine("\nComment deleted!");
+                Console.WriteLine(Messages.CommentDeleted);
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine($"\n{ex.Message}");
+                Console.WriteLine(ex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nError: {ex.Message}");
+                Console.WriteLine(string.Format(Messages.Error, ex.Message));
             }
         }
     }

@@ -2,37 +2,37 @@
 using Habr.DataAccess.Entities;
 using Habr.DataAccess;
 using Habr.BusinessLogic.Interfaces;
+using Habr.BusinessLogic.DTOs;
+using Habr.BusinessLogic.Resources;
+using AutoMapper;
 
 namespace Habr.BusinessLogic.Services
 {
     public class CommentService : ICommentService
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public CommentService(DataContext context)
+        public CommentService(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<Comment> AddComment(int userId, int postId, string text)
+        public async Task<Comment> AddComment(AddCommentDto addCommentDto)
         {
             var post = await _context.Posts
-                .Where(p => p.Id == postId && p.IsPublished)
+                .Where(p => p.Id == addCommentDto.PostId && p.IsPublished)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
 
             if (post == null)
             {
-                throw new InvalidOperationException("You cannot comment on unpublished posts!");
+                throw new InvalidOperationException(Messages.CannotCommentUnpublished);
             }
 
-            var comment = new Comment
-            {
-                UserId = userId,
-                PostId = postId,
-                Text = text,
-                Created = DateTime.UtcNow
-            };
+            var comment = _mapper.Map<Comment>(addCommentDto);
+            comment.Created = DateTime.UtcNow;
 
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
@@ -40,27 +40,22 @@ namespace Habr.BusinessLogic.Services
             return comment;
         }
 
-        public async Task<Comment> AddReply(int userId, int parentCommentId, string text)
+        public async Task<Comment> AddReply(AddReplyDto addReplyDto)
         {
             var parentComment = await _context.Comments
-                .Where(c => c.Id == parentCommentId && c.Post.IsPublished)
+                .Where(c => c.Id == addReplyDto.ParentCommentId && c.Post.IsPublished)
                 .Include(c => c.Post)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
 
             if (parentComment == null)
             {
-                throw new ArgumentException("Parent comment not found.");
+                throw new ArgumentException(Messages.CommentNotFound);
             }
 
-            var comment = new Comment
-            {
-                UserId = userId,
-                ParentCommentId = parentCommentId,
-                PostId = parentComment.PostId,
-                Text = text,
-                Created = DateTime.UtcNow
-            };
+            var comment = _mapper.Map<Comment>(addReplyDto);
+            comment.PostId = parentComment.PostId;
+            comment.Created = DateTime.UtcNow;
 
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
@@ -76,7 +71,7 @@ namespace Habr.BusinessLogic.Services
 
             if (comment == null)
             {
-                throw new ArgumentException("\nComment not found or you do not have permission to delete it.");
+                throw new ArgumentException(Messages.DeleteCommentPermissionDenied);
             }
 
             await DeleteReplies(comment);

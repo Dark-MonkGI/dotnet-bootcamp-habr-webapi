@@ -7,14 +7,40 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Habr.WebApi.Helpers;
+using Habr.BusinessLogic.Profiles;
+using Habr.WebApi.Resources;
+using Habr.WebApi.Extensions;
+using Habr.WebApi.Profiles;
+using Serilog;
+using Serilog.Events;
 
 namespace Habr.WebApi
 {
     public class Program
     {
+        private const string LogFilePath = "logs/log.txt";
+
         public static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.Async(a => a.File(LogFilePath, rollingInterval: RollingInterval.Day))
+                .CreateLogger();
+
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Host.UseSerilog();
+
+            builder.Services.AddAutoMapper(
+                typeof(PostProfile), 
+                typeof(CommentProfile), 
+                typeof(UserProfile),
+                typeof(ExceptionProfile),
+                typeof(WebApiMappingProfile)
+                );
 
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
@@ -24,6 +50,10 @@ namespace Habr.WebApi
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<IUserService, UserService>();
+
+            builder.Services.AddLogging();
+
+            builder.Services.AddGlobalExceptionHandler();
 
             var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
             var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
@@ -54,7 +84,7 @@ namespace Habr.WebApi
             {
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Description = Messages.SwaggerSecurityDefinitionDescription,
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
@@ -86,6 +116,8 @@ namespace Habr.WebApi
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseGlobalExceptionHandler();
 
             app.UseHttpsRedirection();
 

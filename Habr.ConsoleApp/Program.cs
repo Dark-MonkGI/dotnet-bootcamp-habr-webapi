@@ -5,6 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Habr.Application.Controllers;
 using Habr.ConsoleApp.Managers;
+using AutoMapper;
+using Habr.BusinessLogic.Profiles;
+using Habr.ConsoleApp.Resources;
+using Microsoft.Extensions.Logging;
+using Serilog;
+
 
 namespace Habr.ConsoleApp
 {
@@ -12,6 +18,17 @@ namespace Habr.ConsoleApp
     {
         static async Task Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddSerilog(Log.Logger);
+            });
+
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
@@ -21,7 +38,7 @@ namespace Habr.ConsoleApp
 
             if (string.IsNullOrEmpty(connectionString))
             {
-                Console.WriteLine("Connection string 'DefaultConnection' is empty. Please check your settings!");
+                Console.WriteLine(Messages.DefaultConnectionEmpty);
                 return;
             }
 
@@ -29,9 +46,19 @@ namespace Habr.ConsoleApp
             {
                 await context.Database.MigrateAsync();
 
-                var userService = new UserService(context);
-                var postService = new PostService(context);
-                var commentService = new CommentService(context);
+                var mapperConfig = new MapperConfiguration(cfg =>
+                {
+                    cfg.AddProfile<UserProfile>();
+                    cfg.AddProfile<PostProfile>();
+                    cfg.AddProfile<CommentProfile>();
+                });
+
+                var mapper = mapperConfig.CreateMapper();
+
+
+                var userService = new UserService(context, mapper, loggerFactory.CreateLogger<UserService>());
+                var postService = new PostService(context, mapper, loggerFactory.CreateLogger<PostService>());
+                var commentService = new CommentService(context, mapper);
 
                 var usersController = new UsersController(userService);
                 var postsController = new PostsController(postService);
@@ -42,32 +69,32 @@ namespace Habr.ConsoleApp
                 while (true)
                 {
                     Console.WriteLine("\n" + new string('-', 95));
-                    Console.WriteLine("What do you want to do? Please enter:\n " +
-                        "R - for register;\n " +
-                        "C - for confirm email;\n " +
-                        "A - for login;\n " +
-                        "0 - to exit;");
+                    Console.WriteLine(Messages.ActionSelection);
+                    Console.WriteLine(Messages.Register);
+                    Console.WriteLine(Messages.Confirm);
+                    Console.WriteLine(Messages.Login);
+                    Console.WriteLine(Messages.ToExit);
                     Console.WriteLine(new string('-', 95) + "\n");
 
                     var userInput = Console.ReadLine()?.Trim().ToLower();
 
-                    if (userInput == "r")
+                    if (userInput == Messages.R)
                     {
                         authenticatedUser = await UserManager.RegisterUser(usersController);
                         if (authenticatedUser != null)
                         {
-                            Console.WriteLine($"\nRegistration successful. Welcome, {authenticatedUser.Name}!");
+                            Console.WriteLine(string.Format(Messages.RegistrationSuccessful, authenticatedUser.Name));
                             if (authenticatedUser.IsEmailConfirmed)
                             {
                                 break;
                             }
                             else
                             {
-                                Console.WriteLine("\nDon't forget to confirm your email!");
+                                Console.WriteLine(Messages.DonNotForgetConfirmEmail);
                             }
                         }
                     }
-                    else if (userInput == "c")
+                    else if (userInput == Messages.C)
                     {
                         authenticatedUser = await UserManager.ConfirmEmail(usersController);
                         if (authenticatedUser != null)
@@ -75,41 +102,41 @@ namespace Habr.ConsoleApp
                             break;
                         }
                     }
-                    else if (userInput == "a")
+                    else if (userInput == Messages.A)
                     {
                         authenticatedUser = await UserManager.AuthenticateUser(usersController);
                         if (authenticatedUser != null)
                         {
-                            Console.WriteLine($"\nAuthorization was successful. Welcome back, {authenticatedUser.Name}!");
+                            Console.WriteLine(string.Format(Messages.AuthorizationWasSuccessful, authenticatedUser.Name));
                             break;
                         }
                     }
-                    else if (userInput == "0")
+                    else if (userInput == Messages.Zero)
                     {
                         return;
                     }
                     else
                     {
-                        Console.WriteLine("Invalid action. Please try again.");
+                        Console.WriteLine(Messages.InvalidAction);
                     }
                 }
-
+                
                 while (true)
                 {
                     Console.WriteLine("\n" + new string('-', 95));
-                    Console.WriteLine("What do you want to do? Please enter:\n " +
-                        "G - for get all posts;\n " +
-                        "S - for view draft posts;\n " +
-                        "C - for create post;\n " +
-                        "E - for edit post;\n " +
-                        "D - for delete post;\n " +
-                        "P - for publish post;\n " +
-                        "M - for move post to drafts;\n " +
-                        "J - for post details;\n " +
-                        "A - for add comment to post;\n " +
-                        "R - for reply to comment;\n " +
-                        "X - for delete comment;\n " +
-                        "0 - to exit;");
+                    Console.WriteLine(Messages.WhatDoYouWant);
+                    Console.WriteLine(Messages.GetAllPosts);
+                    Console.WriteLine(Messages.ViewDraftPosts);
+                    Console.WriteLine(Messages.CreatePost);
+                    Console.WriteLine(Messages.EditPost);
+                    Console.WriteLine(Messages.DeletePost);
+                    Console.WriteLine(Messages.PublishPost);
+                    Console.WriteLine(Messages.MovePostToDrafts);
+                    Console.WriteLine(Messages.PostDetails);
+                    Console.WriteLine(Messages.CommentToPost);
+                    Console.WriteLine(Messages.ReplyToComment);
+                    Console.WriteLine(Messages.DeleteComment);
+                    Console.WriteLine(Messages.ToExit);
                     Console.WriteLine(new string('-', 95) + "\n");
 
                     var userInput = Console.ReadLine()?.Trim().ToLower();
@@ -151,7 +178,7 @@ namespace Habr.ConsoleApp
                         case "0":
                             return;
                         default:
-                            Console.WriteLine("Invalid action. Please try again.");
+                            Console.WriteLine(Messages.InvalidAction);
                             break;
                     }
                 }

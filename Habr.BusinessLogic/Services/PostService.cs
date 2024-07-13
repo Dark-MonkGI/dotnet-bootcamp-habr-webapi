@@ -3,16 +3,24 @@ using Habr.DataAccess.Entities;
 using Habr.DataAccess;
 using Habr.BusinessLogic.DTOs;
 using Habr.BusinessLogic.Interfaces;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Habr.BusinessLogic.Resources;
+using Microsoft.Extensions.Logging;
 
 namespace Habr.BusinessLogic.Services
 {
     public class PostService : IPostService
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
+        private readonly ILogger<PostService> _logger;
 
-        public PostService(DataContext context)
+        public PostService(DataContext context, IMapper mapper, ILogger<PostService> logger)
         {
             _context = context;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<PostDto>> GetAllPublishedPosts()
@@ -21,31 +29,19 @@ namespace Habr.BusinessLogic.Services
                 .Include(p => p.User)
                 .Where(p => p.IsPublished && !p.IsDeleted)
                 .OrderByDescending(p => p.PublishedDate)
-                .Select(p => new PostDto
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    AuthorEmail = p.User.Email,
-                    PublicationDate = p.PublishedDate
-                })
+                .ProjectTo<PostDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<DraftPostDto>> GetUserDraftPosts(int userId)
         {
             return await _context.Posts
-                .Where(p => 
-                    !p.IsPublished && 
-                    p.UserId == userId && 
+                .Where(p =>
+                    !p.IsPublished &&
+                    p.UserId == userId &&
                     !p.IsDeleted)
                 .OrderByDescending(p => p.Updated)
-                .Select(p => new DraftPostDto
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    CreatedAt = p.Created,
-                    UpdatedAt = p.Updated
-                })
+                .ProjectTo<DraftPostDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
@@ -59,26 +55,17 @@ namespace Habr.BusinessLogic.Services
                 .ToListAsync();
         }
 
-        public async Task<Post> CreatePost(
-            int userId, 
-            string title, 
-            string text, 
-            bool isPublished)
+        public async Task<Post> CreatePost(CreatePostDto createPostDto)
         {
-
-            var post = new Post
-            {
-                UserId = userId,
-                Title = title,
-                Text = text,
-                IsPublished = isPublished,
-                Created = DateTime.UtcNow,
-                Updated = DateTime.UtcNow,
-                PublishedDate = isPublished ? DateTime.UtcNow : (DateTime?)null
-            };
+            var post = _mapper.Map<Post>(createPostDto);
+            post.Created = DateTime.UtcNow;
+            post.Updated = DateTime.UtcNow;
+            post.PublishedDate = createPostDto.IsPublished ? DateTime.UtcNow : (DateTime?)null;
 
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(string.Format(LogMessages.PostCreatedSuccessfully, post.Id, createPostDto.UserId));
 
             return post;
         }
@@ -109,22 +96,21 @@ namespace Habr.BusinessLogic.Services
             return post;
         }
 
-        public async Task UpdatePost(int postId, int userId, UpdatePostDto updatePostDto)
+        public async Task UpdatePost(UpdatePostDto updatePostDto)
         {
-            var existingPost = await GetPostByIdAsync(postId, userId);
+            var existingPost = await GetPostByIdAsync(updatePostDto.PostId, updatePostDto.UserId);
 
             if (existingPost == null)
             {
-                throw new ArgumentException("Post not found.");
+                throw new ArgumentException(Messages.PostNotFound);
             }
 
             if (existingPost.IsPublished)
             {
-                throw new InvalidOperationException("A published post cannot be edited. Move it to drafts first.");
+                throw new InvalidOperationException(Messages.PostPublishedError);
             }
 
-            existingPost.Title = updatePostDto.Title;
-            existingPost.Text = updatePostDto.Text;
+            _mapper.Map(updatePostDto, existingPost);
             existingPost.Updated = DateTime.UtcNow;
 
             _context.Posts.Update(existingPost);
@@ -142,7 +128,7 @@ namespace Habr.BusinessLogic.Services
 
             if (post == null)
             {
-                throw new ArgumentException("The post does not exist.");
+                throw new ArgumentException(Messages.PostDoesNotExist);
             }
 
             post.IsDeleted = true;
@@ -161,12 +147,12 @@ namespace Habr.BusinessLogic.Services
 
             if (post == null)
             {
-                throw new ArgumentException("\nThe post does not exist.");
+                throw new ArgumentException(Messages.PostDoesNotExist);
             }
 
             if (post.IsPublished)
             {
-                throw new InvalidOperationException("\nThe post is already published.");
+                throw new InvalidOperationException(Messages.PostAlreadyPublished);
             }
 
             post.IsPublished = true;
@@ -175,6 +161,8 @@ namespace Habr.BusinessLogic.Services
 
             _context.Posts.Update(post);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(string.Format(LogMessages.PostPublishedSuccessfully, postId, userId));
         }
 
         public async Task MovePostToDraftAsync(int postId, int userId)
@@ -189,17 +177,17 @@ namespace Habr.BusinessLogic.Services
 
             if (post == null)
             {
-                throw new ArgumentException("\nThe post does not exist.");
+                throw new ArgumentException(Messages.PostDoesNotExist);
             }
 
             if (!post.IsPublished)
             {
-                throw new InvalidOperationException("\nThe post is already in drafts.");
+                throw new InvalidOperationException(Messages.PostInDrafts);
             }
 
             if (post.Comments.Any())
             {
-                throw new InvalidOperationException("\nThe post cannot be moved to drafts because it has comments.");
+                throw new InvalidOperationException(Messages.PostCommentsExist);
             }
 
             post.IsPublished = false;
@@ -222,27 +210,10 @@ namespace Habr.BusinessLogic.Services
 
             if (post == null)
             {
-                throw new ArgumentException("Post not found or is not published.");
+                throw new ArgumentException(Messages.PostNotFoundOrUnpublished);
             }
 
-            var postDetails = new PostDetailsDto
-            {
-                Id = post.Id,
-                Title = post.Title,
-                Text = post.Text,
-                AuthorEmail = post.User.Email,
-                PublicationDate = post.PublishedDate,
-                Comments = post.Comments.Select(c => new CommentDto
-                {
-                    Id = c.Id,
-                    Text = c.Text,
-                    Created = c.Created,
-                    UserName = c.User.Name,
-                    ParentCommentId = c.ParentCommentId
-                }).ToList()
-            };
-
-            return postDetails;
+            return _mapper.Map<PostDetailsDto>(post);
         }
     }
 }

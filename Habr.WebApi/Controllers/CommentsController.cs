@@ -19,63 +19,38 @@ namespace Habr.WebApi.Controllers
         }
 
         [HttpPost("{postId}")]
-        public async Task<IActionResult> AddCommentAsync(int postId, [FromBody] AddCommentDto addCommentDto)
+        public async Task<IActionResult> AddCommentAsync(int postId, [FromBody] AddCommentRequest addCommentRequest)
         {
-            try
+            var comment = await _commentService.AddComment(new AddCommentDto
             {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var comment = await _commentService.AddComment(userId, postId, addCommentDto.Text);
+                UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                PostId = postId,
+                Text = addCommentRequest.Text
+            });
 
-                return StatusCode(201, comment);
-            }
-            catch (Exception ex)
-            {
-                if (ex is InvalidOperationException || ex is ArgumentException) 
-                {
-                    return BadRequest(ex.Message);
-                }
-                return StatusCode(500, ex.Message);
-            }
+            return StatusCode(201, comment);
         }
 
         [HttpPost("{parentCommentId}/reply")]
-        public async Task<IActionResult> AddReplyAsync(int parentCommentId, [FromBody] AddReplyDto addReplyDto)
+        public async Task<IActionResult> AddReplyAsync(int parentCommentId, [FromBody] AddReplyRequest addReplyRequest)
         {
-            try
+            var comment = await _commentService.AddReply(new AddReplyDto
             {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var comment = await _commentService.AddReply(userId, parentCommentId, addReplyDto.Text);
+                UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                ParentCommentId = parentCommentId,
+                Text = addReplyRequest.Text
+            });
 
-                return StatusCode(201, comment);
-            }
-            catch (Exception ex)
-            {
-                if (ex is InvalidOperationException || ex is ArgumentException)
-                {
-                    return BadRequest(ex.Message);
-                }
-                return StatusCode(500, ex.Message);
-            }
+            return StatusCode(201, comment);
         }
 
         [HttpDelete("{commentId}")]
         public async Task<IActionResult> DeleteCommentAsync(int commentId)
         {
-            try
-            {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-                await _commentService.DeleteComment(commentId, userId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                if (ex is InvalidOperationException || ex is ArgumentException)
-                {
-                    return BadRequest(ex.Message);
-                }
-                return StatusCode(500, ex.Message);
-            }
+            await _commentService.DeleteComment(commentId, userId);
+            return Ok();
         }
     }
 }

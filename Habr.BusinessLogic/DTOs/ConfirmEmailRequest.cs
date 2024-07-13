@@ -1,6 +1,6 @@
 ﻿namespace Habr.BusinessLogic.DTOs
 {
-    public class ConfirmEmailDto
+    public class ConfirmEmailRequest
     {
         public string Email { get; set; }
         public string Password { get; set; }

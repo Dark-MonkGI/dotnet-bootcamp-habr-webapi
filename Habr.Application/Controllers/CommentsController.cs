@@ -1,4 +1,5 @@
-﻿using Habr.BusinessLogic.Services;
+﻿using Habr.BusinessLogic.DTOs;
+using Habr.BusinessLogic.Services;
 using Habr.DataAccess.Entities;
 
 namespace Habr.Application.Controllers
@@ -17,14 +18,14 @@ namespace Habr.Application.Controllers
             return await _commentService.GetCommentsByPost(postId);
         }
 
-        public async Task<Comment> AddCommentAsync(int userId, int postId, string text)
+        public async Task<Comment> AddCommentAsync(AddCommentDto addCommentDto)
         {
-            return await _commentService.AddComment(userId, postId, text);
+            return await _commentService.AddComment(addCommentDto);
         }
 
-        public async Task<Comment> AddReplyAsync(int userId, int parentCommentId, string text)
+        public async Task<Comment> AddReplyAsync(AddReplyDto addReplyDto)
         {
-            return await _commentService.AddReply(userId, parentCommentId, text);
+            return await _commentService.AddReply(addReplyDto);
         }
 
         public async Task<IEnumerable<Comment>> GetUserCommentsAsync(int userId)

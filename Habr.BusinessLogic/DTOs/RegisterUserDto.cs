@@ -1,4 +1,4 @@
-﻿namespace Habr.WebApi.DTOs
+﻿namespace Habr.BusinessLogic.DTOs
 {
     public class RegisterUserDto
     {

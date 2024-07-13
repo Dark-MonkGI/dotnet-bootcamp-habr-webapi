@@ -1,4 +1,5 @@
-﻿using Habr.BusinessLogic.Services;
+﻿using Habr.BusinessLogic.DTOs;
+using Habr.BusinessLogic.Services;
 using Habr.DataAccess.Entities;
 
 namespace Habr.Application.Controllers
@@ -12,9 +13,9 @@ namespace Habr.Application.Controllers
             _userService = userService;
         }
 
-        public async Task<User> RegisterAsync(string email, string password, bool isEmailConfirmed)
+        public async Task<User> RegisterAsync(RegisterUserDto registerUserDto)
         {
-            return await _userService.RegisterAsync(email, password, isEmailConfirmed);
+            return await _userService.RegisterAsync(registerUserDto);
         }
 
         public async Task ConfirmEmailAsync(string email, bool isEmailConfirmed)
@@ -22,9 +23,9 @@ namespace Habr.Application.Controllers
             await _userService.ConfirmEmailAsync(email, isEmailConfirmed);
         }
 
-        public async Task<User> AuthenticateAsync(string email, string password)
+        public async Task<User> AuthenticateAsync(AuthenticateUserDto authenticateUserDto)
         {
-            return await _userService.AuthenticateAsync(email, password);
+            return await _userService.AuthenticateAsync(authenticateUserDto);
         }
     }
 }

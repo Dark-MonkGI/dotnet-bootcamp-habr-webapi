@@ -1,4 +1,6 @@
-﻿namespace Habr.ConsoleApp.Helpers
+﻿using Habr.ConsoleApp.Resources;
+
+namespace Habr.ConsoleApp.Helpers
 {
     public static class InputHelper
     {
@@ -6,10 +8,10 @@
         {
             while (true)
             {
-                Console.WriteLine($"\n{prompt} (or 0 to exit):");
+                Console.WriteLine(string.Format(Messages.ZeroToExit, prompt));
                 var input = Console.ReadLine()?.Trim();
 
-                if (input == "0")
+                if (input == Messages.Zero)
                 {
                     return null;
                 }
@@ -21,7 +23,7 @@
                 }
                 catch (ArgumentException ex)
                 {
-                    Console.WriteLine($"\n{ex.Message}");
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
