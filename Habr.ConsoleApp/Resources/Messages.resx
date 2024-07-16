@@ -123,6 +123,9 @@
   <data name="ActionSelection" xml:space="preserve">
     <value>What do you want to do? Please enter:</value>
   </data>
+  <data name="AuthenticatedUserNoValidEmail" xml:space="preserve">
+    <value>Authenticated user does not have a valid email</value>
+  </data>
   <data name="AuthorEmail" xml:space="preserve">
     <value>Author's Email</value>
   </data>
@@ -156,6 +159,9 @@
   <data name="CreatePost" xml:space="preserve">
     <value>C - for create post;</value>
   </data>
+  <data name="CurrentUserName" xml:space="preserve">
+    <value>Current user: {0}</value>
+  </data>
   <data name="DateCreation" xml:space="preserve">
     <value>Date of Creation</value>
   </data>
@@ -176,6 +182,9 @@
   </data>
   <data name="DeletePost" xml:space="preserve">
     <value>D - for delete post;</value>
+  </data>
+  <data name="DisplayUserName" xml:space="preserve">
+    <value>n - Display the current user's name</value>
   </data>
   <data name="DonNotForgetConfirmEmail" xml:space="preserve">
     <value>Don't forget to confirm your email!</value>
@@ -371,6 +380,9 @@
   </data>
   <data name="UserName" xml:space="preserve">
     <value>User Name</value>
+  </data>
+  <data name="UserNotAuthenticated" xml:space="preserve">
+    <value>User is not authenticated</value>
   </data>
   <data name="ViewDraftPosts" xml:space="preserve">
     <value>S - for view draft posts;</value>

@@ -136,6 +136,7 @@ namespace Habr.ConsoleApp
                     Console.WriteLine(Messages.CommentToPost);
                     Console.WriteLine(Messages.ReplyToComment);
                     Console.WriteLine(Messages.DeleteComment);
+                    Console.WriteLine(Messages.DisplayUserName);
                     Console.WriteLine(Messages.ToExit);
                     Console.WriteLine(new string('-', 95) + "\n");
 
@@ -174,6 +175,9 @@ namespace Habr.ConsoleApp
                             break;
                         case "x":
                             await CommentManager.DeleteComment(commentsController, authenticatedUser);
+                            break;
+                        case "n":
+                            await UserManager.GetAuthenticatedUserNameAsync(authenticatedUser);
                             break;
                         case "0":
                             return;

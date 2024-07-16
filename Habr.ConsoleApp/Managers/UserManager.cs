@@ -147,5 +147,24 @@ namespace Habr.ConsoleApp.Managers
                 return null;
             }
         }
+
+        public static async Task GetAuthenticatedUserNameAsync(User authenticatedUser)
+        {
+            if (authenticatedUser == null)
+            {
+                Console.WriteLine(Messages.UserNotAuthenticated);
+                return;
+            }
+
+            var email = authenticatedUser.Email;
+            if (string.IsNullOrEmpty(email))
+            {
+                Console.WriteLine(Messages.AuthenticatedUserNoValidEmail);
+                return;
+            }
+
+            var userName = email.Split('@')[0];
+            Console.WriteLine(string.Format(Messages.CurrentUserName, userName));
+        }
     }
 }

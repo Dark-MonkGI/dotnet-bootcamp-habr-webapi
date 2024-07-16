@@ -13,6 +13,7 @@ using Habr.WebApi.Extensions;
 using Habr.WebApi.Profiles;
 using Serilog;
 using Serilog.Events;
+using Habr.WebApi.Modules;
 
 namespace Habr.WebApi
 {
@@ -76,7 +77,7 @@ namespace Habr.WebApi
                 };
             });
 
-            builder.Services.AddControllers();
+            builder.Services.AddAuthorization();
 
             builder.Services.AddEndpointsApiExplorer();
 
@@ -124,7 +125,9 @@ namespace Habr.WebApi
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapControllers();
+            app.RegisterCommentEndpoints();
+            app.RegisterPostEndpoints();
+            app.RegisterUserEndpoints();
 
             app.Run();
         }
