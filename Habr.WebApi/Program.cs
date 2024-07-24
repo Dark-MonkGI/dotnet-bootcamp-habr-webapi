@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
-using Habr.WebApi.Helpers;
 using Habr.BusinessLogic.Profiles;
 using Habr.WebApi.Resources;
 using Habr.WebApi.Extensions;
@@ -43,7 +42,7 @@ namespace Habr.WebApi
                 typeof(WebApiMappingProfile)
                 );
 
-            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+            builder.Services.Configure<BusinessLogic.Helpers.JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
             builder.Services.AddDbContext<DataContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -56,7 +55,7 @@ namespace Habr.WebApi
 
             builder.Services.AddGlobalExceptionHandler();
 
-            var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
+            var jwtSettings = builder.Configuration.GetSection("Jwt").Get<BusinessLogic.Helpers.JwtSettings>();
             var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
 
             builder.Services.AddAuthentication(options =>

@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlreadyAuthenticated" xml:space="preserve">
+    <value>You are already authenticated. Cannot register again.</value>
+  </data>
+  <data name="AuthenticationSuccessful" xml:space="preserve">
+    <value>Authentication Successful</value>
+  </data>
   <data name="CannotCommentUnpublished" xml:space="preserve">
     <value>You cannot comment on unpublished posts!</value>
   </data>
@@ -129,8 +135,17 @@
   <data name="CommentTextTooLong" xml:space="preserve">
     <value>Comment text cannot exceed {0} characters.</value>
   </data>
+  <data name="ConfirmYourEmail" xml:space="preserve">
+    <value>User authenticated. Please confirm your email.</value>
+  </data>
   <data name="DeleteCommentPermissionDenied" xml:space="preserve">
     <value>Comment not found or you do not have permission to delete it.</value>
+  </data>
+  <data name="EmailConfirmationFailed" xml:space="preserve">
+    <value>Email confirmation failed. Please try again.</value>
+  </data>
+  <data name="EmailConfirmedSuccessfully" xml:space="preserve">
+    <value>Email confirmed successfully.</value>
   </data>
   <data name="EmailEmpty" xml:space="preserve">
     <value>Email cannot be empty.</value>
@@ -146,6 +161,9 @@
   </data>
   <data name="EmailTooLong" xml:space="preserve">
     <value>Email cannot exceed {0} characters.</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>Invalid email or password.</value>
   </data>
   <data name="InvalidEmailOrPassword" xml:space="preserve">
     <value>Invalid email or password.</value>
