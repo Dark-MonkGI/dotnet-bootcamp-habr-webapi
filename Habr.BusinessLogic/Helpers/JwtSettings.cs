@@ -1,4 +1,4 @@
-﻿namespace Habr.WebApi.Helpers
+﻿namespace Habr.BusinessLogic.Helpers
 {
     public class JwtSettings
     {

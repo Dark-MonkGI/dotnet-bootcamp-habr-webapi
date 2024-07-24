@@ -61,6 +61,24 @@ namespace Habr.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на You are already authenticated. Cannot register again..
+        /// </summary>
+        internal static string AlreadyAuthenticated {
+            get {
+                return ResourceManager.GetString("AlreadyAuthenticated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Authentication Successful.
+        /// </summary>
+        internal static string AuthenticationSuccessful {
+            get {
+                return ResourceManager.GetString("AuthenticationSuccessful", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на You cannot comment on unpublished posts!.
         /// </summary>
         internal static string CannotCommentUnpublished {
@@ -97,11 +115,38 @@ namespace Habr.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на User authenticated. Please confirm your email..
+        /// </summary>
+        internal static string ConfirmYourEmail {
+            get {
+                return ResourceManager.GetString("ConfirmYourEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Comment not found or you do not have permission to delete it..
         /// </summary>
         internal static string DeleteCommentPermissionDenied {
             get {
                 return ResourceManager.GetString("DeleteCommentPermissionDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Email confirmation failed. Please try again..
+        /// </summary>
+        internal static string EmailConfirmationFailed {
+            get {
+                return ResourceManager.GetString("EmailConfirmationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Email confirmed successfully..
+        /// </summary>
+        internal static string EmailConfirmedSuccessfully {
+            get {
+                return ResourceManager.GetString("EmailConfirmedSuccessfully", resourceCulture);
             }
         }
         
@@ -147,6 +192,15 @@ namespace Habr.BusinessLogic.Resources {
         internal static string EmailTooLong {
             get {
                 return ResourceManager.GetString("EmailTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid email or password..
+        /// </summary>
+        internal static string InvalidEmail {
+            get {
+                return ResourceManager.GetString("InvalidEmail", resourceCulture);
             }
         }
         
