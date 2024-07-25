@@ -2,9 +2,6 @@ using Habr.BusinessLogic.Interfaces;
 using Habr.BusinessLogic.Services;
 using Habr.DataAccess;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Habr.BusinessLogic.Profiles;
 using Habr.WebApi.Extensions;
 using Habr.WebApi.Profiles;
@@ -53,26 +50,7 @@ namespace Habr.WebApi
 
             builder.Services.AddGlobalExceptionHandler();
 
-            var jwtSettings = builder.Configuration.GetSection("Jwt").Get<BusinessLogic.Helpers.JwtSettings>();
-            var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
-
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
+            builder.Services.AddJwtAuthentication(builder.Configuration);
 
             builder.Services.AddAuthorization();
 
