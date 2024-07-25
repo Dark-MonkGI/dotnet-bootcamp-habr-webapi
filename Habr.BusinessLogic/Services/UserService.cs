@@ -41,11 +41,6 @@ namespace Habr.BusinessLogic.Services
 
         public async Task<string> RegisterUserAsync(RegisterUserDto registerUserDto, ClaimsPrincipal user)
         {
-            if (user.Identity.IsAuthenticated)
-            {
-                throw new InvalidOperationException(Messages.AlreadyAuthenticated);
-            }
-
             UserValidation.ValidateEmail(registerUserDto.Email);
             UserValidation.ValidatePassword(registerUserDto.Password);
 
