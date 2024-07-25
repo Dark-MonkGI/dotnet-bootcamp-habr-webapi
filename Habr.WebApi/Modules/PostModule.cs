@@ -16,7 +16,11 @@ namespace Habr.WebApi.Modules
                 var posts = await postService.GetAllPublishedPosts();
 
                 return posts.Any() ? Results.Ok(posts) : Results.NotFound(Messages.NoPostsFound);
-            }).WithTags("Posts").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Posts").RequireAuthorization();
 
             app.MapGet("/api/posts/drafts", async (IPostService postService, ClaimsPrincipal user) =>
             {
@@ -24,7 +28,11 @@ namespace Habr.WebApi.Modules
                 var posts = await postService.GetUserDraftPosts(userId);
 
                 return posts.Any() ? Results.Ok(posts) : Results.NotFound(Messages.NoDraftPosts);
-            }).WithTags("Posts").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Posts").RequireAuthorization();
 
             app.MapPost("/api/posts", 
                 async (
@@ -39,7 +47,11 @@ namespace Habr.WebApi.Modules
                 var post = await postService.CreatePost(createPostDto);
 
                 return Results.Created($"/api/posts/{post.Id}", post);
-            }).WithTags("Posts").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Posts").RequireAuthorization();
 
             app.MapPut("/api/posts/{postId}", 
                 async (
@@ -56,7 +68,11 @@ namespace Habr.WebApi.Modules
                 await postService.UpdatePost(updatePostDto);
 
                 return Results.Ok();
-            }).WithTags("Posts").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Posts").RequireAuthorization();
 
             app.MapDelete("/api/posts/{postId}", async ([FromRoute] int postId, IPostService postService, ClaimsPrincipal user) =>
             {
@@ -64,7 +80,11 @@ namespace Habr.WebApi.Modules
                 await postService.DeletePost(postId, userId);
 
                 return Results.Ok();
-            }).WithTags("Posts").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Posts").RequireAuthorization();
 
             app.MapPost("/api/posts/{postId}/publish", async ([FromRoute] int postId, IPostService postService, ClaimsPrincipal user) =>
             {
@@ -72,7 +92,11 @@ namespace Habr.WebApi.Modules
                 await postService.PublishPostAsync(postId, userId);
 
                 return Results.Ok();
-            }).WithTags("Posts").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Posts").RequireAuthorization();
 
             app.MapPost("/api/posts/{postId}/move-to-draft", async ([FromRoute] int postId, IPostService postService, ClaimsPrincipal user) =>
             {
@@ -80,14 +104,22 @@ namespace Habr.WebApi.Modules
                 await postService.MovePostToDraftAsync(postId, userId);
 
                 return Results.Ok();
-            }).WithTags("Posts").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Posts").RequireAuthorization();
 
             app.MapGet("/api/posts/{postId}", async ([FromRoute] int postId, IPostService postService) =>
             {
                 var postDetails = await postService.GetPostDetailsAsync(postId);
 
                 return Results.Ok(postDetails);
-            }).WithTags("Posts").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Posts").RequireAuthorization();
         }
     }
 }

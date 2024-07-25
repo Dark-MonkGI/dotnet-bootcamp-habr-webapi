@@ -26,7 +26,11 @@ namespace Habr.WebApi.Modules
                 });
 
                 return Results.Created($"/api/comments/{comment.Id}", comment);
-            }).WithTags("Comments").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Comments").RequireAuthorization();
 
             app.MapPost("/api/comments/{parentCommentId}/reply", 
                 async (
@@ -45,7 +49,11 @@ namespace Habr.WebApi.Modules
                 });
 
                 return Results.Created($"/api/comments/{comment.Id}", comment);
-            }).WithTags("Comments").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Comments").RequireAuthorization();
 
             app.MapDelete("/api/comments/{commentId}", async (int commentId, ICommentService commentService, ClaimsPrincipal user) =>
             {
@@ -53,7 +61,11 @@ namespace Habr.WebApi.Modules
                 await commentService.DeleteComment(commentId, userId);
                 
                 return Results.Ok();
-            }).WithTags("Comments").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Comments").RequireAuthorization();
         }
     }
 }
