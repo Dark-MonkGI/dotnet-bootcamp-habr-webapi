@@ -1,5 +1,3 @@
-using Habr.BusinessLogic.Interfaces;
-using Habr.BusinessLogic.Services;
 using Habr.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Habr.BusinessLogic.Profiles;
@@ -8,13 +6,12 @@ using Habr.WebApi.Profiles;
 using Serilog;
 using Serilog.Events;
 using Habr.WebApi.Modules;
+using Habr.Common;
 
 namespace Habr.WebApi
 {
     public class Program
     {
-        private const string LogFilePath = "logs/log.txt";
-
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
@@ -22,7 +19,7 @@ namespace Habr.WebApi
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.Async(a => a.File(LogFilePath, rollingInterval: RollingInterval.Day))
+                .WriteTo.Async(a => a.File(Constants.Log.LogFilePath, rollingInterval: RollingInterval.Day))
                 .CreateLogger();
 
             var builder = WebApplication.CreateBuilder(args);
@@ -42,10 +39,6 @@ namespace Habr.WebApi
             builder.Services.AddDbContext<DataContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddScoped<ICommentService, CommentService>();
-            builder.Services.AddScoped<IPostService, PostService>();
-            builder.Services.AddScoped<IUserService, UserService>();
-
             builder.Services.AddLogging();
 
             builder.Services.AddGlobalExceptionHandler();
@@ -55,6 +48,8 @@ namespace Habr.WebApi
             builder.Services.AddAuthorization();
 
             builder.Services.AddSwaggerServices();
+
+            builder.Services.AddBusinessLogicServices();
 
             var app = builder.Build();
 

@@ -2,6 +2,11 @@
 {
     public static class Constants
     {
+        public static class Log
+        {
+            public const string LogFilePath = "logs/log.txt";
+        }
+
         public static class Post
         {
             public const int TitleMaxLength = 200;
