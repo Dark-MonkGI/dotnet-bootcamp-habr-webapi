@@ -22,7 +22,10 @@ namespace Habr.BusinessLogic.Services
         public async Task<Comment> AddComment(AddCommentDto addCommentDto)
         {
             var post = await _context.Posts
-                .Where(p => p.Id == addCommentDto.PostId && p.IsPublished)
+                .Where(p => 
+                    p.Id == addCommentDto.PostId && 
+                    p.IsPublished && 
+                    !p.IsDeleted)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
 
@@ -43,7 +46,10 @@ namespace Habr.BusinessLogic.Services
         public async Task<Comment> AddReply(AddReplyDto addReplyDto)
         {
             var parentComment = await _context.Comments
-                .Where(c => c.Id == addReplyDto.ParentCommentId && c.Post.IsPublished)
+                .Where(c => 
+                    c.Id == addReplyDto.ParentCommentId 
+                    && c.Post.IsPublished && 
+                    !c.Post.IsDeleted)
                 .Include(c => c.Post)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();

@@ -79,6 +79,15 @@ namespace Habr.ConsoleApp.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Authenticated user does not have a valid email.
+        /// </summary>
+        internal static string AuthenticatedUserNoValidEmail {
+            get {
+                return ResourceManager.GetString("AuthenticatedUserNoValidEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Author&apos;s Email.
         /// </summary>
         internal static string AuthorEmail {
@@ -178,6 +187,15 @@ namespace Habr.ConsoleApp.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Current user: {0}.
+        /// </summary>
+        internal static string CurrentUserName {
+            get {
+                return ResourceManager.GetString("CurrentUserName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Date of Creation.
         /// </summary>
         internal static string DateCreation {
@@ -237,6 +255,15 @@ namespace Habr.ConsoleApp.Resources {
         internal static string DeletePost {
             get {
                 return ResourceManager.GetString("DeletePost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на n - Display the current user&apos;s name.
+        /// </summary>
+        internal static string DisplayUserName {
+            get {
+                return ResourceManager.GetString("DisplayUserName", resourceCulture);
             }
         }
         
@@ -822,6 +849,15 @@ namespace Habr.ConsoleApp.Resources {
         internal static string UserName {
             get {
                 return ResourceManager.GetString("UserName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на User is not authenticated.
+        /// </summary>
+        internal static string UserNotAuthenticated {
+            get {
+                return ResourceManager.GetString("UserNotAuthenticated", resourceCulture);
             }
         }
         

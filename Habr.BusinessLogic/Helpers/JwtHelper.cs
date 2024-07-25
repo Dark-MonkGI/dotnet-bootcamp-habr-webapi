@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Habr.WebApi.Helpers
+namespace Habr.BusinessLogic.Helpers
 {
     public static class JwtHelper
     {
@@ -20,7 +20,6 @@ namespace Habr.WebApi.Helpers
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email)
                 }),
-
                 Expires = DateTime.UtcNow.AddDays(tokenLifeDays),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
