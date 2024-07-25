@@ -20,6 +20,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Posts").RequireAuthorization();
 
             app.MapGet("/api/posts/drafts", async (IPostService postService, ClaimsPrincipal user) =>
@@ -32,6 +33,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Posts").RequireAuthorization();
 
             app.MapPost("/api/posts", 
@@ -51,6 +53,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Posts").RequireAuthorization();
 
             app.MapPut("/api/posts/{postId}", 
@@ -72,6 +75,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Posts").RequireAuthorization();
 
             app.MapDelete("/api/posts/{postId}", async ([FromRoute] int postId, IPostService postService, ClaimsPrincipal user) =>
@@ -84,6 +88,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Posts").RequireAuthorization();
 
             app.MapPost("/api/posts/{postId}/publish", async ([FromRoute] int postId, IPostService postService, ClaimsPrincipal user) =>
@@ -96,6 +101,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Posts").RequireAuthorization();
 
             app.MapPost("/api/posts/{postId}/move-to-draft", async ([FromRoute] int postId, IPostService postService, ClaimsPrincipal user) =>
@@ -108,6 +114,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Posts").RequireAuthorization();
 
             app.MapGet("/api/posts/{postId}", async ([FromRoute] int postId, IPostService postService) =>
@@ -119,6 +126,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Posts").RequireAuthorization();
         }
     }

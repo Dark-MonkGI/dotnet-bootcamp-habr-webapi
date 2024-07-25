@@ -25,6 +25,7 @@ namespace Habr.WebApi.Modules
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
+            .WithOpenApi()
             .WithTags("Users");
 
             app.MapPost("/api/users/confirm-email",
@@ -42,6 +43,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Users");
 
             app.MapPost("/api/users/authenticate",
@@ -59,6 +61,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Users");
 
             app.MapGet("/api/users/self", (IUserService userService, ClaimsPrincipal user) =>
@@ -75,6 +78,7 @@ namespace Habr.WebApi.Modules
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Users")
             .RequireAuthorization();
         }

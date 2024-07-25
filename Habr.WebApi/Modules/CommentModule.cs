@@ -30,6 +30,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Comments").RequireAuthorization();
 
             app.MapPost("/api/comments/{parentCommentId}/reply", 
@@ -53,6 +54,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Comments").RequireAuthorization();
 
             app.MapDelete("/api/comments/{commentId}", async (int commentId, ICommentService commentService, ClaimsPrincipal user) =>
@@ -65,6 +67,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
             .WithTags("Comments").RequireAuthorization();
         }
     }
