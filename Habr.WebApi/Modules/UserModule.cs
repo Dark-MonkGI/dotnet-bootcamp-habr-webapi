@@ -22,7 +22,10 @@ namespace Habr.WebApi.Modules
                 var token = await userService.RegisterUserAsync(registerUserDto, user);
 
                 return Results.Ok(new { Token = token });
-            }).WithTags("Users");
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .WithTags("Users");
 
             app.MapPost("/api/users/confirm-email",
                 async (
@@ -35,7 +38,11 @@ namespace Habr.WebApi.Modules
                 var authenticateUserDto = mapper.Map<AuthenticateUserDto>(confirmEmailRequest);
                 var (token, message) = await userService.ConfirmEmailAsync(authenticateUserDto, user);
                 return Results.Ok(new { Token = token, Message = message });
-            }).WithTags("Users");
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Users");
 
             app.MapPost("/api/users/authenticate",
                 async (
@@ -48,7 +55,11 @@ namespace Habr.WebApi.Modules
                 var authenticateUserDto = mapper.Map<AuthenticateUserDto>(authenticateUserRequest);
                 var (token, message) = await userService.AuthenticateUserAsync(authenticateUserDto, user);
                 return Results.Ok(new { Token = token, Message = message });
-            }).WithTags("Users");
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Users");
 
             app.MapGet("/api/users/self", (IUserService userService, ClaimsPrincipal user) =>
             {
@@ -61,7 +72,11 @@ namespace Habr.WebApi.Modules
                 var userName = email.Split('@')[0];
                 return Results.Ok(new { UserName = userName });
 
-            }).WithTags("Users").RequireAuthorization();
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithTags("Users")
+            .RequireAuthorization();
         }
     }
 }
