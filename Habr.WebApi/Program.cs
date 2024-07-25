@@ -5,9 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.OpenApi.Models;
 using Habr.BusinessLogic.Profiles;
-using Habr.WebApi.Resources;
 using Habr.WebApi.Extensions;
 using Habr.WebApi.Profiles;
 using Serilog;
@@ -78,29 +76,7 @@ namespace Habr.WebApi
 
             builder.Services.AddAuthorization();
 
-            builder.Services.AddEndpointsApiExplorer();
-
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = Messages.SwaggerSecurityDefinitionDescription,
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement{
-                {
-                    new OpenApiSecurityScheme{
-                        Reference = new OpenApiReference{
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new string[]{}
-                }});
-            });
+            builder.Services.AddSwaggerServices();
 
             var app = builder.Build();
 
