@@ -44,11 +44,21 @@ namespace Habr.DataAccess
             this.connectionString = config.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is empty.");
         }
 
+        /// <summary>
+        /// Initializes a new instance of the DataContext class using the provided parameters, for use with Moq
+        /// </summary>
+        /// <param name="options">Options for this context.</param>
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        {
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(this.connectionString);
-            optionsBuilder.UseLoggerFactory(ConsoleLoggerFactory);
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(this.connectionString);
+                optionsBuilder.UseLoggerFactory(ConsoleLoggerFactory);
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
