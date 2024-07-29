@@ -57,6 +57,16 @@ namespace Habr.BusinessLogic.Services
 
         public async Task<Post> CreatePost(CreatePostDto createPostDto)
         {
+            if (string.IsNullOrWhiteSpace(createPostDto.Title))
+            {
+                throw new ArgumentException(Messages.TitleRequired);
+            }
+
+            if (string.IsNullOrWhiteSpace(createPostDto.Text))
+            {
+                throw new ArgumentException(Messages.TextRequired);
+            }
+
             var post = _mapper.Map<Post>(createPostDto);
             post.Created = DateTime.UtcNow;
             post.Updated = DateTime.UtcNow;

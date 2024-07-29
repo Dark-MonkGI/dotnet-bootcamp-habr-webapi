@@ -207,4 +207,10 @@
   <data name="PostTitleTooLong" xml:space="preserve">
     <value>Title must be less than {0}  symbols.</value>
   </data>
+  <data name="TextRequired" xml:space="preserve">
+    <value>Text is required</value>
+  </data>
+  <data name="TitleRequired" xml:space="preserve">
+    <value>Title is required</value>
+  </data>
 </root>

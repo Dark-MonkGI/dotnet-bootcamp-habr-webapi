@@ -329,5 +329,23 @@ namespace Habr.BusinessLogic.Resources {
                 return ResourceManager.GetString("PostTitleTooLong", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Text is required.
+        /// </summary>
+        internal static string TextRequired {
+            get {
+                return ResourceManager.GetString("TextRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Title is required.
+        /// </summary>
+        internal static string TitleRequired {
+            get {
+                return ResourceManager.GetString("TitleRequired", resourceCulture);
+            }
+        }
     }
 }
