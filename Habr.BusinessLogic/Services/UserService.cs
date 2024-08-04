@@ -19,6 +19,7 @@ namespace Habr.BusinessLogic.Services
         private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
         private readonly JwtSettings _jwtSettings;
+        private readonly ITokenService _tokenService;
 
         public UserService(DataContext context, IMapper mapper, ILogger<UserService> logger)
         {
@@ -31,15 +32,17 @@ namespace Habr.BusinessLogic.Services
             DataContext context, 
             IMapper mapper, 
             ILogger<UserService> logger, 
-            IOptions<JwtSettings> jwtSettings)
+            IOptions<JwtSettings> jwtSettings,
+            ITokenService tokenService)
         {
             _context = context;
             _mapper = mapper;
             _logger = logger;
             _jwtSettings = jwtSettings.Value;
+            _tokenService = tokenService;
         }
 
-        public async Task<string> RegisterUserAsync(RegisterUserDto registerUserDto, ClaimsPrincipal user)
+        public async Task<TokenResponseDto> RegisterUserAsync(RegisterUserDto registerUserDto, ClaimsPrincipal user)
         {
             UserValidation.ValidateEmail(registerUserDto.Email);
             UserValidation.ValidatePassword(registerUserDto.Password);
@@ -53,18 +56,29 @@ namespace Habr.BusinessLogic.Services
             newUser.Name = registerUserDto.Email.Split('@')[0];
             newUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerUserDto.Password);
             newUser.Created = DateTime.UtcNow;
+            newUser.RefreshToken = _tokenService.GenerateRefreshToken();
+            newUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeDays);
 
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            var token = JwtHelper.GenerateJwtToken(newUser, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
+            var token = _tokenService.GenerateAccessToken(new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, newUser.Id.ToString()),
+                new Claim(ClaimTypes.Email, newUser.Email)
+            });
 
             _logger.LogInformation(string.Format(LogMessages.UserRegisteredSuccessfully, newUser.Email));
 
-            return token;
+
+            return new TokenResponseDto { 
+                Token = token, 
+                RefreshToken = newUser.RefreshToken, 
+                Message = string.Format(Messages.UserRegisteredSuccessfully, newUser.Email)
+            };
         }
 
-        public async Task<(string Token, string Message)> ConfirmEmailAsync(AuthenticateUserDto authenticateUserDto, ClaimsPrincipal user)
+        public async Task<TokenResponseDto> ConfirmEmailAsync(AuthenticateUserDto authenticateUserDto, ClaimsPrincipal user)
         {
             if (user.Identity.IsAuthenticated)
             {
@@ -87,12 +101,27 @@ namespace Habr.BusinessLogic.Services
             _context.Users.Update(authenticatedUser);
             await _context.SaveChangesAsync();
 
-            var token = JwtHelper.GenerateJwtToken(authenticatedUser, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
+            var token = _tokenService.GenerateAccessToken(new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, authenticatedUser.Id.ToString()),
+                new Claim(ClaimTypes.Email, authenticatedUser.Email)
+            });
 
-            return (token, Messages.EmailConfirmedSuccessfully);
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            authenticatedUser.RefreshToken = refreshToken;
+            authenticatedUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeDays);
+
+            _context.Users.Update(authenticatedUser);
+            await _context.SaveChangesAsync();
+
+            return new TokenResponseDto { 
+                Token = token, 
+                RefreshToken = refreshToken, 
+                Message = Messages.EmailConfirmedSuccessfully 
+            };
         }
 
-        public async Task<(string Token, string Message)> AuthenticateUserAsync(AuthenticateUserDto authenticateUserDto, ClaimsPrincipal user)
+        public async Task<TokenResponseDto> AuthenticateUserAsync(AuthenticateUserDto authenticateUserDto, ClaimsPrincipal user)
         {
             if (user.Identity.IsAuthenticated)
             {
@@ -108,11 +137,55 @@ namespace Habr.BusinessLogic.Services
 
             if (!authenticatedUser.IsEmailConfirmed)
             {
-                return (null, Messages.ConfirmYourEmail);
+                return new TokenResponseDto { Message = Messages.ConfirmYourEmail };
             }
 
-            var token = JwtHelper.GenerateJwtToken(authenticatedUser, _jwtSettings.SecretKey, _jwtSettings.TokenLifetimeDays);
-            return (token, Messages.AuthenticationSuccessful);
+            var token = _tokenService.GenerateAccessToken(new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, authenticatedUser.Id.ToString()),
+                new Claim(ClaimTypes.Email, authenticatedUser.Email)
+            });
+
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            authenticatedUser.RefreshToken = refreshToken;
+            authenticatedUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeDays);
+
+            _context.Users.Update(authenticatedUser);
+            await _context.SaveChangesAsync();
+
+            return new TokenResponseDto { 
+                Token = token, 
+                RefreshToken = refreshToken, 
+                Message = Messages.AuthenticationSuccessful 
+            };
+        }
+
+        public async Task<TokenResponseDto> RefreshTokenAsync(string refreshToken)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken);
+
+            if (user == null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            {
+                throw new UnauthorizedAccessException(Messages.InvalidRefreshToken);
+            }
+
+            var newAccessToken = _tokenService.GenerateAccessToken(new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email)
+            });
+
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeDays);
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return new TokenResponseDto { 
+                Token = newAccessToken, 
+                RefreshToken = newRefreshToken 
+            };
         }
 
         public async Task<User> RegisterAsync(RegisterUserDto registerUserDto)

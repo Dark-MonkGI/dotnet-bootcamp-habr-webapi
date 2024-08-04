@@ -214,6 +214,24 @@ namespace Habr.BusinessLogic.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid or expired refresh token.
+        /// </summary>
+        internal static string InvalidRefreshToken {
+            get {
+                return ResourceManager.GetString("InvalidRefreshToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Invalid token.
+        /// </summary>
+        internal static string InvalidToken {
+            get {
+                return ResourceManager.GetString("InvalidToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Password cannot be empty..
         /// </summary>
         internal static string PasswordEmpty {
@@ -345,6 +363,15 @@ namespace Habr.BusinessLogic.Resources {
         internal static string TitleRequired {
             get {
                 return ResourceManager.GetString("TitleRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на User {0} registered successfully.
+        /// </summary>
+        internal static string UserRegisteredSuccessfully {
+            get {
+                return ResourceManager.GetString("UserRegisteredSuccessfully", resourceCulture);
             }
         }
     }

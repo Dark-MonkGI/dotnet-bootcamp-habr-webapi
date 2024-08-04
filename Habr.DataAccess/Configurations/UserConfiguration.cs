@@ -9,20 +9,9 @@ namespace Habr.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.Property(u => u.Id)
-                .IsRequired()
-                .ValueGeneratedOnAdd();
-
             builder.Property(u => u.Name)
                 .IsRequired()
                 .HasMaxLength(Constants.User.NameMaxLength);
-
-            builder.Property(u => u.Email)
-                .IsRequired()
-                .HasMaxLength(Constants.User.EmailMaxLength);
-
-            builder.Property(u => u.PasswordHash)
-                .IsRequired();
 
             builder.Property(u => u.Created)
                 .IsRequired();
@@ -30,6 +19,12 @@ namespace Habr.DataAccess.Configurations
             builder.Property(u => u.IsEmailConfirmed)
                 .IsRequired()
                 .HasDefaultValue(Constants.User.DefaultIsEmailConfirmed);
+
+            builder.Property(u => u.RefreshToken)
+                .HasMaxLength(500);
+
+            builder.Property(u => u.RefreshTokenExpiryTime)
+                .IsRequired();
 
             builder.HasIndex(u => u.Email)
                 .IsUnique();
