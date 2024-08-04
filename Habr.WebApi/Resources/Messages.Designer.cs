@@ -151,6 +151,15 @@ namespace Habr.WebApi.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на RefreshTokenLifetimeDays configuration is missing or invalid.
+        /// </summary>
+        public static string RefreshTokenLifetimeDaysInvalid {
+            get {
+                return ResourceManager.GetString("RefreshTokenLifetimeDaysInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на JWT Authorization header using the Bearer scheme. Example: &quot;Authorization: Bearer {token}&quot;.
         /// </summary>
         public static string SwaggerSecurityDefinitionDescription {

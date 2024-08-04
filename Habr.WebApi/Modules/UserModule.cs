@@ -3,6 +3,7 @@ using Habr.BusinessLogic.Interfaces;
 using AutoMapper;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Habr.Common;
 
 namespace Habr.WebApi.Modules
 {
@@ -26,7 +27,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .WithOpenApi()
-            .WithTags("Users");
+            .WithTags(Constants.Tags.UsersTag);
 
             app.MapPost("/api/users/confirm-email",
                 async (
@@ -44,7 +45,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .WithOpenApi()
-            .WithTags("Users");
+            .WithTags(Constants.Tags.UsersTag);
 
             app.MapPost("/api/users/authenticate",
                 async (
@@ -62,7 +63,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .WithOpenApi()
-            .WithTags("Users");
+            .WithTags(Constants.Tags.UsersTag);
 
             app.MapPost("/api/users/refresh-token",
             async (
@@ -77,7 +78,7 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .WithOpenApi()
-            .WithTags("Users");
+            .WithTags(Constants.Tags.UsersTag);
 
             app.MapGet("/api/users/self", (IUserService userService, ClaimsPrincipal user) =>
             {
@@ -94,8 +95,8 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .WithOpenApi()
-            .WithTags("Users")
-            .RequireAuthorization();
+            .WithTags(Constants.Tags.UsersTag)
+            .RequireAuthorization(Constants.Policies.UserPolicy);
         }
     }
 }

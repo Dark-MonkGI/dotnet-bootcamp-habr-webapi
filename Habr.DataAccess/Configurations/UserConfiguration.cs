@@ -9,6 +9,9 @@ namespace Habr.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            builder.Property(u => u.Id)
+                .ValueGeneratedOnAdd();
+
             builder.Property(u => u.Name)
                 .IsRequired()
                 .HasMaxLength(Constants.User.NameMaxLength);
@@ -25,6 +28,10 @@ namespace Habr.DataAccess.Configurations
 
             builder.Property(u => u.RefreshTokenExpiryTime)
                 .IsRequired();
+
+            builder.Property(u => u.SecurityStamp)
+                .IsRequired()
+                .HasMaxLength(Constants.User.SecurityStampMaxLength);
 
             builder.HasIndex(u => u.Email)
                 .IsUnique();

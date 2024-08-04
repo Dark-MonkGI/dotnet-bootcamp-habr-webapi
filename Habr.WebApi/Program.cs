@@ -7,12 +7,15 @@ using Serilog;
 using Serilog.Events;
 using Habr.WebApi.Modules;
 using Habr.Common;
+using Microsoft.AspNetCore.Identity;
+using Habr.DataAccess.Entities;
+using Habr.WebApi.Infrastructure;
 
 namespace Habr.WebApi
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -39,6 +42,10 @@ namespace Habr.WebApi
             builder.Services.AddDbContext<DataContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddIdentity<User, IdentityRole<int>>()
+                .AddEntityFrameworkStores<DataContext>()
+                .AddDefaultTokenProviders();
+
             builder.Services.AddLogging();
 
             builder.Services.AddGlobalExceptionHandler();
@@ -46,6 +53,12 @@ namespace Habr.WebApi
             builder.Services.AddJwtAuthentication(builder.Configuration);
 
             builder.Services.AddAuthorization();
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Constants.Policies.UserPolicy, policy => policy.RequireRole(Constants.Roles.User, 
+                    Constants.Roles.Admin));
+                options.AddPolicy(Constants.Policies.AdminPolicy, policy => policy.RequireRole(Constants.Roles.Admin));
+            });
 
             builder.Services.AddSwaggerServices();
 
@@ -58,6 +71,8 @@ namespace Habr.WebApi
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<DataContext>();
                 context.Database.Migrate();
+
+                await RoleInitializer.InitializeAsync(services);
             }
 
             if (app.Environment.IsDevelopment())
@@ -77,7 +92,7 @@ namespace Habr.WebApi
             app.RegisterPostEndpoints();
             app.RegisterUserEndpoints();
 
-            app.Run();
+            await app.RunAsync();
         }
     }
 }

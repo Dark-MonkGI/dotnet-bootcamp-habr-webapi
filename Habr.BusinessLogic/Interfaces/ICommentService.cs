@@ -10,5 +10,6 @@ namespace Habr.BusinessLogic.Interfaces
         Task DeleteComment(int commentId, int userId);
         Task<IEnumerable<Comment>> GetCommentsByPost(int postId);
         Task<IEnumerable<Comment>> GetUserComments(int userId);
+        Task DeleteCommentAsAdmin(int commentId);
     }
 }

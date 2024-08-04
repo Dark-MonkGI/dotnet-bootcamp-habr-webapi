@@ -147,6 +147,9 @@
   <data name="NotFoundTitle" xml:space="preserve">
     <value>Not Found</value>
   </data>
+  <data name="RefreshTokenLifetimeDaysInvalid" xml:space="preserve">
+    <value>RefreshTokenLifetimeDays configuration is missing or invalid</value>
+  </data>
   <data name="SwaggerSecurityDefinitionDescription" xml:space="preserve">
     <value>JWT Authorization header using the Bearer scheme. Example: "Authorization: Bearer {token}"</value>
   </data>

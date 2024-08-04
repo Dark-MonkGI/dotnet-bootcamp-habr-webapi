@@ -127,8 +127,10 @@ namespace Habr.DataAccess.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "SecurityStamp",
                 table: "AspNetUsers",
-                type: "nvarchar(max)",
-                nullable: true);
+                type: "nvarchar(100)",
+                maxLength: 100,
+                nullable: false,
+                defaultValue: "");
 
             migrationBuilder.AddColumn<bool>(
                 name: "TwoFactorEnabled",

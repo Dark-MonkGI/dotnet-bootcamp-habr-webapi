@@ -16,5 +16,7 @@ namespace Habr.BusinessLogic.Interfaces
         Task MovePostToDraftAsync(int postId, int userId);
         Task<PostDetailsDto> GetPostDetailsAsync(int postId);
         Task<Post> GetPostByIdAsync(int postId, int userId);
+        Task UpdatePostAsAdmin(UpdatePostDto updatePostDto);
+        Task DeletePostAsAdmin(int postId);
     }
 }
