@@ -18,7 +18,7 @@ namespace Habr.WebApi.Infrastructure
                 throw new InvalidOperationException(Messages.AlreadyAuthenticated);
             }
 
-            var roleNames = configuration.GetSection("Roles").Get<string[]>();
+            var roleNames = new string[] { Constants.Roles.Admin, Constants.Roles.User };
 
             foreach (var roleName in roleNames)
             {
