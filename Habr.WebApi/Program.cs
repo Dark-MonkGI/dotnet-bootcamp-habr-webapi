@@ -72,7 +72,7 @@ namespace Habr.WebApi
                 var context = services.GetRequiredService<DataContext>();
                 context.Database.Migrate();
 
-                await RoleInitializer.InitializeAsync(services);
+                await RoleInitializer.AdminInitializeAsync(services);
             }
 
             if (app.Environment.IsDevelopment())

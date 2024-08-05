@@ -7,7 +7,7 @@ namespace Habr.WebApi.Infrastructure
 {
     public static class RoleInitializer
     {
-        public static async Task InitializeAsync(IServiceProvider serviceProvider)
+        public static async Task AdminInitializeAsync(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
