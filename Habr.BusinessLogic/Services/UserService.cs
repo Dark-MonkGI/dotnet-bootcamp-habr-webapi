@@ -175,8 +175,9 @@ namespace Habr.BusinessLogic.Services
         public async Task<TokenResponseDto> RefreshTokenAsync(string refreshToken)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            var currentUtcTime = DateTime.UtcNow;
 
-            if (user == null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            if (user == null || user.RefreshTokenExpiryTime <= currentUtcTime)
             {
                 throw new UnauthorizedAccessException(Messages.InvalidRefreshToken);
             }
@@ -189,7 +190,7 @@ namespace Habr.BusinessLogic.Services
 
             var newRefreshToken = _tokenService.GenerateRefreshToken();
             user.RefreshToken = newRefreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenLifetimeDays);
+            user.RefreshTokenExpiryTime = currentUtcTime.AddDays(_jwtSettings.RefreshTokenLifetimeDays);
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
