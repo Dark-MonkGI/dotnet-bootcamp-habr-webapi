@@ -9,7 +9,6 @@ using Habr.WebApi.Modules;
 using Habr.Common;
 using Microsoft.AspNetCore.Identity;
 using Habr.DataAccess.Entities;
-using Habr.WebApi.Infrastructure;
 
 namespace Habr.WebApi
 {
@@ -66,14 +65,7 @@ namespace Habr.WebApi
 
             var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<DataContext>();
-                context.Database.Migrate();
-
-                await RoleInitializer.AdminInitializeAsync(services);
-            }
+            await app.Services.InitializeDatabaseAndRolesAsync();
 
             if (app.Environment.IsDevelopment())
             {
