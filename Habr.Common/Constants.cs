@@ -41,6 +41,7 @@
             public const int NameMaxLength = 100;
             public const int EmailMaxLength = 200;
             public const int SecurityStampMaxLength = 100;
+            public const int RefreshTokenMaxLength = 500;           
             public const bool DefaultIsEmailConfirmed = false;
             public const string EmailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
         }

@@ -193,6 +193,9 @@ namespace Habr.DataAccess.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("RefreshToken")
+                        .HasDatabaseName("IX_Users_RefreshToken");
+
                     b.ToTable("AspNetUsers", (string)null);
                 });
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Habr.DataAccess.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240804160606_AddIdentitySupport")]
+    [Migration("20240805191315_AddIdentitySupport")]
     partial class AddIdentitySupport
     {
         /// <inheritdoc />
@@ -195,6 +195,9 @@ namespace Habr.DataAccess.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("RefreshToken")
+                        .HasDatabaseName("IX_Users_RefreshToken");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });

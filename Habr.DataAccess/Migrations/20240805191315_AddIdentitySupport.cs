@@ -285,6 +285,11 @@ namespace Habr.DataAccess.Migrations
                 filter: "[Email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_RefreshToken",
+                table: "AspNetUsers",
+                column: "RefreshToken");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -374,6 +379,10 @@ namespace Habr.DataAccess.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_AspNetUsers_Email",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Users_RefreshToken",
                 table: "AspNetUsers");
 
             migrationBuilder.DropIndex(

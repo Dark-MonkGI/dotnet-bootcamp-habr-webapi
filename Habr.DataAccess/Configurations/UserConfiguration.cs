@@ -24,7 +24,7 @@ namespace Habr.DataAccess.Configurations
                 .HasDefaultValue(Constants.User.DefaultIsEmailConfirmed);
 
             builder.Property(u => u.RefreshToken)
-                .HasMaxLength(500);
+                .HasMaxLength(Constants.User.RefreshTokenMaxLength);
 
             builder.Property(u => u.RefreshTokenExpiryTime)
                 .IsRequired();
@@ -35,6 +35,10 @@ namespace Habr.DataAccess.Configurations
 
             builder.HasIndex(u => u.Email)
                 .IsUnique();
+
+            builder.HasIndex(u => u.RefreshToken)
+                .HasDatabaseName("IX_Users_RefreshToken")
+                .IsUnique(false);
         }
     }
 }
