@@ -10,7 +10,7 @@ namespace Habr.WebApi.Extensions
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IPostService, PostService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddTransient<ITokenService, TokenService>();
+            services.AddSingleton<ITokenService, TokenService>();
 
             return services;
         }
