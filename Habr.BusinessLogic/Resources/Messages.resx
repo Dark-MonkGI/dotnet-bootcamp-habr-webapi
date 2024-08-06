@@ -168,6 +168,12 @@
   <data name="InvalidEmailOrPassword" xml:space="preserve">
     <value>Invalid email or password.</value>
   </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>Invalid or expired refresh token</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Invalid token</value>
+  </data>
   <data name="PasswordEmpty" xml:space="preserve">
     <value>Password cannot be empty.</value>
   </data>
@@ -212,5 +218,8 @@
   </data>
   <data name="TitleRequired" xml:space="preserve">
     <value>Title is required</value>
+  </data>
+  <data name="UserRegisteredSuccessfully" xml:space="preserve">
+    <value>User {0} registered successfully</value>
   </data>
 </root>

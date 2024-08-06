@@ -6,9 +6,10 @@ namespace Habr.BusinessLogic.Interfaces
 {
     public interface IUserService
     {
-        Task<string> RegisterUserAsync(RegisterUserDto registerUserDto, ClaimsPrincipal user);
-        Task<(string Token, string Message)> ConfirmEmailAsync(AuthenticateUserDto authenticateUserDto, ClaimsPrincipal user);
-        Task<(string Token, string Message)> AuthenticateUserAsync(AuthenticateUserDto authenticateUserDto, ClaimsPrincipal user);
+        Task<TokenResponseDto> RegisterUserAsync(RegisterUserDto registerUserDto, ClaimsPrincipal user);
+        Task<TokenResponseDto> ConfirmEmailAsync(AuthenticateUserDto authenticateUserDto, ClaimsPrincipal user);
+        Task<TokenResponseDto> AuthenticateUserAsync(AuthenticateUserDto authenticateUserDto, ClaimsPrincipal user);
+        Task<TokenResponseDto> RefreshTokenAsync(string refreshToken);
 
         Task<User> RegisterAsync(RegisterUserDto registerUserDto);
         Task ConfirmEmailAsync(string email, bool isEmailConfirmed);

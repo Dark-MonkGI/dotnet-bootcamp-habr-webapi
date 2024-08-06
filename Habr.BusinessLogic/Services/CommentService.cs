@@ -114,5 +114,23 @@ namespace Habr.BusinessLogic.Services
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        public async Task DeleteCommentAsAdmin(int commentId)
+        {
+            var comment = await _context.Comments
+                .Include(c => c.Replies)
+                .SingleOrDefaultAsync(c => c.Id == commentId);
+
+            if (comment == null)
+            {
+                throw new ArgumentException(Messages.CommentNotFound);
+            }
+
+            await DeleteReplies(comment);
+
+            _context.Comments.Remove(comment);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

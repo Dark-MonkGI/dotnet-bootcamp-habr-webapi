@@ -2,6 +2,7 @@
 using Habr.BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Habr.Common;
 
 namespace Habr.WebApi.Modules
 {
@@ -31,7 +32,8 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .WithOpenApi()
-            .WithTags("Comments").RequireAuthorization();
+            .WithTags(Constants.Tags.CommentsTag)
+            .RequireAuthorization(Constants.Policies.UserPolicy);
 
             app.MapPost("/api/comments/{parentCommentId}/reply", 
                 async (
@@ -55,7 +57,8 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .WithOpenApi()
-            .WithTags("Comments").RequireAuthorization();
+            .WithTags(Constants.Tags.CommentsTag)
+            .RequireAuthorization(Constants.Policies.UserPolicy);
 
             app.MapDelete("/api/comments/{commentId}", async (int commentId, ICommentService commentService, ClaimsPrincipal user) =>
             {
@@ -68,7 +71,21 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
             .WithOpenApi()
-            .WithTags("Comments").RequireAuthorization();
+            .WithTags(Constants.Tags.CommentsTag)
+            .RequireAuthorization(Constants.Policies.UserPolicy);
+
+            app.MapDelete("/api/admin/comments/{commentId}", async (int commentId, ICommentService commentService) =>
+            {
+                await commentService.DeleteCommentAsAdmin(commentId);
+
+                return Results.Ok();
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithOpenApi()
+            .WithTags(Constants.Tags.AdminTag)
+            .RequireAuthorization(Constants.Policies.AdminPolicy);
         }
     }
 }

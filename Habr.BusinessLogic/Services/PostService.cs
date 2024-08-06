@@ -225,5 +225,42 @@ namespace Habr.BusinessLogic.Services
 
             return _mapper.Map<PostDetailsDto>(post);
         }
+
+        public async Task UpdatePostAsAdmin(UpdatePostDto updatePostDto)
+        {
+            var existingPost = await _context.Posts
+                .Where(p => p.Id == updatePostDto.PostId && !p.IsDeleted)
+                .SingleOrDefaultAsync();
+
+            if (existingPost == null)
+            {
+                throw new ArgumentException(Messages.PostNotFound);
+            }
+
+            var originalUserId = existingPost.UserId;
+
+            _mapper.Map(updatePostDto, existingPost);
+            existingPost.UserId = originalUserId;
+            existingPost.Updated = DateTime.UtcNow;
+
+            _context.Posts.Update(existingPost);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeletePostAsAdmin(int postId)
+        {
+            var post = await _context.Posts
+                .Where(p => p.Id == postId && !p.IsDeleted)
+                .SingleOrDefaultAsync();
+
+            if (post == null)
+            {
+                throw new ArgumentException(Messages.PostDoesNotExist);
+            }
+
+            post.IsDeleted = true;
+            _context.Posts.Update(post);
+            await _context.SaveChangesAsync();
+        }
     }
 }
