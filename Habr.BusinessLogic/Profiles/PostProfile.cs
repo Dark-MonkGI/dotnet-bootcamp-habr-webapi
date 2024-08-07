@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Habr.BusinessLogic.DTOs;
 using Habr.DataAccess.Entities;
+using System.Globalization;
 
 namespace Habr.BusinessLogic.Profiles
 {
@@ -8,11 +9,19 @@ namespace Habr.BusinessLogic.Profiles
     {
         public PostProfile()
         {
-            CreateMap<Post, PostDto>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            CreateMap<Post, PostDtoV1>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.AuthorEmail, opt => opt.MapFrom(src => src.User.Email))
-                .ForMember(dest => dest.PublicationDate, opt => opt.MapFrom(src => src.PublishedDate));
+                .ForMember(dest => dest.PublishedAt, opt => opt.MapFrom(src => src.PublishedDate.HasValue ? src.PublishedDate.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : null));
+
+            CreateMap<Post, PostDtoV2>()
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+                .ForMember(dest => dest.PublishedAt, opt => opt.MapFrom(src => src.PublishedDate.HasValue ? src.PublishedDate.Value.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) : null))
+                .ForMember(dest => dest.Author, opt => opt.MapFrom(src => new AuthorDto
+                {
+                    Email = src.User.Email,
+                    Name = src.User.UserName
+                }));
 
             CreateMap<Post, PostDetailsDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

@@ -63,6 +63,8 @@ namespace Habr.WebApi
 
             builder.Services.AddBusinessLogicServices();
 
+            builder.Services.AddApiVersioningServices();
+
             var app = builder.Build();
 
             await app.Services.InitializeDatabaseAndRolesAsync();
@@ -80,8 +82,10 @@ namespace Habr.WebApi
             app.UseAuthentication();
             app.UseAuthorization();
 
+            var apiVersionSet = app.CreateApiVersionSet();
+
             app.RegisterCommentEndpoints();
-            app.RegisterPostEndpoints();
+            app.RegisterPostEndpoints(apiVersionSet);
             app.RegisterUserEndpoints();
 
             await app.RunAsync();

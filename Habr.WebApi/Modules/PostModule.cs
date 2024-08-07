@@ -5,14 +5,15 @@ using System.Security.Claims;
 using Habr.WebApi.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Habr.Common;
+using Asp.Versioning.Builder;
 
 namespace Habr.WebApi.Modules
 {
     public static class PostModule
     {
-        public static void RegisterPostEndpoints(this IEndpointRouteBuilder app)
+        public static void RegisterPostEndpoints(this IEndpointRouteBuilder app, ApiVersionSet apiVersionSet)
         {
-            app.MapGet("/api/posts", async (IPostService postService) =>
+            app.MapGet("/api/v{version:apiVersion}/posts", async (IPostService postService) =>
             {
                 var posts = await postService.GetAllPublishedPosts();
 
@@ -21,6 +22,23 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(1.0)
+            .WithOpenApi()
+            .WithTags(Constants.Tags.PostsTag)
+            .RequireAuthorization(Constants.Policies.UserPolicy);
+
+            app.MapGet("/api/v{version:apiVersion}/posts", async (IPostService postService) =>
+            {
+                var posts = await postService.GetAllPublishedPostsV2();
+
+                return posts.Any() ? Results.Ok(posts) : Results.NotFound(Messages.NoPostsFound);
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithApiVersionSet(apiVersionSet) 
+            .MapToApiVersion(2.0) 
             .WithOpenApi()
             .WithTags(Constants.Tags.PostsTag)
             .RequireAuthorization(Constants.Policies.UserPolicy);
