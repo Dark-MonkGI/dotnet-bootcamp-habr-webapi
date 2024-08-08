@@ -4,14 +4,15 @@ using AutoMapper;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Habr.Common;
+using Asp.Versioning.Builder;
 
 namespace Habr.WebApi.Modules
 {
     public static class UserModule
     {
-        public static void RegisterUserEndpoints(this IEndpointRouteBuilder app)
+        public static void RegisterUserEndpoints(this IEndpointRouteBuilder app, ApiVersionSet apiVersionSet)
         {
-            app.MapPost("/api/users/register",
+            app.MapPost("/api/v{version:apiVersion}/users/register",
                 async (
                     [FromBody] RegisterUserRequest registerUserRequest,
                     IUserService userService,
@@ -26,10 +27,12 @@ namespace Habr.WebApi.Modules
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(1.0)
             .WithOpenApi()
             .WithTags(Constants.Tags.UsersTag);
 
-            app.MapPost("/api/users/confirm-email",
+            app.MapPost("/api/v{version:apiVersion}/users/confirm-email",
                 async (
                     [FromBody] ConfirmEmailRequest confirmEmailRequest,
                     IUserService userService,
@@ -44,10 +47,12 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(1.0)
             .WithOpenApi()
             .WithTags(Constants.Tags.UsersTag);
 
-            app.MapPost("/api/users/authenticate",
+            app.MapPost("/api/v{version:apiVersion}/users/authenticate",
                 async (
                     [FromBody] AuthenticateUserRequest authenticateUserRequest,
                     IUserService userService,
@@ -62,10 +67,12 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(1.0)
             .WithOpenApi()
             .WithTags(Constants.Tags.UsersTag);
 
-            app.MapPost("/api/users/refresh-token",
+            app.MapPost("/api/v{version:apiVersion}/users/refresh-token",
             async (
                 [FromBody] RefreshTokenRequest refreshTokenRequest,
                 IUserService userService
@@ -77,10 +84,12 @@ namespace Habr.WebApi.Modules
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(1.0)
             .WithOpenApi()
             .WithTags(Constants.Tags.UsersTag);
 
-            app.MapGet("/api/users/self", (IUserService userService, ClaimsPrincipal user) =>
+            app.MapGet("/api/v{version:apiVersion}/users/self", (IUserService userService, ClaimsPrincipal user) =>
             {
                 if (!user.Identity.IsAuthenticated)
                 {
@@ -94,6 +103,8 @@ namespace Habr.WebApi.Modules
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(1.0)
             .WithOpenApi()
             .WithTags(Constants.Tags.UsersTag)
             .RequireAuthorization(Constants.Policies.UserPolicy);
