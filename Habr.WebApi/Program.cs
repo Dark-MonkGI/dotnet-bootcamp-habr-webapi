@@ -86,7 +86,7 @@ namespace Habr.WebApi
             app.UseAuthentication();
             app.UseAuthorization();
 
-            var apiVersionSet = app.CreateApiVersionSet();
+            var apiVersionSet = app.GetApiVersionSet();
 
             app.RegisterCommentEndpoints(apiVersionSet);
             app.RegisterPostEndpoints(apiVersionSet);
