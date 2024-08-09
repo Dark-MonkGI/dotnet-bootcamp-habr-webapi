@@ -28,21 +28,6 @@ namespace Habr.WebApi.Modules
             .WithTags(Constants.Tags.PostsTag)
             .RequireAuthorization(Constants.Policies.UserPolicy);
 
-            app.MapGet("/api/v{version:apiVersion}/posts", async (IPostService postService) =>
-            {
-                var posts = await postService.GetAllPublishedPostsV2();
-
-                return posts.Any() ? Results.Ok(posts) : Results.NotFound(Messages.NoPostsFound);
-            })
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status401Unauthorized)
-            .WithApiVersionSet(apiVersionSet) 
-            .MapToApiVersion(2.0) 
-            .WithOpenApi()
-            .WithTags(Constants.Tags.PostsTag)
-            .RequireAuthorization(Constants.Policies.UserPolicy);
-
             app.MapGet("/api/v{version:apiVersion}/posts/drafts", async (IPostService postService, ClaimsPrincipal user) =>
             {
                 var userId = int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));

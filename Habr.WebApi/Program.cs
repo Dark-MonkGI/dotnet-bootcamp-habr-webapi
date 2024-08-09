@@ -90,6 +90,7 @@ namespace Habr.WebApi
 
             app.RegisterCommentEndpoints(apiVersionSet);
             app.RegisterPostEndpoints(apiVersionSet);
+            app.RegisterPostEndpointsV2(apiVersionSet);
             app.RegisterUserEndpoints(apiVersionSet);
 
             await app.RunAsync();
