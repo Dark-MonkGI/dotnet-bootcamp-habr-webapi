@@ -63,6 +63,8 @@ namespace Habr.WebApi
 
             builder.Services.AddBusinessLogicServices();
 
+            builder.Services.AddApiVersioningServices();
+
             var app = builder.Build();
 
             await app.Services.InitializeDatabaseAndRolesAsync();
@@ -70,7 +72,11 @@ namespace Habr.WebApi
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Habr API v1");
+                    c.SwaggerEndpoint("/swagger/v2/swagger.json", "Habr API v2");
+                });
             }
 
             app.UseGlobalExceptionHandler();
@@ -80,9 +86,12 @@ namespace Habr.WebApi
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.RegisterCommentEndpoints();
-            app.RegisterPostEndpoints();
-            app.RegisterUserEndpoints();
+            var apiVersionSet = app.GetApiVersionSet();
+
+            app.RegisterCommentEndpoints(apiVersionSet);
+            app.RegisterPostEndpoints(apiVersionSet);
+            app.RegisterPostEndpointsV2(apiVersionSet);
+            app.RegisterUserEndpoints(apiVersionSet);
 
             await app.RunAsync();
         }

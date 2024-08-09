@@ -6,15 +6,15 @@ namespace Habr.ConsoleApp.Helpers
 {
     public static class DisplayHelper
     {
-        public static void DisplayPosts(IEnumerable<PostDto> posts)
+        public static void DisplayPosts(IEnumerable<PostDtoV1> posts)
         {
             Console.WriteLine("\n" + new string('-', 115));
-            Console.WriteLine("{0, -5} | {1, -40} | {2, -30} | {3, -20}", Messages.Id, Messages.Title, Messages.AuthorEmail, Messages.DatePublication);
+            Console.WriteLine("{1, -40} | {2, -30} | {3, -20}", Messages.Title, Messages.AuthorEmail, Messages.DatePublication);
             Console.WriteLine(new string('-', 115));
 
             foreach (var post in posts)
             {
-                Console.WriteLine("{0, -5} | {1, -40} | {2, -30} | {3, -20}", post.Id, post.Title, post.AuthorEmail, post.PublicationDate);
+                Console.WriteLine("{1, -40} | {2, -30} | {3, -20}", post.Title, post.AuthorEmail, post.PublishedAt);
             }
 
             Console.WriteLine(new string('-', 115));

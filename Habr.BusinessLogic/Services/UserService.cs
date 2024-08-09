@@ -182,11 +182,14 @@ namespace Habr.BusinessLogic.Services
                 throw new UnauthorizedAccessException(Messages.InvalidRefreshToken);
             }
 
+            var roles = await _userManager.GetRolesAsync(user);
+            var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
+
             var newAccessToken = _tokenService.GenerateAccessToken(new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email)
-            });
+            }.Concat(roleClaims));
 
             var newRefreshToken = _tokenService.GenerateRefreshToken();
             user.RefreshToken = newRefreshToken;

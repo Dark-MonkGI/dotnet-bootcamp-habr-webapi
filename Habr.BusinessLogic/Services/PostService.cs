@@ -23,13 +23,23 @@ namespace Habr.BusinessLogic.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<PostDto>> GetAllPublishedPosts()
+        public async Task<IEnumerable<PostDtoV1>> GetAllPublishedPosts()
         {
             return await _context.Posts
                 .Include(p => p.User)
                 .Where(p => p.IsPublished && !p.IsDeleted)
                 .OrderByDescending(p => p.PublishedDate)
-                .ProjectTo<PostDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<PostDtoV1>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<PostDtoV2>> GetAllPublishedPostsV2()
+        {
+            return await _context.Posts
+                .Include(p => p.User)
+                .Where(p => p.IsPublished && !p.IsDeleted)
+                .OrderByDescending(p => p.PublishedDate)
+                .ProjectTo<PostDtoV2>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 

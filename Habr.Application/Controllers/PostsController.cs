@@ -13,7 +13,7 @@ namespace Habr.Application.Controllers
             _postService = postService;
         }
 
-        public async Task<IEnumerable<PostDto>> GetAllPostsAsync()
+        public async Task<IEnumerable<PostDtoV1>> GetAllPostsAsync()
         {
             return await _postService.GetAllPublishedPosts();
         }
