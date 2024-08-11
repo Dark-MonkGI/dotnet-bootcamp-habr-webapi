@@ -6,7 +6,7 @@ namespace Habr.BusinessLogic.Interfaces
     public interface IPostService
     {
         Task<IEnumerable<PostDtoV1>> GetAllPublishedPosts();
-        Task<IEnumerable<PostDtoV2>> GetAllPublishedPostsV2();
+        Task<PaginatedDTO<PostDtoV2>> GetAllPublishedPostsV2(int pageNumber, int pageSize);
         Task<IEnumerable<DraftPostDto>> GetUserDraftPosts(int userId);
         Task<IEnumerable<Post>> GetAllUserPosts(int userId);
         Task<Post> CreatePost(CreatePostDto createPostDto);

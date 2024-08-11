@@ -2,6 +2,7 @@
 using Habr.BusinessLogic.Interfaces;
 using Habr.Common;
 using Habr.WebApi.Resources;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Habr.WebApi.Modules
 {
@@ -9,11 +10,15 @@ namespace Habr.WebApi.Modules
     {
         public static void RegisterPostEndpointsV2(this IEndpointRouteBuilder app, ApiVersionSet apiVersionSet)
         {
-            app.MapGet("/api/v{version:apiVersion}/posts", async (IPostService postService) =>
+            app.MapGet("/api/v{version:apiVersion}/posts", 
+                async (
+                    IPostService postService, 
+                    [FromQuery] int pageNumber = 1, 
+                    [FromQuery] int pageSize = 10) =>
             {
-                var posts = await postService.GetAllPublishedPostsV2();
+                var paginatedPosts = await postService.GetAllPublishedPostsV2(pageNumber, pageSize);
 
-                return posts.Any() ? Results.Ok(posts) : Results.NotFound(Messages.NoPostsFound);
+                return paginatedPosts.Items.Any() ? Results.Ok(paginatedPosts) : Results.NotFound(Messages.NoPostsFound);
             })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
