@@ -7,6 +7,8 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Habr.BusinessLogic.Resources;
 using Microsoft.Extensions.Logging;
+using X.PagedList;
+using X.Extensions.PagedList.EF;
 
 namespace Habr.BusinessLogic.Services
 {
@@ -33,7 +35,7 @@ namespace Habr.BusinessLogic.Services
                 .ToListAsync();
         }
 
-        public async Task<PaginatedDTO<PostDtoV2>> GetAllPublishedPostsV2(int pageNumber, int pageSize)
+        public async Task<IPagedList<PostDtoV2>> GetAllPublishedPostsV2(int pageNumber, int pageSize)
         {
             var postsQuery = _context.Posts
                 .Include(p => p.User)
@@ -42,7 +44,7 @@ namespace Habr.BusinessLogic.Services
                 .ProjectTo<PostDtoV2>(_mapper.ConfigurationProvider)
                 .AsQueryable();
 
-            return PaginatedDTO<PostDtoV2>.Create(postsQuery, pageNumber, pageSize);
+            return await postsQuery.ToPagedListAsync(pageNumber, pageSize);
         }
 
         public async Task<IEnumerable<DraftPostDto>> GetUserDraftPosts(int userId)

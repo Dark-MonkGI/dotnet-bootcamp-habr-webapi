@@ -10,16 +10,16 @@ namespace Habr.WebApi.Modules
     {
         public static void RegisterPostEndpointsV2(this IEndpointRouteBuilder app, ApiVersionSet apiVersionSet)
         {
-            app.MapGet("/api/v{version:apiVersion}/posts", 
+            app.MapGet("/api/v{version:apiVersion}/posts",
                 async (
-                    IPostService postService, 
-                    [FromQuery] int pageNumber = 1, 
+                    IPostService postService,
+                    [FromQuery] int pageNumber = 1,
                     [FromQuery] int pageSize = 10) =>
-            {
-                var paginatedPosts = await postService.GetAllPublishedPostsV2(pageNumber, pageSize);
-
-                return paginatedPosts.Items.Any() ? Results.Ok(paginatedPosts) : Results.NotFound(Messages.NoPostsFound);
-            })
+                {
+                    var paginatedPosts = await postService.GetAllPublishedPostsV2(pageNumber, pageSize);
+            
+                    return paginatedPosts.Any() ? Results.Ok(paginatedPosts) : Results.NotFound(Messages.NoPostsFound);
+                })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status401Unauthorized)

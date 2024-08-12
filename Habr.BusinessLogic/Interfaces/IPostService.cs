@@ -1,12 +1,13 @@
 ﻿using Habr.BusinessLogic.DTOs;
 using Habr.DataAccess.Entities;
+using X.PagedList;
 
 namespace Habr.BusinessLogic.Interfaces
 {
     public interface IPostService
     {
         Task<IEnumerable<PostDtoV1>> GetAllPublishedPosts();
-        Task<PaginatedDTO<PostDtoV2>> GetAllPublishedPostsV2(int pageNumber, int pageSize);
+        Task<IPagedList<PostDtoV2>> GetAllPublishedPostsV2(int pageNumber, int pageSize);
         Task<IEnumerable<DraftPostDto>> GetUserDraftPosts(int userId);
         Task<IEnumerable<Post>> GetAllUserPosts(int userId);
         Task<Post> CreatePost(CreatePostDto createPostDto);
