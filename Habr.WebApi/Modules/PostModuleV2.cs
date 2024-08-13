@@ -19,8 +19,7 @@ namespace Habr.WebApi.Modules
                 {
                     var paginatedParameters = mapper.Map<PaginatedParametersDto>(paginationRequest);
                     var paginatedPosts = await postService.GetAllPublishedPostsV2(paginatedParameters);
-
-                    return paginatedPosts.Any() ? Results.Ok(paginatedPosts) : Results.NotFound(Messages.NoPostsFound);
+                    return Results.Ok(paginatedPosts);
                 })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
