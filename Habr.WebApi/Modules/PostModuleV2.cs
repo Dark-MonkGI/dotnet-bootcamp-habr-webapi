@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning.Builder;
+using AutoMapper;
 using Habr.BusinessLogic.DTOs;
 using Habr.BusinessLogic.Interfaces;
 using Habr.Common;
@@ -13,9 +14,11 @@ namespace Habr.WebApi.Modules
             app.MapGet("/api/v{version:apiVersion}/posts",
                 async (
                     IPostService postService,
-                    [AsParameters] PaginationRequest paginationRequest) =>
+                    [AsParameters] PaginationRequest paginationRequest,
+                    IMapper mapper) =>
                 {
-                    var paginatedPosts = await postService.GetAllPublishedPostsV2(paginationRequest.PageNumber, paginationRequest.PageSize);
+                    var paginatedParameters = mapper.Map<PaginatedParametersDto>(paginationRequest);
+                    var paginatedPosts = await postService.GetAllPublishedPostsV2(paginatedParameters);
 
                     return paginatedPosts.Any() ? Results.Ok(paginatedPosts) : Results.NotFound(Messages.NoPostsFound);
                 })

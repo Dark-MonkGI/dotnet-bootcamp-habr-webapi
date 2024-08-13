@@ -35,14 +35,14 @@ namespace Habr.BusinessLogic.Services
                 .ToListAsync();
         }
 
-        public async Task<IPagedList<PostDtoV2>> GetAllPublishedPostsV2(int pageNumber, int pageSize)
+        public async Task<IPagedList<PostDtoV2>> GetAllPublishedPostsV2(PaginatedParametersDto paginatedParametersDto)
         {
             return await _context.Posts
                 .Include(p => p.User)
                 .Where(p => p.IsPublished && !p.IsDeleted)
                 .OrderByDescending(p => p.PublishedDate)
                 .ProjectTo<PostDtoV2>(_mapper.ConfigurationProvider)
-                .ToPagedListAsync(pageNumber, pageSize);
+                .ToPagedListAsync(paginatedParametersDto.PageNumber, paginatedParametersDto.PageSize);
         }
 
         public async Task<IEnumerable<DraftPostDto>> GetUserDraftPosts(int userId)
