@@ -1,8 +1,8 @@
 ﻿using Asp.Versioning.Builder;
+using Habr.BusinessLogic.DTOs;
 using Habr.BusinessLogic.Interfaces;
 using Habr.Common;
 using Habr.WebApi.Resources;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Habr.WebApi.Modules
 {
@@ -13,11 +13,10 @@ namespace Habr.WebApi.Modules
             app.MapGet("/api/v{version:apiVersion}/posts",
                 async (
                     IPostService postService,
-                    [FromQuery] int pageNumber = 1,
-                    [FromQuery] int pageSize = 10) =>
+                    [AsParameters] PaginationRequest paginationRequest) =>
                 {
-                    var paginatedPosts = await postService.GetAllPublishedPostsV2(pageNumber, pageSize);
-            
+                    var paginatedPosts = await postService.GetAllPublishedPostsV2(paginationRequest.PageNumber, paginationRequest.PageSize);
+
                     return paginatedPosts.Any() ? Results.Ok(paginatedPosts) : Results.NotFound(Messages.NoPostsFound);
                 })
             .Produces(StatusCodes.Status200OK)
