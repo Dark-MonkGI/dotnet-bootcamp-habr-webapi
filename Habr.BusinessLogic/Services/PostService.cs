@@ -37,14 +37,12 @@ namespace Habr.BusinessLogic.Services
 
         public async Task<IPagedList<PostDtoV2>> GetAllPublishedPostsV2(int pageNumber, int pageSize)
         {
-            var postsQuery = _context.Posts
+            return await _context.Posts
                 .Include(p => p.User)
                 .Where(p => p.IsPublished && !p.IsDeleted)
                 .OrderByDescending(p => p.PublishedDate)
                 .ProjectTo<PostDtoV2>(_mapper.ConfigurationProvider)
-                .AsQueryable();
-
-            return await postsQuery.ToPagedListAsync(pageNumber, pageSize);
+                .ToPagedListAsync(pageNumber, pageSize);
         }
 
         public async Task<IEnumerable<DraftPostDto>> GetUserDraftPosts(int userId)
