@@ -9,6 +9,7 @@ using Habr.WebApi.Modules;
 using Habr.Common;
 using Microsoft.AspNetCore.Identity;
 using Habr.DataAccess.Entities;
+using Hangfire;
 
 namespace Habr.WebApi
 {
@@ -65,6 +66,11 @@ namespace Habr.WebApi
 
             builder.Services.AddApiVersioningServices();
 
+            builder.Services.AddHangfire(config =>
+                config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddHangfireServer();
+
             var app = builder.Build();
 
             await app.Services.InitializeDatabaseAndRolesAsync();
@@ -85,6 +91,8 @@ namespace Habr.WebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseHangfireDashboard();
 
             var apiVersionSet = app.GetApiVersionSet();
 
