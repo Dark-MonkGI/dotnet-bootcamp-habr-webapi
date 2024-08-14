@@ -9,6 +9,10 @@ namespace Habr.BusinessLogic.Profiles
     {
         public PostProfile()
         {
+            CreateMap<PaginationRequest, PaginatedParametersDto>()
+                .ForMember(dest => dest.PageNumber, opt => opt.MapFrom(src => src.PageNumber))
+                .ForMember(dest => dest.PageSize, opt => opt.MapFrom(src => src.PageSize));
+
             CreateMap<Post, PostDtoV1>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.AuthorEmail, opt => opt.MapFrom(src => src.User.Email))

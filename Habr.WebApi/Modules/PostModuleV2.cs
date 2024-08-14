@@ -1,4 +1,6 @@
 ﻿using Asp.Versioning.Builder;
+using AutoMapper;
+using Habr.BusinessLogic.DTOs;
 using Habr.BusinessLogic.Interfaces;
 using Habr.Common;
 using Habr.WebApi.Resources;
@@ -9,12 +11,16 @@ namespace Habr.WebApi.Modules
     {
         public static void RegisterPostEndpointsV2(this IEndpointRouteBuilder app, ApiVersionSet apiVersionSet)
         {
-            app.MapGet("/api/v{version:apiVersion}/posts", async (IPostService postService) =>
-            {
-                var posts = await postService.GetAllPublishedPostsV2();
-
-                return posts.Any() ? Results.Ok(posts) : Results.NotFound(Messages.NoPostsFound);
-            })
+            app.MapGet("/api/v{version:apiVersion}/posts",
+                async (
+                    IPostService postService,
+                    [AsParameters] PaginationRequest paginationRequest,
+                    IMapper mapper) =>
+                {
+                    var paginatedParameters = mapper.Map<PaginatedParametersDto>(paginationRequest);
+                    var paginatedPosts = await postService.GetAllPublishedPostsV2(paginatedParameters);
+                    return Results.Ok(paginatedPosts);
+                })
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status401Unauthorized)
