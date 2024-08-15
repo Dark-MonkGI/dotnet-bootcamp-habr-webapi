@@ -10,6 +10,7 @@ namespace Habr.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.Property(u => u.Id)
+                .IsRequired()
                 .ValueGeneratedOnAdd();
 
             builder.Property(u => u.Name)

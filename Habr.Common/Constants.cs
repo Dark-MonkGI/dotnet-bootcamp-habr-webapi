@@ -2,6 +2,12 @@
 {
     public static class Constants
     {
+        public static class RatingConstants
+        {
+            public const int MinValue = 1;
+            public const int MaxValue = 5;
+        }
+
         public static class Pagination
         {
             public const int DefaultPageNumber = 1;
