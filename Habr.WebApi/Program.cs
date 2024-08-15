@@ -10,6 +10,7 @@ using Habr.Common;
 using Microsoft.AspNetCore.Identity;
 using Habr.DataAccess.Entities;
 using Hangfire;
+using Habr.WebApi.Configurations;
 
 namespace Habr.WebApi
 {
@@ -34,7 +35,8 @@ namespace Habr.WebApi
                 typeof(CommentProfile), 
                 typeof(UserProfile),
                 typeof(ExceptionProfile),
-                typeof(WebApiMappingProfile)
+                typeof(WebApiMappingProfile),
+                typeof(RatingProfile)
                 );
 
             builder.Services.Configure<BusinessLogic.Helpers.JwtSettings>(builder.Configuration.GetSection("Jwt"));
@@ -94,12 +96,15 @@ namespace Habr.WebApi
 
             app.UseHangfireDashboard();
 
+            HangfireJobsSetup.ConfigureRecurringJobs();
+
             var apiVersionSet = app.GetApiVersionSet();
 
             app.RegisterCommentEndpoints(apiVersionSet);
             app.RegisterPostEndpoints(apiVersionSet);
             app.RegisterPostEndpointsV2(apiVersionSet);
             app.RegisterUserEndpoints(apiVersionSet);
+            app.RegisterRatingEndpoints(apiVersionSet);
 
             await app.RunAsync();
         }

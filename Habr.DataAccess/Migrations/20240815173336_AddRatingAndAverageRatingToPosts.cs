@@ -18,7 +18,7 @@ namespace Habr.DataAccess.Migrations
                 nullable: true);
 
             migrationBuilder.CreateTable(
-                name: "Rating",
+                name: "Ratings",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -26,20 +26,20 @@ namespace Habr.DataAccess.Migrations
                     PostId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Rating", x => x.Id);
+                    table.PrimaryKey("PK_Ratings", x => x.Id);
                     table.CheckConstraint("CK_Rating_Value", "[Value] >= 1 AND [Value] <= 5");
                     table.ForeignKey(
-                        name: "FK_Rating_AspNetUsers_UserId",
+                        name: "FK_Ratings_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Rating_Posts_PostId",
+                        name: "FK_Ratings_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id",
@@ -47,14 +47,14 @@ namespace Habr.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rating_PostId_UserId",
-                table: "Rating",
+                name: "IX_Ratings_PostId_UserId",
+                table: "Ratings",
                 columns: new[] { "PostId", "UserId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rating_UserId",
-                table: "Rating",
+                name: "IX_Ratings_UserId",
+                table: "Ratings",
                 column: "UserId");
         }
 
@@ -62,7 +62,7 @@ namespace Habr.DataAccess.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Rating");
+                name: "Ratings");
 
             migrationBuilder.DropColumn(
                 name: "AverageRating",

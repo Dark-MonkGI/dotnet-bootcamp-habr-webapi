@@ -17,8 +17,7 @@ namespace Habr.DataAccess.Configurations
                 .IsRequired();
 
             builder.Property(r => r.CreatedAt)
-                .IsRequired()
-                .HasDefaultValueSql("GETDATE()");
+                .IsRequired();
 
             builder.HasOne(r => r.Post)
                 .WithMany(p => p.Ratings)

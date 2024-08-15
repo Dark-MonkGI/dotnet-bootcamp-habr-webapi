@@ -113,9 +113,7 @@ namespace Habr.DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PostId")
                         .HasColumnType("int");
@@ -133,7 +131,7 @@ namespace Habr.DataAccess.Migrations
                     b.HasIndex("PostId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("Rating", t =>
+                    b.ToTable("Ratings", t =>
                         {
                             t.HasCheckConstraint("CK_Rating_Value", "[Value] >= 1 AND [Value] <= 5");
                         });

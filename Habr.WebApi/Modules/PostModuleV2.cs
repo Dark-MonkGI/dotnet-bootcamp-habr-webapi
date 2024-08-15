@@ -3,7 +3,6 @@ using AutoMapper;
 using Habr.BusinessLogic.DTOs;
 using Habr.BusinessLogic.Interfaces;
 using Habr.Common;
-using Habr.WebApi.Resources;
 
 namespace Habr.WebApi.Modules
 {

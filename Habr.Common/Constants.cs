@@ -30,6 +30,7 @@
             public const string PostsTag = "Posts";
             public const string UsersTag = "Users";
             public const string CommentsTag = "Comments";
+            public const string RatingsTag = "Ratings";
             public const string AdminTag = "Admin rights";
         }
         public static class Log
