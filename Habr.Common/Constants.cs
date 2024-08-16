@@ -53,6 +53,7 @@
         {
             public const int NameMaxLength = 100;
             public const int EmailMaxLength = 200;
+            public const int PasswordMinLength = 8;
             public const int SecurityStampMaxLength = 100;
             public const int RefreshTokenMaxLength = 500;           
             public const bool DefaultIsEmailConfirmed = false;

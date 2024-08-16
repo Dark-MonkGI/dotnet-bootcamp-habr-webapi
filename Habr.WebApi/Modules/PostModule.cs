@@ -6,6 +6,7 @@ using Habr.WebApi.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Habr.Common;
 using Asp.Versioning.Builder;
+using Habr.WebApi.Filters;
 
 namespace Habr.WebApi.Modules
 {
@@ -58,6 +59,7 @@ namespace Habr.WebApi.Modules
 
                 return Results.Created($"/api/posts/{post.Id}", post);
             })
+            .AddEndpointFilter<ValidationFilter<CreatePostRequest>>()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -69,8 +71,8 @@ namespace Habr.WebApi.Modules
 
             app.MapPut("/api/v{version:apiVersion}/posts/{postId}", 
                 async (
-                    [FromRoute] int postId,
                     UpdatePostRequest updatePostRequest,
+                    [FromRoute] int postId,
                     IPostService postService,
                     ClaimsPrincipal user,
                     IMapper mapper
@@ -83,6 +85,7 @@ namespace Habr.WebApi.Modules
 
                 return Results.Ok();
             })
+            .AddEndpointFilter<ValidationFilter<UpdatePostRequest>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

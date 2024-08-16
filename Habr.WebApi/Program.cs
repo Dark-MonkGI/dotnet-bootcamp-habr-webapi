@@ -73,6 +73,8 @@ namespace Habr.WebApi
 
             builder.Services.AddHangfireServer();
 
+            builder.Services.AddValidationServices();
+
             var app = builder.Build();
 
             await app.Services.InitializeDatabaseAndRolesAsync();

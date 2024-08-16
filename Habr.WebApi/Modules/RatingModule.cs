@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Asp.Versioning.Builder;
 using Habr.Common;
 using AutoMapper;
+using Habr.WebApi.Filters;
 
 namespace Habr.WebApi.Modules
 {
@@ -28,6 +29,7 @@ namespace Habr.WebApi.Modules
 
                     return Results.Ok();
                 })
+            .AddEndpointFilter<ValidationFilter<RatePostRequest>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

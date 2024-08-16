@@ -194,5 +194,14 @@ namespace Habr.WebApi.Resources {
                 return ResourceManager.GetString("ValidationErrorMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Validation failed.
+        /// </summary>
+        public static string ValidationFailed {
+            get {
+                return ResourceManager.GetString("ValidationFailed", resourceCulture);
+            }
+        }
     }
 }

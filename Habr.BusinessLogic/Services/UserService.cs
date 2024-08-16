@@ -52,9 +52,6 @@ namespace Habr.BusinessLogic.Services
 
         public async Task<TokenResponseDto> RegisterUserAsync(RegisterUserDto registerUserDto, ClaimsPrincipal user)
         {
-            UserValidation.ValidateEmail(registerUserDto.Email);
-            UserValidation.ValidatePassword(registerUserDto.Password);
-
             if (await _context.Users.AnyAsync(u => u.Email == registerUserDto.Email))
             {
                 throw new ArgumentException(Messages.EmailTaken);
@@ -103,6 +100,12 @@ namespace Habr.BusinessLogic.Services
                 throw new ArgumentException(Messages.InvalidEmail);
             }
 
+            var passwordValid = await _userManager.CheckPasswordAsync(authenticatedUser, authenticateUserDto.Password);
+            if (!passwordValid)
+            {
+                throw new ArgumentException(Messages.InvalidEmailOrPassword);
+            }
+
             if (!authenticateUserDto.IsEmailConfirmed)
             {
                 throw new ArgumentException(Messages.EmailConfirmationFailed);
@@ -138,8 +141,13 @@ namespace Habr.BusinessLogic.Services
             }
 
             var authenticatedUser = await _userManager.FindByEmailAsync(authenticateUserDto.Email);
-
             if (authenticatedUser == null)
+            {
+                throw new ArgumentException(Messages.InvalidEmailOrPassword);
+            }
+
+            var passwordValid = await _userManager.CheckPasswordAsync(authenticatedUser, authenticateUserDto.Password);
+            if (!passwordValid)
             {
                 throw new ArgumentException(Messages.InvalidEmailOrPassword);
             }
