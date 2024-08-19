@@ -103,7 +103,6 @@ namespace Habr.WebApi
             app.RegisterPostEndpoints(apiVersionSet);
             app.RegisterPostEndpointsV2(apiVersionSet);
             app.RegisterUserEndpoints(apiVersionSet);
-            app.RegisterRatingEndpoints(apiVersionSet);
 
             await app.RunAsync();
         }

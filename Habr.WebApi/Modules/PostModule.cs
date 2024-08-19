@@ -199,6 +199,32 @@ namespace Habr.WebApi.Modules
             .WithOpenApi()
             .WithTags(Constants.Tags.AdminTag)
             .RequireAuthorization(Constants.Policies.AdminPolicy);
+
+            app.MapPost("/api/v{version:apiVersion}/posts/rate",
+                async (
+                    [FromBody] RatePostRequest ratePostRequest,
+                    IRatingService ratingService,
+                    IMapper mapper,
+                    ClaimsPrincipal user) =>
+                {
+                    var userId = int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
+            
+                    var ratePostDto = mapper.Map<RatePostDto>(ratePostRequest);
+                    ratePostDto.UserId = userId;
+            
+                    await ratingService.RatePostAsync(ratePostDto);
+            
+                    return Results.Ok();
+                })
+            .AddEndpointFilter<ValidationFilter<RatePostRequest>>()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(1.0)
+            .WithOpenApi()
+            .WithTags(Constants.Tags.RatingsTag)
+            .RequireAuthorization(Constants.Policies.UserPolicy);
         }
     }
 }
