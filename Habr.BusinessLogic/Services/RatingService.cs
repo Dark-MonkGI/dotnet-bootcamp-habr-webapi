@@ -5,7 +5,6 @@ using Habr.BusinessLogic.Resources;
 using Habr.DataAccess;
 using Habr.DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Habr.BusinessLogic.Services
 {
@@ -13,13 +12,11 @@ namespace Habr.BusinessLogic.Services
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly ILogger<PostService> _logger;
 
-        public RatingService(DataContext context, IMapper mapper, ILogger<PostService> logger)
+        public RatingService(DataContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _logger = logger;
         }
 
         public async Task RatePostAsync(RatePostDto ratePostDto)
