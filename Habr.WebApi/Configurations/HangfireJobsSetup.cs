@@ -9,7 +9,7 @@ namespace Habr.WebApi.Configurations
         {
             RecurringJob.AddOrUpdate<IRatingService>(
                 "daily-rating-calc",
-                service => service.CalculateAverageRatingsAsync(),
+                service => service.CalculateAverageRatingsAsync(CancellationToken.None),
                 Cron.Daily);
         }
     }

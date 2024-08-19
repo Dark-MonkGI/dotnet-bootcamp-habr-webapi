@@ -19,7 +19,7 @@ namespace Habr.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task RatePostAsync(RatePostDto ratePostDto)
+        public async Task RatePostAsync(RatePostDto ratePostDto, CancellationToken cancellationToken)
         {
             var post = await _context.Posts
                 .Where(p => 
@@ -27,7 +27,7 @@ namespace Habr.BusinessLogic.Services
                     !p.IsDeleted && 
                     p.IsPublished)
                 .AsNoTracking()
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (post == null)
             {
@@ -37,7 +37,8 @@ namespace Habr.BusinessLogic.Services
             var rating = await _context.Ratings
                 .SingleOrDefaultAsync(r => 
                     r.PostId == ratePostDto.PostId && 
-                    r.UserId == ratePostDto.UserId
+                    r.UserId == ratePostDto.UserId,
+                    cancellationToken
                 );
 
             if (rating == null)
@@ -53,15 +54,15 @@ namespace Habr.BusinessLogic.Services
                 _context.Ratings.Update(rating);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task CalculateAverageRatingsAsync()
+        public async Task CalculateAverageRatingsAsync(CancellationToken cancellationToken)
         {
             var posts = await _context.Posts
                 .Include(p => p.Ratings)
                 .Where(p => p.Ratings.Any())
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             foreach (var post in posts)
             {
@@ -71,7 +72,7 @@ namespace Habr.BusinessLogic.Services
                 _context.Posts.Update(post);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }
