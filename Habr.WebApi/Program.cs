@@ -68,10 +68,7 @@ namespace Habr.WebApi
 
             builder.Services.AddApiVersioningServices();
 
-            builder.Services.AddHangfire(config =>
-                config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-            builder.Services.AddHangfireServer();
+            builder.Services.AddHangfireServices(builder.Configuration);
 
             builder.Services.AddValidationServices();
 
