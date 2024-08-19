@@ -22,9 +22,10 @@ namespace Habr.BusinessLogic.Services
         public async Task RatePostAsync(RatePostDto ratePostDto, CancellationToken cancellationToken)
         {
             var post = await _context.Posts
-                .Where(p => 
-                    p.Id == ratePostDto.PostId && 
-                    !p.IsDeleted && 
+                .Include(p => p.Ratings)
+                .Where(p =>
+                    p.Id == ratePostDto.PostId &&
+                    !p.IsDeleted &&
                     p.IsPublished)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(cancellationToken);
@@ -34,12 +35,7 @@ namespace Habr.BusinessLogic.Services
                 throw new ArgumentException(Messages.PostNotFoundOrUnpublished);
             }
 
-            var rating = await _context.Ratings
-                .SingleOrDefaultAsync(r => 
-                    r.PostId == ratePostDto.PostId && 
-                    r.UserId == ratePostDto.UserId,
-                    cancellationToken
-                );
+            var rating = post.Ratings.SingleOrDefault(r => r.UserId == ratePostDto.UserId);
 
             if (rating == null)
             {
