@@ -95,7 +95,7 @@ namespace Habr.WebApi
 
             app.UseHangfireDashboard();
 
-            HangfireJobsSetup.ConfigureRecurringJobs();
+            HangfireJobsSetup.ConfigureRecurringJobs(app.Configuration);
 
             var apiVersionSet = app.GetApiVersionSet();
 
