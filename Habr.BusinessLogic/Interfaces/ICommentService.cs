@@ -5,11 +5,11 @@ namespace Habr.BusinessLogic.Interfaces
 {
     public interface ICommentService
     {
-        Task<Comment> AddComment(AddCommentDto addCommentDto);
-        Task<Comment> AddReply(AddReplyDto addReplyDto);
-        Task DeleteComment(int commentId, int userId);
-        Task<IEnumerable<Comment>> GetCommentsByPost(int postId);
-        Task<IEnumerable<Comment>> GetUserComments(int userId);
-        Task DeleteCommentAsAdmin(int commentId);
+        Task<Comment> AddComment(AddCommentDto addCommentDto, CancellationToken cancellationToken = default);
+        Task<Comment> AddReply(AddReplyDto addReplyDto, CancellationToken cancellationToken = default);
+        Task DeleteComment(int commentId, int userId, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Comment>> GetCommentsByPost(int postId, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Comment>> GetUserComments(int userId, CancellationToken cancellationToken = default);
+        Task DeleteCommentAsAdmin(int commentId, CancellationToken cancellationToken = default);
     }
 }

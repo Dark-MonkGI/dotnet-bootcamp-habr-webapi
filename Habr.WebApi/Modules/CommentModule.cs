@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Habr.Common;
 using Asp.Versioning.Builder;
+using Habr.WebApi.Filters;
 
 namespace Habr.WebApi.Modules
 {
@@ -13,8 +14,8 @@ namespace Habr.WebApi.Modules
         {
             app.MapPost("/api/v{version:apiVersion}/comments/{postId}", 
                 async (
-                    int postId, 
-                    [FromBody] AddCommentRequest addCommentRequest, 
+                    [FromBody] AddCommentRequest addCommentRequest,
+                    int postId,
                     ICommentService commentService, 
                     ClaimsPrincipal user
                 ) =>
@@ -29,6 +30,7 @@ namespace Habr.WebApi.Modules
 
                 return Results.Created($"/api/comments/{comment.Id}", comment);
             })
+            .AddEndpointFilter<ValidationFilter<AddCommentRequest>>()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -40,8 +42,8 @@ namespace Habr.WebApi.Modules
 
             app.MapPost("/api/v{version:apiVersion}/comments/{parentCommentId}/reply", 
                 async (
+                    [FromBody] AddReplyRequest addReplyRequest,
                     int parentCommentId,
-                    [FromBody] AddReplyRequest addReplyRequest, 
                     ICommentService commentService, 
                     ClaimsPrincipal user
                 ) =>
@@ -56,6 +58,7 @@ namespace Habr.WebApi.Modules
 
                 return Results.Created($"/api/comments/{comment.Id}", comment);
             })
+            .AddEndpointFilter<ValidationFilter<AddReplyRequest>>()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Habr.Common;
 using Asp.Versioning.Builder;
+using Habr.WebApi.Filters;
 
 namespace Habr.WebApi.Modules
 {
@@ -25,6 +26,7 @@ namespace Habr.WebApi.Modules
 
                 return Results.Ok(tokenResponseDto);
             })
+            .AddEndpointFilter<ValidationFilter<RegisterUserRequest>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .WithApiVersionSet(apiVersionSet)
@@ -44,6 +46,7 @@ namespace Habr.WebApi.Modules
                 var tokenResponseDto = await userService.ConfirmEmailAsync(authenticateUserDto, user);
                 return Results.Ok(tokenResponseDto);
             })
+            .AddEndpointFilter<ValidationFilter<ConfirmEmailRequest>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)
@@ -64,6 +67,7 @@ namespace Habr.WebApi.Modules
                 var tokenResponseDto = await userService.AuthenticateUserAsync(authenticateUserDto, user);
                 return Results.Ok(tokenResponseDto);
             })
+            .AddEndpointFilter<ValidationFilter<AuthenticateUserRequest>>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized)

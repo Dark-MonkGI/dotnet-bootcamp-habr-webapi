@@ -9,6 +9,8 @@ using Habr.WebApi.Modules;
 using Habr.Common;
 using Microsoft.AspNetCore.Identity;
 using Habr.DataAccess.Entities;
+using Hangfire;
+using Habr.WebApi.Configurations;
 
 namespace Habr.WebApi
 {
@@ -33,7 +35,8 @@ namespace Habr.WebApi
                 typeof(CommentProfile), 
                 typeof(UserProfile),
                 typeof(ExceptionProfile),
-                typeof(WebApiMappingProfile)
+                typeof(WebApiMappingProfile),
+                typeof(RatingProfile)
                 );
 
             builder.Services.Configure<BusinessLogic.Helpers.JwtSettings>(builder.Configuration.GetSection("Jwt"));
@@ -65,6 +68,10 @@ namespace Habr.WebApi
 
             builder.Services.AddApiVersioningServices();
 
+            builder.Services.AddHangfireServices(builder.Configuration);
+
+            builder.Services.AddValidationServices();
+
             var app = builder.Build();
 
             await app.Services.InitializeDatabaseAndRolesAsync();
@@ -85,6 +92,10 @@ namespace Habr.WebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseHangfireDashboard();
+
+            HangfireJobsSetup.ConfigureRecurringJobs(app.Configuration);
 
             var apiVersionSet = app.GetApiVersionSet();
 

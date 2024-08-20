@@ -25,27 +25,33 @@ namespace Habr.BusinessLogic.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<PostDtoV1>> GetAllPublishedPosts()
+        public async Task<IEnumerable<PostDtoV1>> GetAllPublishedPosts(CancellationToken cancellationToken)
         {
             return await _context.Posts
                 .Include(p => p.User)
                 .Where(p => p.IsPublished && !p.IsDeleted)
                 .OrderByDescending(p => p.PublishedDate)
                 .ProjectTo<PostDtoV1>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<IPagedList<PostDtoV2>> GetAllPublishedPostsV2(PaginatedParametersDto paginatedParametersDto)
+        public async Task<IPagedList<PostDtoV2>> GetAllPublishedPostsV2(
+            PaginatedParametersDto paginatedParametersDto, CancellationToken cancellationToken)
         {
             return await _context.Posts
                 .Include(p => p.User)
                 .Where(p => p.IsPublished && !p.IsDeleted)
                 .OrderByDescending(p => p.PublishedDate)
                 .ProjectTo<PostDtoV2>(_mapper.ConfigurationProvider)
-                .ToPagedListAsync(paginatedParametersDto.PageNumber, paginatedParametersDto.PageSize);
+                .ToPagedListAsync(
+                    paginatedParametersDto.PageNumber, 
+                    paginatedParametersDto.PageSize, 
+                    null, 
+                    cancellationToken
+                );
         }
 
-        public async Task<IEnumerable<DraftPostDto>> GetUserDraftPosts(int userId)
+        public async Task<IEnumerable<DraftPostDto>> GetUserDraftPosts(int userId, CancellationToken cancellationToken)
         {
             return await _context.Posts
                 .Where(p =>
@@ -54,20 +60,20 @@ namespace Habr.BusinessLogic.Services
                     !p.IsDeleted)
                 .OrderByDescending(p => p.Updated)
                 .ProjectTo<DraftPostDto>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Post>> GetAllUserPosts(int userId)
+        public async Task<IEnumerable<Post>> GetAllUserPosts(int userId, CancellationToken cancellationToken)
         {
             return await _context.Posts
                 .Include(p => p.User)
                 .Where(p => p.UserId == userId && !p.IsDeleted)
                 .OrderByDescending(p => p.Created)
                 .AsNoTracking()
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<Post> CreatePost(CreatePostDto createPostDto)
+        public async Task<Post> CreatePost(CreatePostDto createPostDto, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(createPostDto.Title))
             {
@@ -85,14 +91,14 @@ namespace Habr.BusinessLogic.Services
             post.PublishedDate = createPostDto.IsPublished ? DateTime.UtcNow : (DateTime?)null;
 
             _context.Posts.Add(post);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation(string.Format(LogMessages.PostCreatedSuccessfully, post.Id, createPostDto.UserId));
 
             return post;
         }
 
-        public async Task<Post> GetPostWithCommentsAsync(int postId, int userId)
+        public async Task<Post> GetPostWithCommentsAsync(int postId, int userId, CancellationToken cancellationToken)
         {
             var post =  await _context.Posts
                 .Include(p => p.Comments)
@@ -100,12 +106,12 @@ namespace Habr.BusinessLogic.Services
                     p.Id == postId &&
                     p.UserId == userId &&
                     !p.IsDeleted)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             return post;
         }
 
-        public async Task<Post> GetPostByIdAsync(int postId, int userId)
+        public async Task<Post> GetPostByIdAsync(int postId, int userId, CancellationToken cancellationToken)
         {
             var post = await _context.Posts
                 .Where(p =>
@@ -113,14 +119,14 @@ namespace Habr.BusinessLogic.Services
                     p.UserId == userId &&
                     !p.IsDeleted)
                 .AsNoTracking()
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             return post;
         }
 
-        public async Task UpdatePost(UpdatePostDto updatePostDto)
+        public async Task UpdatePost(UpdatePostDto updatePostDto, CancellationToken cancellationToken)
         {
-            var existingPost = await GetPostByIdAsync(updatePostDto.PostId, updatePostDto.UserId);
+            var existingPost = await GetPostByIdAsync(updatePostDto.PostId, updatePostDto.UserId, cancellationToken);
 
             if (existingPost == null)
             {
@@ -136,17 +142,17 @@ namespace Habr.BusinessLogic.Services
             existingPost.Updated = DateTime.UtcNow;
 
             _context.Posts.Update(existingPost);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeletePost(int postId, int userId)
+        public async Task DeletePost(int postId, int userId, CancellationToken cancellationToken)
         {
             var post = await _context.Posts
                 .Where(p =>
                     p.Id == postId &&
                     p.UserId == userId &&
                     !p.IsDeleted)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (post == null)
             {
@@ -155,17 +161,17 @@ namespace Habr.BusinessLogic.Services
 
             post.IsDeleted = true;
             _context.Posts.Update(post);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task PublishPostAsync(int postId, int userId)
+        public async Task PublishPostAsync(int postId, int userId, CancellationToken cancellationToken)
         {
             var post = await _context.Posts
                 .Where(p =>
                     p.Id == postId &&
                     p.UserId == userId &&
                     !p.IsDeleted)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (post == null)
             {
@@ -182,12 +188,12 @@ namespace Habr.BusinessLogic.Services
             post.Updated = DateTime.UtcNow;
 
             _context.Posts.Update(post);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation(string.Format(LogMessages.PostPublishedSuccessfully, postId, userId));
         }
 
-        public async Task MovePostToDraftAsync(int postId, int userId)
+        public async Task MovePostToDraftAsync(int postId, int userId, CancellationToken cancellationToken)
         {
             var post = await _context.Posts
                 .Include(p => p.Comments)
@@ -195,7 +201,7 @@ namespace Habr.BusinessLogic.Services
                     p.Id == postId &&
                     p.UserId == userId &&
                     !p.IsDeleted)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (post == null)
             {
@@ -217,10 +223,10 @@ namespace Habr.BusinessLogic.Services
             post.Updated = DateTime.UtcNow;
 
             _context.Posts.Update(post);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<PostDetailsDto> GetPostDetailsAsync(int postId)
+        public async Task<PostDetailsDto> GetPostDetailsAsync(int postId, CancellationToken cancellationToken)
         {
             var post = await _context.Posts
                 .Include(p => p.User)
@@ -228,7 +234,7 @@ namespace Habr.BusinessLogic.Services
                     .ThenInclude(c => c.User)
                 .Where(p => p.Id == postId && p.IsPublished && !p.IsDeleted)
                 .AsNoTracking()
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (post == null)
             {
@@ -238,11 +244,11 @@ namespace Habr.BusinessLogic.Services
             return _mapper.Map<PostDetailsDto>(post);
         }
 
-        public async Task UpdatePostAsAdmin(UpdatePostDto updatePostDto)
+        public async Task UpdatePostAsAdmin(UpdatePostDto updatePostDto, CancellationToken cancellationToken)
         {
             var existingPost = await _context.Posts
                 .Where(p => p.Id == updatePostDto.PostId && !p.IsDeleted)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (existingPost == null)
             {
@@ -256,14 +262,14 @@ namespace Habr.BusinessLogic.Services
             existingPost.Updated = DateTime.UtcNow;
 
             _context.Posts.Update(existingPost);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeletePostAsAdmin(int postId)
+        public async Task DeletePostAsAdmin(int postId, CancellationToken cancellationToken)
         {
             var post = await _context.Posts
                 .Where(p => p.Id == postId && !p.IsDeleted)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (post == null)
             {
@@ -272,7 +278,7 @@ namespace Habr.BusinessLogic.Services
 
             post.IsDeleted = true;
             _context.Posts.Update(post);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Habr.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<Comment> AddComment(AddCommentDto addCommentDto)
+        public async Task<Comment> AddComment(AddCommentDto addCommentDto, CancellationToken cancellationToken)
         {
             var post = await _context.Posts
                 .Where(p => 
@@ -27,7 +27,7 @@ namespace Habr.BusinessLogic.Services
                     p.IsPublished && 
                     !p.IsDeleted)
                 .AsNoTracking()
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (post == null)
             {
@@ -38,12 +38,12 @@ namespace Habr.BusinessLogic.Services
             comment.Created = DateTime.UtcNow;
 
             _context.Comments.Add(comment);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return comment;
         }
 
-        public async Task<Comment> AddReply(AddReplyDto addReplyDto)
+        public async Task<Comment> AddReply(AddReplyDto addReplyDto, CancellationToken cancellationToken)
         {
             var parentComment = await _context.Comments
                 .Where(c => 
@@ -52,7 +52,7 @@ namespace Habr.BusinessLogic.Services
                     !c.Post.IsDeleted)
                 .Include(c => c.Post)
                 .AsNoTracking()
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (parentComment == null)
             {
@@ -64,73 +64,76 @@ namespace Habr.BusinessLogic.Services
             comment.Created = DateTime.UtcNow;
 
             _context.Comments.Add(comment);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return comment;
         }
 
-        public async Task DeleteComment(int commentId, int userId)
+        public async Task DeleteComment(int commentId, int userId, CancellationToken cancellationToken)
         {
             var comment = await _context.Comments
                 .Include(c => c.Replies)
-                .SingleOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
+                .SingleOrDefaultAsync(c => 
+                    c.Id == commentId && 
+                    c.UserId == userId, 
+                    cancellationToken);
 
             if (comment == null)
             {
                 throw new ArgumentException(Messages.DeleteCommentPermissionDenied);
             }
 
-            await DeleteReplies(comment);
+            await DeleteReplies(comment, cancellationToken);
 
             _context.Comments.Remove(comment);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        private async Task DeleteReplies(Comment comment)
+        private async Task DeleteReplies(Comment comment, CancellationToken cancellationToken)
         {
             foreach (var reply in comment.Replies.ToList())
             {
-                await _context.Entry(reply).Collection(r => r.Replies).LoadAsync();
-                await DeleteReplies(reply);
+                await _context.Entry(reply).Collection(r => r.Replies).LoadAsync(cancellationToken);
+                await DeleteReplies(reply, cancellationToken);
                 _context.Comments.Remove(reply);
             }
         }
 
-        public async Task<IEnumerable<Comment>> GetCommentsByPost(int postId)
+        public async Task<IEnumerable<Comment>> GetCommentsByPost(int postId, CancellationToken cancellationToken)
         {
             return await _context.Comments
                 .Where(c => c.PostId == postId)
                 .Include(c => c.User)
                 .AsNoTracking()
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Comment>> GetUserComments(int userId)
+        public async Task<IEnumerable<Comment>> GetUserComments(int userId, CancellationToken cancellationToken)
         {
             return await _context.Comments
                 .Where(c => c.UserId == userId)
                 .Include(c => c.User)
                 .AsNoTracking()
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task DeleteCommentAsAdmin(int commentId)
+        public async Task DeleteCommentAsAdmin(int commentId, CancellationToken cancellationToken)
         {
             var comment = await _context.Comments
                 .Include(c => c.Replies)
-                .SingleOrDefaultAsync(c => c.Id == commentId);
+                .SingleOrDefaultAsync(c => c.Id == commentId, cancellationToken);
 
             if (comment == null)
             {
                 throw new ArgumentException(Messages.CommentNotFound);
             }
 
-            await DeleteReplies(comment);
+            await DeleteReplies(comment, cancellationToken);
 
             _context.Comments.Remove(comment);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

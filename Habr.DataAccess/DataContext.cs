@@ -20,6 +20,7 @@ namespace Habr.DataAccess
 
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
 
         public DataContext(string connectionString)
         {

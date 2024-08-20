@@ -10,6 +10,7 @@ namespace Habr.WebApi.Extensions
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IPostService, PostService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRatingService, RatingService>();
             services.AddSingleton<ITokenService, TokenService>();
 
             return services;

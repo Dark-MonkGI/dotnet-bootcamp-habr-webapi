@@ -50,12 +50,10 @@ namespace Habr.BusinessLogic.Services
             _roleManager = roleManager;
         }
 
-        public async Task<TokenResponseDto> RegisterUserAsync(RegisterUserDto registerUserDto, ClaimsPrincipal user)
+        public async Task<TokenResponseDto> RegisterUserAsync(
+            RegisterUserDto registerUserDto, ClaimsPrincipal user, CancellationToken cancellationToken)
         {
-            UserValidation.ValidateEmail(registerUserDto.Email);
-            UserValidation.ValidatePassword(registerUserDto.Password);
-
-            if (await _context.Users.AnyAsync(u => u.Email == registerUserDto.Email))
+            if (await _context.Users.AnyAsync(u => u.Email == registerUserDto.Email, cancellationToken))
             {
                 throw new ArgumentException(Messages.EmailTaken);
             }
@@ -103,6 +101,12 @@ namespace Habr.BusinessLogic.Services
                 throw new ArgumentException(Messages.InvalidEmail);
             }
 
+            var passwordValid = await _userManager.CheckPasswordAsync(authenticatedUser, authenticateUserDto.Password);
+            if (!passwordValid)
+            {
+                throw new ArgumentException(Messages.InvalidEmailOrPassword);
+            }
+
             if (!authenticateUserDto.IsEmailConfirmed)
             {
                 throw new ArgumentException(Messages.EmailConfirmationFailed);
@@ -138,8 +142,13 @@ namespace Habr.BusinessLogic.Services
             }
 
             var authenticatedUser = await _userManager.FindByEmailAsync(authenticateUserDto.Email);
-
             if (authenticatedUser == null)
+            {
+                throw new ArgumentException(Messages.InvalidEmailOrPassword);
+            }
+
+            var passwordValid = await _userManager.CheckPasswordAsync(authenticatedUser, authenticateUserDto.Password);
+            if (!passwordValid)
             {
                 throw new ArgumentException(Messages.InvalidEmailOrPassword);
             }
@@ -172,9 +181,9 @@ namespace Habr.BusinessLogic.Services
             };
         }
 
-        public async Task<TokenResponseDto> RefreshTokenAsync(string refreshToken)
+        public async Task<TokenResponseDto> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken, cancellationToken);
             var currentUtcTime = DateTime.UtcNow;
 
             if (user == null || user.RefreshTokenExpiryTime <= currentUtcTime)
@@ -196,7 +205,7 @@ namespace Habr.BusinessLogic.Services
             user.RefreshTokenExpiryTime = currentUtcTime.AddDays(_jwtSettings.RefreshTokenLifetimeDays);
 
             _context.Users.Update(user);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return new TokenResponseDto { 
                 Token = newAccessToken, 
@@ -204,12 +213,12 @@ namespace Habr.BusinessLogic.Services
             };
         }
 
-        public async Task<User> RegisterAsync(RegisterUserDto registerUserDto)
+        public async Task<User> RegisterAsync(RegisterUserDto registerUserDto, CancellationToken cancellationToken)
         {
             UserValidation.ValidateEmail(registerUserDto.Email);
             UserValidation.ValidatePassword(registerUserDto.Password);
 
-            if (await _context.Users.AnyAsync(u => u.Email == registerUserDto.Email))
+            if (await _context.Users.AnyAsync(u => u.Email == registerUserDto.Email, cancellationToken))
             {
                 throw new ArgumentException(Messages.EmailTaken);
             }
@@ -220,16 +229,16 @@ namespace Habr.BusinessLogic.Services
             user.Created = DateTime.UtcNow;
 
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation(string.Format(LogMessages.UserRegisteredSuccessfully, user.Email));
 
             return user;
         }
 
-        public async Task ConfirmEmailAsync(string email, bool isEmailConfirmed)
+        public async Task ConfirmEmailAsync(string email, bool isEmailConfirmed, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken);
             if (user == null)
             {
                 throw new ArgumentException(Messages.EmailIncorrect);
@@ -237,19 +246,19 @@ namespace Habr.BusinessLogic.Services
 
             user.IsEmailConfirmed = isEmailConfirmed;
             _context.Users.Update(user);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation(string.Format(LogMessages.UserConfirmedSuccessfully, user.Email));
         }
 
-        public async Task<User> AuthenticateAsync(AuthenticateUserDto authenticateUserDto)
+        public async Task<User> AuthenticateAsync(AuthenticateUserDto authenticateUserDto, CancellationToken cancellationToken)
         {
             UserValidation.ValidateEmail(authenticateUserDto.Email);
             UserValidation.ValidatePassword(authenticateUserDto.Password);
 
             var user = await _context.Users
                 .AsNoTracking()
-                .SingleOrDefaultAsync(u => u.Email == authenticateUserDto.Email);
+                .SingleOrDefaultAsync(u => u.Email == authenticateUserDto.Email, cancellationToken);
 
             if (user == null)
             {

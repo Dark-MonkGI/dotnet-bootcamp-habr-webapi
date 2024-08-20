@@ -13,11 +13,13 @@ namespace Habr.DataAccess.Entities
 
         public ICollection<Post> Posts { get; set; }
         public ICollection<Comment> Comments { get; set; }
+        public ICollection<Rating> Ratings { get; set; }
 
         public User()
         {
             Posts = new HashSet<Post>();
             Comments = new HashSet<Comment>();
+            Ratings = new HashSet<Rating>();
         }
     }
 }

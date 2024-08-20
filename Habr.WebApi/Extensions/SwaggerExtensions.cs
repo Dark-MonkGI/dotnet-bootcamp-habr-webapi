@@ -1,4 +1,6 @@
-﻿namespace Habr.WebApi.Extensions
+﻿using Habr.WebApi.Resources;
+
+namespace Habr.WebApi.Extensions
 {
     public static class SwaggerExtensions
     {
@@ -26,17 +28,17 @@
                         new string[]{}
                     }
                 });
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                c.SwaggerDoc(SwaggerDescriptions.HabrApiV1Version, new Microsoft.OpenApi.Models.OpenApiInfo
                 {
-                    Version = "v1",
-                    Title = "Habr API v1",
-                    Description = "API version 1.0"
+                    Version = SwaggerDescriptions.HabrApiV1Version,
+                    Title = SwaggerDescriptions.HabrApiV1Title,
+                    Description = SwaggerDescriptions.HangfireDashboardDescriptionV1
                 });
-                c.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo
+                c.SwaggerDoc(SwaggerDescriptions.HabrApiV2Version, new Microsoft.OpenApi.Models.OpenApiInfo
                 {
-                    Version = "v2",
-                    Title = "Habr API v2",
-                    Description = "API version 2.0"
+                    Version = SwaggerDescriptions.HabrApiV2Version,
+                    Title = SwaggerDescriptions.HabrApiV2Title,
+                    Description = SwaggerDescriptions.HangfireDashboardDescriptionV2
                 });
             });
 

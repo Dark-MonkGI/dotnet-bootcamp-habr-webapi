@@ -36,6 +36,9 @@ namespace Habr.DataAccess.Configurations
                 .IsRequired()
                 .HasDefaultValue(false);
 
+            builder.Property(p => p.AverageRating)
+                .IsRequired(false);
+
             builder.HasOne(p => p.User)
                 .WithMany(u => u.Posts)
                 .HasForeignKey(p => p.UserId)

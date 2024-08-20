@@ -117,52 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlreadyAuthenticated" xml:space="preserve">
-    <value>You are already authenticated. Cannot register again.</value>
+  <data name="HabrApiV1Title" xml:space="preserve">
+    <value>Habr API v1</value>
   </data>
-  <data name="BadRequestTitle" xml:space="preserve">
-    <value>Bad Request</value>
+  <data name="HabrApiV1Version" xml:space="preserve">
+    <value>v1</value>
   </data>
-  <data name="ConfirmYourEmail" xml:space="preserve">
-    <value>User authenticated. Please confirm your email.</value>
+  <data name="HabrApiV2Title" xml:space="preserve">
+    <value>Habr API v2</value>
   </data>
-  <data name="EmailConfirmationFailed" xml:space="preserve">
-    <value>Email confirmation failed. Please try again.</value>
+  <data name="HabrApiV2Version" xml:space="preserve">
+    <value>v2</value>
   </data>
-  <data name="EmailConfirmedSuccessfully" xml:space="preserve">
-    <value>Email confirmed successfully.</value>
+  <data name="HangfireDashboardDescriptionV1" xml:space="preserve">
+    <value>API version 1.0&lt;br&gt;&lt;br&gt;Access the Hangfire Dashboard at [/hangfire](/hangfire)</value>
   </data>
-  <data name="InternalServerErrorTitle" xml:space="preserve">
-    <value>Internal Server Error</value>
-  </data>
-  <data name="InvalidEmail" xml:space="preserve">
-    <value>Invalid email or password.</value>
-  </data>
-  <data name="NoDraftPosts" xml:space="preserve">
-    <value>No draft posts found.</value>
-  </data>
-  <data name="NoPostsFound" xml:space="preserve">
-    <value>No posts found.</value>
-  </data>
-  <data name="NotFoundTitle" xml:space="preserve">
-    <value>Not Found</value>
-  </data>
-  <data name="RefreshTokenLifetimeDaysInvalid" xml:space="preserve">
-    <value>RefreshTokenLifetimeDays configuration is missing or invalid</value>
-  </data>
-  <data name="SwaggerSecurityDefinitionDescription" xml:space="preserve">
-    <value>JWT Authorization header using the Bearer scheme. Example: "Authorization: Bearer {token}"</value>
-  </data>
-  <data name="UnauthorizedTitle" xml:space="preserve">
-    <value>Unauthorized</value>
-  </data>
-  <data name="UserRegisteredEmailNotConfirmed" xml:space="preserve">
-    <value>User registered but email not confirmed.</value>
-  </data>
-  <data name="ValidationErrorMessage" xml:space="preserve">
-    <value>One or more validation errors occurred</value>
-  </data>
-  <data name="ValidationFailed" xml:space="preserve">
-    <value>Validation failed</value>
+  <data name="HangfireDashboardDescriptionV2" xml:space="preserve">
+    <value>API version 2.0&lt;br&gt;&lt;br&gt;Access the Hangfire Dashboard at [/hangfire](/hangfire)</value>
   </data>
 </root>

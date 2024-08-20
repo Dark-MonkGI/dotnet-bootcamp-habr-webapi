@@ -15,17 +15,17 @@ namespace Habr.Application.Controllers
 
         public async Task<User> RegisterAsync(RegisterUserDto registerUserDto)
         {
-            return await _userService.RegisterAsync(registerUserDto);
+            return await _userService.RegisterAsync(registerUserDto, CancellationToken.None);
         }
 
         public async Task ConfirmEmailAsync(string email, bool isEmailConfirmed)
         {
-            await _userService.ConfirmEmailAsync(email, isEmailConfirmed);
+            await _userService.ConfirmEmailAsync(email, isEmailConfirmed, CancellationToken.None);
         }
 
         public async Task<User> AuthenticateAsync(AuthenticateUserDto authenticateUserDto)
         {
-            return await _userService.AuthenticateAsync(authenticateUserDto);
+            return await _userService.AuthenticateAsync(authenticateUserDto, CancellationToken.None);
         }
     }
 }

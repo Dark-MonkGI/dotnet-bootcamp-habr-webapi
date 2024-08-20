@@ -2,6 +2,12 @@
 {
     public static class Constants
     {
+        public static class RatingConstants
+        {
+            public const int MinValue = 1;
+            public const int MaxValue = 5;
+        }
+
         public static class Pagination
         {
             public const int DefaultPageNumber = 1;
@@ -24,6 +30,7 @@
             public const string PostsTag = "Posts";
             public const string UsersTag = "Users";
             public const string CommentsTag = "Comments";
+            public const string RatingsTag = "Ratings";
             public const string AdminTag = "Admin rights";
         }
         public static class Log
@@ -46,6 +53,7 @@
         {
             public const int NameMaxLength = 100;
             public const int EmailMaxLength = 200;
+            public const int PasswordMinLength = 8;
             public const int SecurityStampMaxLength = 100;
             public const int RefreshTokenMaxLength = 500;           
             public const bool DefaultIsEmailConfirmed = false;
